@@ -2,5 +2,5 @@ open Parser
 open Node
 
 let () =
-  run();
+  ignore(run());
   Printf.printf "hello\n"
