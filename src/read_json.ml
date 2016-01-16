@@ -25,5 +25,5 @@ let rec walker j =
   | `Null -> Printf.printf "null\n"
   | _ -> Printf.printf "else\n";;
 
-let res = read_json() in
-walker res
+(* let res = read_json() in *)
+(* walker res *)

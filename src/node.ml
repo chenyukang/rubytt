@@ -37,6 +37,14 @@ let set_node_file node f =
 let set_node_path node p =
   node.info.path <- p
 
+let nil_node =
+  {
+    info = {path = ""; file = ""; ss = -1; ee = -1};
+    ty = Nil;
+    parent = None;
+
+  }
+  
 let make_nil_node file s e =
   {
     info = {path = ""; file = file; ss = s; ee = e};
