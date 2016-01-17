@@ -16,6 +16,7 @@ and
   | Symbol of string
   | Void
   | Name of string * string (* Fixme *)
+  | Block of node list
 and
   node = {
   info: node_info;
@@ -42,15 +43,27 @@ let nil_node =
     info = {path = ""; file = ""; ss = -1; ee = -1};
     ty = Nil;
     parent = None;
-
   }
-  
+
 let make_nil_node file s e =
   {
     info = {path = ""; file = file; ss = s; ee = e};
     ty = Nil;
     parent = None;
   }
+
+let add_children parent children =
+  List.iter (fun a -> set_node_parent a parent) children
+
+let make_block_node stmts file s e =
+  let block = {
+    info = {path = ""; file = file; ss = s; ee = e};
+    ty = Block(stmts);
+    parent = None;
+  } in
+  add_children block stmts;
+  block
+
 
 
 

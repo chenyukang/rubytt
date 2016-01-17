@@ -6,7 +6,7 @@ SOURCES = \
 	main.ml
 
 
-OCAMLBUILD = corebuild -pkg yojson
+OCAMLBUILD = corebuild -pkg yojson -pkg alcotest -pkg ounit
 
 default: byte
 

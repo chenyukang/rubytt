@@ -23,7 +23,7 @@ let rec convert json =
   | "block" ->
     Printf.printf "ty: %s\n" ty;
     let stmts = convert_list (json |> member "stmts") in
-    nil_node
+    make_block_node stmts "file" ss ee
   | _ -> Printf.printf "here\n"; nil_node
 and
   convert_list stmts =
