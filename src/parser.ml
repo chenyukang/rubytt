@@ -25,10 +25,32 @@ let rec convert json =
     let stmts = convert_list (json |> member "stmts") in
     make_block_node stmts "file" ss ee
   | "int" ->
-    (* FIXME *)
-    let i = json |> member "value" |> to_s in
-    (* Printf.printf "int: %s\n" i; *)
-    make_int_node i "file" ss ee
+    let v = json |> member "value" |> to_s in
+    Printf.printf "here int value: %s\n" v;
+    make_int_node v "file" ss ee  (* FIXME *)
+  | "float" ->
+    let v = json |> member "value" |> to_s in
+    Printf.printf "here float value: %s\n" v;
+    make_float_node v "file" ss ee (* FIXME *)
+  | "symbol" ->
+    let sym = json |> member "id" |> to_s in
+    make_symbol_node sym "file" ss ee
+  | "string" ->
+    let str = json |> member "id" |> to_s in
+    make_string_node str "file" ss ee
+  | "name" ->
+    let id = json |> member "id" |> to_s in
+    make_name_node id "file" ss ee (* FIXME *)
+  | "unary" ->
+    let op = convert_op (json |> member "op") in
+    let operand = convert (json |> member "operand") in
+    make_unary_node op operand "file" ss ee
+  | "yield" ->
+    let value = convert (json |> member "value") in
+    make_yield_node value "file" ss ee
+  | "return" ->
+    let value = convert (json |> member "value") in
+    make_return_node value "file" ss ee
   | "binary" -> (
     let l = convert (json |> member "left") in
     let r = convert (json |> member "right") in

@@ -2,3 +2,4 @@
 *.byte
 _build
 _tests
+res

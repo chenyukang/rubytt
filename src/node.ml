@@ -38,10 +38,11 @@ type node_info = {
 and
   node_type =
   | Nil
-  | IfNode of node * node * node
-  | IndexNode of node
-  | KwdNode of string * node
+  | If of node * node * node
+  | Index of node
+  | Kwd of string * node
   | Int of int
+  | Float of float
   | String of string
   | Symbol of string
   | Void
@@ -49,6 +50,8 @@ and
   | Block of node list
   | BinOp of op * node * node (* left op * right op *)
   | UnaryOp of op * node
+  | Yield of node
+  | Return of node
 and
   node = {
   info: node_info;
@@ -118,6 +121,49 @@ let make_int_node value file s e =
     parent = None;
   }
 
+let make_float_node value file s e =
+  let v = Float.of_string value in
+  {
+    info = {path=""; file = file; ss = s; ee = e};
+    ty = Float(v);
+    parent = None;
+  }
 
+let make_string_node str file s e =
+  {
+    info = {path=""; file = file; ss = s; ee = e};
+    ty = String(str);
+    parent = None;
+  }
+
+let make_symbol_node sym file s e =
+  {
+    info = {path=""; file = file; ss = s; ee = e};
+    ty = Symbol(sym);
+    parent = None;
+  }
+
+let make_name_node id file s e =
+  {
+    info = {path=""; file = file; ss = s; ee = e};
+    ty = Name(id, ""); (* FIXME *)
+    parent = None;
+  }
+
+let make_yield_node value file s e =
+  {
+    info = {path=""; file = file; ss = s; ee = e};
+    ty = Yield(value);
+    parent = None;
+  }
+
+let make_return_node value file s e =
+  let node = {
+    info = {path=""; file = file; ss = s; ee = e};
+    ty = Return(value);
+    parent = None;
+  } in
+  set_node_parent value node;
+  node
 
 
