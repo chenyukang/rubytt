@@ -1,3 +1,33 @@
+open Core.Std
+
+type op =
+  | Add
+  | Sub
+  | Mul
+  | Div
+  | Pow
+  | Match
+  | NotMatch
+  | Equal
+  | Eq
+  | Lt
+  | Gt
+  | BitAnd
+  | BitOr
+  | BitXor
+  | In
+  | LShift
+  | RShift
+  | Mod
+  | Invert
+  | And
+  | Or
+  | Not
+  | LtE
+  | GtE
+  | NotEqual
+  | Defined
+  | Unknown
 
 type node_info = {
   mutable path: string;
@@ -17,6 +47,8 @@ and
   | Void
   | Name of string * string (* Fixme *)
   | Block of node list
+  | BinOp of op * node * node (* left op * right op *)
+  | UnaryOp of op * node
 and
   node = {
   info: node_info;
@@ -53,7 +85,7 @@ let make_nil_node file s e =
   }
 
 let add_children parent children =
-  List.iter (fun a -> set_node_parent a parent) children
+  List.iter children ~f:(fun a -> set_node_parent a parent) 
 
 let make_block_node stmts file s e =
   let block = {
@@ -63,6 +95,28 @@ let make_block_node stmts file s e =
   } in
   add_children block stmts;
   block
+
+let make_bin_node op left right file s e =
+  {
+    info = {path=""; file = file; ss = s; ee = e};
+    ty = BinOp(op, left, right);
+    parent = None;
+  }
+
+let make_unary_node op operand file s e =
+  {
+    info = {path=""; file = file; ss = s; ee = e};
+    ty = UnaryOp(op, operand);
+    parent = None;
+  }
+
+let make_int_node value file s e =
+  let v = Int.of_string value in
+  {
+    info = {path=""; file = file; ss = s; ee = e};
+    ty = Int(v);
+    parent = None;
+  }
 
 
 
