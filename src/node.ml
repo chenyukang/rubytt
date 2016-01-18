@@ -179,8 +179,7 @@ let make_while_node test body file s e =
     ty = While(test, body);
     parent = None;
   } in
-  set_node_parent test node;
-  set_node_parent body node;
+  add_children node [test; body];
   node
 
 let make_assign_node target value file s e =
@@ -189,19 +188,15 @@ let make_assign_node target value file s e =
     ty = Assign(target, value);
     parent = None;
   } in
-  set_node_parent target node;
-  set_node_parent value node;
+  add_children node [target; value];
   node
 
-let make_try_node body resuce orelse final file s e =
+let make_try_node body rescue orelse final file s e =
   let node = {
     info = {path=""; file = file; ss = s; ee = e};
-    ty = Try(body, resuce, orelse, final);
+    ty = Try(body, rescue, orelse, final);
     parent = None;
   } in
-  set_node_parent body node;
-  set_node_parent resuce node;
-  set_node_parent orelse node;
-  set_node_parent final node;
+  add_children node [body; rescue; orelse; final];
   node
 
