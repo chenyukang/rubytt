@@ -70,6 +70,7 @@ and
   | StrEmbed of string
   | Starred of node
   | Array of node list
+  | Class of node * node * node * node * bool 
 and
   node = {
   info: node_info;
@@ -303,6 +304,15 @@ let make_undef_node targets file s e =
     parent = None;
   } in
   add_children node targets;
+  node
+
+let make_class_node name super body doc static file s e =
+  let node = {
+    info = {path=""; file = file; ss = s; ee = e };
+    ty = Class(name, super, body, doc, static);
+    parent = None;
+  } in
+  add_children node [name; super; body; doc];
   node
 
 

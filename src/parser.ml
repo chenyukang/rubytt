@@ -113,7 +113,14 @@ let rec convert json =
   | "dot2" | "dot3" ->
     let _fr = convert_elem json "from" in
     let _to = convert_elem json "to" in
-    make_array_node [_fr; _to] "file" ss ee 
+    make_array_node [_fr; _to] "file" ss ee
+  | "class" ->
+    let name = convert_elem json "name" in
+    let super = convert_elem json "super" in
+    let body = convert_elem json "body" in
+    let doc = convert_elem json "doc" in 
+    let is_static = json |> member "static" |> to_bool in
+    make_class_node name super body doc is_static "file" ss ee
   | "binary" -> (
     let l = convert_elem json "left" in
     let r = convert_elem json "right" in

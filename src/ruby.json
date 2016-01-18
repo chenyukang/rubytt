@@ -1,0 +1,41 @@
+{
+  "type": "program",
+  "body": {
+    "type": "block",
+    "stmts": [
+      {
+        "type": "class",
+        "static": false,
+        "name": {
+          "type": "name",
+          "id": "Demo",
+          "start": 6,
+          "end": 10,
+          "start_line": 1,
+          "end_line": 6
+        },
+        "body": {
+          "type": "block",
+          "stmts": [
+            {
+              "type": "void"
+            }
+          ]
+        },
+        "start": 6,
+        "end": 14,
+        "start_line": 1,
+        "end_line": 6
+      }
+    ],
+    "start": 6,
+    "end": 14,
+    "start_line": 1,
+    "end_line": 6
+  },
+  "filename": "tests/class.rb",
+  "start": 6,
+  "end": 14,
+  "start_line": 1,
+  "end_line": 6
+}
