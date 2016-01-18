@@ -39,7 +39,6 @@ type node_info = {
 and
   node_type =
   | Nil
-  | If of node * node * node
   | Index of node
   | Kwd of string * node
   | Int of int
@@ -56,6 +55,8 @@ and
   | Yield of node
   | Return of node
   | Try of node * node * node * node
+  | If of node * node * node
+  | For of node * node * node
 and
   node = {
   info: node_info;
@@ -140,6 +141,16 @@ let make_string_node str file s e =
     parent = None;
   }
 
+let make_kwd_node str value file s e =
+  let node = {
+    info = {path=""; file = file; ss = s; ee = e};
+    ty = Kwd(str, value);
+    parent = None;
+  } in
+  set_node_parent value node;
+  node
+
+
 let make_symbol_node sym file s e =
   {
     info = {path=""; file = file; ss = s; ee = e};
@@ -172,7 +183,6 @@ let make_return_node value file s e =
   set_node_parent value node;
   node
 
-
 let make_while_node test body file s e =
   let node = {
     info = {path=""; file = file; ss = s; ee = e};
@@ -198,5 +208,23 @@ let make_try_node body rescue orelse final file s e =
     parent = None;
   } in
   add_children node [body; rescue; orelse; final];
+  node
+
+let make_if_node test body _else file s e =
+  let node = {
+    info = {path=""; file = file; ss = s; ee = e};
+    ty = If(test, body, _else);
+    parent = None;
+  } in
+  add_children node [test; body; _else];
+  node
+
+let make_for_node target iter body file s e = 
+  let node = {
+    info = {path=""; file = file; ss = s; ee = e};
+    ty = For(target, iter, body);
+    parent = None;
+  } in
+  add_children node [target; iter; body];
   node
 

@@ -40,6 +40,10 @@ let rec convert json =
   | "name" ->
     let id = convert_to_s json "id" in
     make_name_node id "file" ss ee (* FIXME *)
+  | "keyword" ->
+    let arg = convert_to_s json "arg" in
+    let value = convert_elem json "value" in
+    make_kwd_node arg value "file" ss ee 
   | "unary" ->
     let op = convert_op (json |> member "op") in
     let operand = convert_elem json "operand" in
@@ -54,6 +58,16 @@ let rec convert json =
     let test = convert_elem json "test" in
     let body = convert_elem json "body" in
     make_while_node test body "file" ss ee
+  | "if" ->
+    let test = convert_elem json "test" in
+    let body = convert_elem json "body" in
+    let _else = convert_elem json "else" in
+    make_if_node test body _else "file" ss ee
+  | "for" ->
+    let target = convert_elem json "target" in
+    let iter = convert_elem json "iter" in
+    let body = convert_elem json "body" in
+    make_for_node target iter body "file" ss ee
   | "assign" ->
     let _var = convert_elem json "target" in
     let _val = convert_elem json "value" in
