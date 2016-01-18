@@ -20,7 +20,6 @@ let rec convert json =
   (* Printf.printf "now type: %s" ty; *)
   match ty with
   | "program" ->
-    (* Printf.printf "ty: %s ss: %d ee: %d\n" ty ss ee; *)
     convert_elem json "body"
   | "block" ->
     let stmts = convert_list (json |> member "stmts") in
@@ -39,11 +38,22 @@ let rec convert json =
     make_string_node str "file" ss ee
   | "name" ->
     let id = convert_to_s json "id" in
-    make_name_node id "file" ss ee (* FIXME *)
+    make_name_node id Node.Local "file" ss ee (* FIXME *)
+  | "attribute" ->
+    let value = convert_elem json "value" in
+    let attr = convert_elem json "attr" in
+    make_attribute_node value attr "file" ss ee
+  | "undef" ->
+    let targets = convert_list (json |> member "names") in
+    make_undef_node targets "file" ss ee 
   | "keyword" ->
     let arg = convert_to_s json "arg" in
     let value = convert_elem json "value" in
-    make_kwd_node arg value "file" ss ee 
+    make_kwd_node arg value "file" ss ee
+  | "void" ->
+    make_void_node "file" ss ee
+  | "break" | "retry" | "redo" | "continue" ->
+    make_control_node ty "file" ss ee
   | "unary" ->
     let op = convert_op (json |> member "op") in
     let operand = convert_elem json "operand" in
@@ -78,6 +88,32 @@ let rec convert json =
     let orelse = convert_elem json "else" in
     let final = convert_elem json "ensure" in
     make_try_node body _rescue orelse final "file" ss ee
+  | "regexp" ->
+    let pat = convert_elem json "pattern" in
+    let reg_end = convert_elem json "regexp_end" in
+    make_regexp_node pat reg_end "file" ss ee
+  | "embexp" ->
+    let value = convert_to_s json "value" in
+    make_strembed_node value "file" ss ee
+  | "arg" ->
+    let id = convert_to_s json "arg" in
+    make_name_node id Node.Local "file" ss ee
+  | "star" ->
+    let value = convert_elem json "value" in
+    make_starred_node value "file" ss ee
+  | "cvar" ->
+    let id = convert_to_s json "id" in
+    make_name_node id Node.Class "file" ss ee
+  | "ivar" ->
+    let id = convert_to_s json "id" in
+    make_name_node id Node.Instance "file" ss ee
+  | "gvar" ->
+    let id = convert_to_s json "id" in
+    make_name_node id Node.Global "file" ss ee
+  | "dot2" | "dot3" ->
+    let _fr = convert_elem json "from" in
+    let _to = convert_elem json "to" in
+    make_array_node [_fr; _to] "file" ss ee 
   | "binary" -> (
     let l = convert_elem json "left" in
     let r = convert_elem json "right" in
@@ -146,5 +182,9 @@ let build_ast_from_file file =
   let json = Yojson.Basic.from_file file in
   convert json
 
+let parse_file file =
+  build_ast_from_file file
+
 let run() =
   build_ast_from_file "./ruby_op.json"
+

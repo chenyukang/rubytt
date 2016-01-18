@@ -30,6 +30,12 @@ type op =
   | Defined
   | Unknown
 
+type name_ty =
+  | Local
+  | Instance
+  | Class
+  | Global
+
 type node_info = {
   mutable path: string;
   mutable file: string;
@@ -45,8 +51,9 @@ and
   | Float of float
   | String of string
   | Symbol of string
+  | Control of string
   | Void
-  | Name of string * string (* Fixme *)
+  | Name of string * name_ty
   | Block of node list
   | BinOp of op * node * node (* left op * right op *)
   | UnaryOp of op * node
@@ -54,9 +61,15 @@ and
   | Assign of node * node
   | Yield of node
   | Return of node
+  | Attribute of node * node
   | Try of node * node * node * node
   | If of node * node * node
   | For of node * node * node
+  | Regexp of node * node
+  | Undef of node list
+  | StrEmbed of string
+  | Starred of node
+  | Array of node list
 and
   node = {
   info: node_info;
@@ -158,10 +171,24 @@ let make_symbol_node sym file s e =
     parent = None;
   }
 
-let make_name_node id file s e =
+let make_void_node file s e =
   {
     info = {path=""; file = file; ss = s; ee = e};
-    ty = Name(id, ""); (* FIXME *)
+    ty = Void;
+    parent = None;
+  }
+
+let make_control_node ty file s e =
+  {
+    info = {path=""; file = file; ss = s; ee = e};
+    ty = Control(ty);
+    parent = None;
+  }
+
+let make_name_node id ty file s e =
+  {
+    info = {path=""; file = file; ss = s; ee = e};
+    ty = Name(id, ty);
     parent = None;
   }
 
@@ -227,4 +254,56 @@ let make_for_node target iter body file s e =
   } in
   add_children node [target; iter; body];
   node
+
+let make_regexp_node pat _end file s e =
+  {
+    info = {path = ""; file = file; ss = s; ee = e};
+    ty = Regexp(pat, _end);
+    parent = None;
+  }
+
+let make_strembed_node value file s e =
+  {
+    info = {path = ""; file = file; ss = s; ee = e};
+    ty = StrEmbed(value);
+    parent = None;
+  }
+
+let make_starred_node value file s e =
+  let node = {
+    info = {path = ""; file = file; ss = s; ee = e};
+    ty = Starred(value);
+    parent = None;
+  } in
+  set_node_parent value node;
+  node
+
+let make_array_node elems file s e =
+  let node = {
+    info = {path=""; file = file; ss = s; ee = e };
+    ty = Array(elems);
+    parent = None;
+  } in
+  add_children node elems;
+  node
+
+let make_attribute_node value attr file s e =
+  let node = {
+    info = {path=""; file = file; ss = s; ee = e };
+    ty = Attribute(value, attr);
+    parent = None;
+  } in
+  add_children node [value; attr];
+  node
+
+let make_undef_node targets file s e =
+  let node = {
+    info = {path=""; file = file; ss = s; ee = e };
+    ty = Undef(targets);
+    parent = None;
+  } in
+  add_children node targets;
+  node
+
+
 
