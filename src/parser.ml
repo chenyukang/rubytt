@@ -5,69 +5,68 @@ open Yojson.Basic
 open UnixLabels
 open Node
 
-let to_s s =
-  let r = to_string s in
+let convert_to_s json mem =
+  let r = json |> member mem |> to_string in
   let x = String.drop_prefix r 1 in
   String.drop_suffix x 1
 
+let convert_to_i json mem =
+  json |> member mem |> to_int
+
 let rec convert json =
-  let ty = json |> member "type" |> to_s in
-  let ss = json |> member "start" |> to_int in
-  let ee = json |> member "end" |> to_int in
+  let ty = convert_to_s json "type" in
+  let ss = convert_to_i json "start" in
+  let ee = convert_to_i json "end" in
   (* Printf.printf "now type: %s" ty; *)
   match ty with
   | "program" ->
     (* Printf.printf "ty: %s ss: %d ee: %d\n" ty ss ee; *)
-    let body = json |> member "body" in
-    convert body
+    convert_elem json "body"
   | "block" ->
-    (* Printf.printf "ty: %s\n" ty; *)
     let stmts = convert_list (json |> member "stmts") in
     make_block_node stmts "file" ss ee
   | "int" ->
-    let v = json |> member "value" |> to_s in
-    Printf.printf "here int value: %s\n" v;
+    let v = convert_to_s json "value" in
     make_int_node v "file" ss ee  (* FIXME *)
   | "float" ->
-    let v = json |> member "value" |> to_s in
-    Printf.printf "here float value: %s\n" v;
+    let v = convert_to_s json "value" in
     make_float_node v "file" ss ee (* FIXME *)
   | "symbol" ->
-    let sym = json |> member "id" |> to_s in
+    let sym = convert_to_s json "id" in
     make_symbol_node sym "file" ss ee
   | "string" ->
-    let str = json |> member "id" |> to_s in
+    let str = convert_to_s json "id" in
     make_string_node str "file" ss ee
   | "name" ->
-    let id = json |> member "id" |> to_s in
+    let id = convert_to_s json "id" in
     make_name_node id "file" ss ee (* FIXME *)
   | "unary" ->
     let op = convert_op (json |> member "op") in
-    let operand = convert (json |> member "operand") in
+    let operand = convert_elem json "operand" in
     make_unary_node op operand "file" ss ee
   | "yield" ->
-    let value = convert (json |> member "value") in
+    let value = convert_elem json "value" in
     make_yield_node value "file" ss ee
   | "return" ->
-    let value = convert (json |> member "value") in
+    let value = convert_elem json "value" in
     make_return_node value "file" ss ee
   | "while" ->
-    let test = convert (json |> member "test") in
-    let body = convert (json |> member "body") in
+    let test = convert_elem json "test" in
+    let body = convert_elem json "body" in
     make_while_node test body "file" ss ee
   | "assign" ->
-    let _var = convert (json |> member "target") in
-    let _val = convert (json |> member "value") in
+    let _var = convert_elem json "target" in
+    let _val = convert_elem json "value" in
     make_assign_node _var _val "file" ss ee
   | "begin" ->
-    let body = convert (json |> member "body") in
-    let _rescue = convert (json |> member "rescue") in
-    let orelse = convert (json |> member "else") in
-    let final = convert (json |> member "ensure") in
+    let body = convert_elem json "body" in
+    let _rescue = convert_elem json "rescue" in
+    let orelse = convert_elem json "else" in
+    let final = convert_elem json "ensure" in
     make_try_node body _rescue orelse final "file" ss ee
   | "binary" -> (
-    let l = convert (json |> member "left") in
-    let r = convert (json |> member "right") in
+    let l = convert_elem json "left" in
+    let r = convert_elem json "right" in
     let op = convert_op (json |> member "op") in
     match op with
     | LtE ->
@@ -88,6 +87,9 @@ let rec convert json =
     )
   | _ -> Printf.printf "here\n"; nil_node
 and
+  convert_elem json mem =
+  convert (json |> member mem)
+and
   convert_list stmts =
   match stmts with
   | `List(v) ->
@@ -95,7 +97,7 @@ and
   | _ -> Printf.printf "type error in convert_list\n"; []
 and
   convert_op op =
-  let o = op |> member "name" |> to_s in
+  let o = convert_to_s op "name" in
   Printf.printf "now: %s\n" o;
   match o with
   | "+" | "+@" -> Node.Add
