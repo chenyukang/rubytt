@@ -1,0 +1,92 @@
+{
+  "type": "program",
+  "body": {
+    "type": "block",
+    "stmts": [
+      {
+        "type": "if",
+        "test": {
+          "type": "binary",
+          "left": {
+            "type": "int",
+            "value": "1",
+            "start": 4,
+            "end": 5,
+            "start_line": 2,
+            "end_line": 3
+          },
+          "op": {
+            "type": "op",
+            "name": "<=>"
+          },
+          "right": {
+            "type": "int",
+            "value": "2",
+            "start": 10,
+            "end": 11,
+            "start_line": 2,
+            "end_line": 9
+          },
+          "start": 4,
+          "end": 11,
+          "start_line": 2,
+          "end_line": 9
+        },
+        "body": {
+          "type": "block",
+          "stmts": [
+            {
+              "type": "call",
+              "func": {
+                "type": "name",
+                "id": "puts",
+                "start": 14,
+                "end": 18,
+                "start_line": 3,
+                "end_line": 2
+              },
+              "args": {
+                "type": "args",
+                "positional": [
+                  {
+                    "type": "string",
+                    "id": "yes",
+                    "start": 20,
+                    "end": 23,
+                    "start_line": 3,
+                    "end_line": 8
+                  }
+                ],
+                "start": 20,
+                "end": 23,
+                "start_line": 3,
+                "end_line": 8
+              },
+              "start": 14,
+              "end": 23,
+              "start_line": 3,
+              "end_line": 8
+            }
+          ],
+          "start": 14,
+          "end": 23,
+          "start_line": 3,
+          "end_line": 8
+        },
+        "start": 4,
+        "end": 28,
+        "start_line": 2,
+        "end_line": 8
+      }
+    ],
+    "start": 4,
+    "end": 28,
+    "start_line": 2,
+    "end_line": 8
+  },
+  "filename": "cmp.rb",
+  "start": 4,
+  "end": 28,
+  "start_line": 2,
+  "end_line": 8
+}

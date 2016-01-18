@@ -6,6 +6,7 @@ type op =
   | Mul
   | Div
   | Pow
+  | Cmp
   | Match
   | NotMatch
   | Equal
@@ -50,8 +51,11 @@ and
   | Block of node list
   | BinOp of op * node * node (* left op * right op *)
   | UnaryOp of op * node
+  | While of node * node
+  | Assign of node * node
   | Yield of node
   | Return of node
+  | Try of node * node * node * node
 and
   node = {
   info: node_info;
@@ -151,11 +155,13 @@ let make_name_node id file s e =
   }
 
 let make_yield_node value file s e =
-  {
+  let node = {
     info = {path=""; file = file; ss = s; ee = e};
     ty = Yield(value);
     parent = None;
-  }
+  } in
+  set_node_parent value node;
+  node
 
 let make_return_node value file s e =
   let node = {
@@ -166,4 +172,36 @@ let make_return_node value file s e =
   set_node_parent value node;
   node
 
+
+let make_while_node test body file s e =
+  let node = {
+    info = {path=""; file = file; ss = s; ee = e};
+    ty = While(test, body);
+    parent = None;
+  } in
+  set_node_parent test node;
+  set_node_parent body node;
+  node
+
+let make_assign_node target value file s e =
+  let node = {
+    info = {path=""; file = file; ss = s; ee = e};
+    ty = Assign(target, value);
+    parent = None;
+  } in
+  set_node_parent target node;
+  set_node_parent value node;
+  node
+
+let make_try_node body resuce orelse final file s e =
+  let node = {
+    info = {path=""; file = file; ss = s; ee = e};
+    ty = Try(body, resuce, orelse, final);
+    parent = None;
+  } in
+  set_node_parent body node;
+  set_node_parent resuce node;
+  set_node_parent orelse node;
+  set_node_parent final node;
+  node
 

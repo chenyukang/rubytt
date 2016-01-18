@@ -51,6 +51,20 @@ let rec convert json =
   | "return" ->
     let value = convert (json |> member "value") in
     make_return_node value "file" ss ee
+  | "while" ->
+    let test = convert (json |> member "test") in
+    let body = convert (json |> member "body") in
+    make_while_node test body "file" ss ee
+  | "assign" ->
+    let _var = convert (json |> member "target") in
+    let _val = convert (json |> member "value") in
+    make_assign_node _var _val "file" ss ee
+  | "begin" ->
+    let body = convert (json |> member "body") in
+    let _rescue = convert (json |> member "rescue") in
+    let orelse = convert (json |> member "else") in
+    let final = convert (json |> member "ensure") in
+    make_try_node body _rescue orelse final "file" ss ee
   | "binary" -> (
     let l = convert (json |> member "left") in
     let r = convert (json |> member "right") in
@@ -84,8 +98,9 @@ and
   let o = op |> member "name" |> to_s in
   Printf.printf "now: %s\n" o;
   match o with
-    "+" | "+@" -> Node.Add
-  | "-" | "-@" | "<=>" -> Node.Sub
+  | "+" | "+@" -> Node.Add
+  | "-" | "-@" -> Node.Sub
+  | "<=>" -> Node.Cmp
   | "*" -> Node.Mul
   | "/" -> Node.Div
   | "**" -> Node.Pow
