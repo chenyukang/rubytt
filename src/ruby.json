@@ -144,46 +144,60 @@
         "end_line": 78
       },
       {
-        "type": "call",
-        "func": {
-          "type": "name",
-          "id": "puts",
+        "type": "binary",
+        "left": {
+          "type": "binary",
+          "left": {
+            "type": "int",
+            "value": "1",
+            "start": 86,
+            "end": 87,
+            "start_line": 2,
+            "end_line": 0
+          },
+          "op": {
+            "type": "op",
+            "name": "&&"
+          },
+          "right": {
+            "type": "int",
+            "value": "2",
+            "start": 91,
+            "end": 92,
+            "start_line": 2,
+            "end_line": 5
+          },
           "start": 86,
-          "end": 90,
-          "start_line": 2,
-          "end_line": 0
-        },
-        "args": {
-          "type": "args",
-          "positional": [
-            {
-              "type": "name",
-              "id": "a",
-              "start": 91,
-              "end": 92,
-              "start_line": 2,
-              "end_line": 5
-            }
-          ],
-          "start": 91,
           "end": 92,
           "start_line": 2,
           "end_line": 5
         },
+        "op": {
+          "type": "op",
+          "name": "&&"
+        },
+        "right": {
+          "type": "int",
+          "value": "3",
+          "start": 96,
+          "end": 97,
+          "start_line": 2,
+          "end_line": 10
+        },
         "start": 86,
-        "end": 92,
+        "end": 97,
         "start_line": 2,
-        "end_line": 5
+        "end_line": 10
       }
     ],
     "start": 0,
-    "end": 92,
+    "end": 97,
     "start_line": 1,
-    "end_line": 5
+    "end_line": 10
   },
   "filename": "tests/dict.rb",
   "start": 0,
-  "end": 92,
+  "end": 97,
   "start_line": 1,
-  "end_line": 5
+  "end_line": 10
 }

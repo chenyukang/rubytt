@@ -4,6 +4,7 @@ open Yojson.Basic.Util
 open Yojson.Basic
 open UnixLabels
 open Node
+open Printer
 
 let convert_to_s json mem =
   let r = json |> member mem |> to_string in
@@ -35,7 +36,7 @@ let rec convert json =
     make_symbol_node sym "file" ss ee
   | "string" ->
     let str = convert_to_s json "id" in
-    Printf.printf "str: %s\n" str;
+    (* Printf.printf "str: %s\n" str; *)
     make_string_node str "file" ss ee
   | "name" ->
     let id = convert_to_s json "id" in
@@ -189,7 +190,6 @@ and
 and
   convert_op op =
   let o = convert_to_s op "name" in
-  Printf.printf "now: %s\n" o;
   match o with
   | "+" | "+@" -> Node.Add
   | "-" | "-@" -> Node.Sub
@@ -227,5 +227,7 @@ let parse_file file =
   build_ast_from_file file
 
 let run() =
-  build_ast_from_file "./ruby.json"
+  let ast = build_ast_from_file "./ruby.json" in
+  let str = node_to_str ast 0 in
+  Printf.printf "%s\n" str
 

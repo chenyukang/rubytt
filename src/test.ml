@@ -1,6 +1,7 @@
-open Node
 open Alcotest
 open OUnit
+open Node
+open Printer
 
 let test_node() =
   let nil = nil_node in
@@ -42,10 +43,20 @@ let test_block() =
   |Block(stmts) -> assert_equal (List.length stmts) 3
   | _ -> assert_failure "impossible"
 
+let test_printer() =
+  let a = make_nil_node "f" 1 2 in
+  let s = node_to_str a 0 in
+  assert_equal s "(Nil)";
+
+  let i = make_int_node "2" "f" 1 2 in
+  let _i = node_to_str i 0 in
+  assert_equal _i "(Int 2)"
+
 let test_unit = [
   "Node", `Quick, test_node;
   "Node_add_children", `Quick, test_node_add_children;
   "Node_block", `Quick, test_block;
+  "Printer", `Quick, test_printer;
 ]
 
 let () =
