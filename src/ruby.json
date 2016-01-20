@@ -4,38 +4,186 @@
     "type": "block",
     "stmts": [
       {
-        "type": "class",
-        "static": false,
-        "name": {
+        "type": "assign",
+        "target": {
           "type": "name",
-          "id": "Demo",
-          "start": 6,
-          "end": 10,
+          "id": "a",
+          "start": 0,
+          "end": 1,
           "start_line": 1,
-          "end_line": 6
+          "end_line": 0
         },
-        "body": {
-          "type": "block",
-          "stmts": [
+        "value": {
+          "type": "hash",
+          "entries": [
             {
-              "type": "void"
+              "type": "assoc",
+              "key": {
+                "type": "int",
+                "value": "1",
+                "start": 6,
+                "end": 7,
+                "start_line": 1,
+                "end_line": 6
+              },
+              "value": {
+                "type": "int",
+                "value": "2",
+                "start": 11,
+                "end": 12,
+                "start_line": 1,
+                "end_line": 11
+              },
+              "start": 6,
+              "end": 12,
+              "start_line": 1,
+              "end_line": 11
+            },
+            {
+              "type": "assoc",
+              "key": {
+                "type": "string",
+                "id": "hello",
+                "start": 15,
+                "end": 20,
+                "start_line": 1,
+                "end_line": 15
+              },
+              "value": {
+                "type": "string",
+                "id": "world",
+                "start": 26,
+                "end": 31,
+                "start_line": 1,
+                "end_line": 26
+              },
+              "start": 15,
+              "end": 31,
+              "start_line": 1,
+              "end_line": 26
+            },
+            {
+              "type": "assoc",
+              "key": {
+                "type": "string",
+                "id": "haha",
+                "start": 36,
+                "end": 40,
+                "start_line": 1,
+                "end_line": 36
+              },
+              "value": {
+                "type": "hash",
+                "entries": [
+                  {
+                    "type": "assoc",
+                    "key": {
+                      "type": "string",
+                      "id": "xiaokang",
+                      "start": 48,
+                      "end": 56,
+                      "start_line": 1,
+                      "end_line": 48
+                    },
+                    "value": {
+                      "type": "string",
+                      "id": "now",
+                      "start": 62,
+                      "end": 65,
+                      "start_line": 1,
+                      "end_line": 62
+                    },
+                    "start": 48,
+                    "end": 65,
+                    "start_line": 1,
+                    "end_line": 62
+                  },
+                  {
+                    "type": "assoc",
+                    "key": {
+                      "type": "string",
+                      "id": "DJI",
+                      "start": 69,
+                      "end": 72,
+                      "start_line": 1,
+                      "end_line": 69
+                    },
+                    "value": {
+                      "type": "string",
+                      "id": "good",
+                      "start": 78,
+                      "end": 82,
+                      "start_line": 1,
+                      "end_line": 78
+                    },
+                    "start": 69,
+                    "end": 82,
+                    "start_line": 1,
+                    "end_line": 78
+                  }
+                ],
+                "start": 48,
+                "end": 82,
+                "start_line": 1,
+                "end_line": 78
+              },
+              "start": 36,
+              "end": 82,
+              "start_line": 1,
+              "end_line": 78
             }
-          ]
+          ],
+          "start": 6,
+          "end": 82,
+          "start_line": 1,
+          "end_line": 78
         },
-        "start": 6,
-        "end": 14,
+        "start": 0,
+        "end": 82,
         "start_line": 1,
-        "end_line": 6
+        "end_line": 78
+      },
+      {
+        "type": "call",
+        "func": {
+          "type": "name",
+          "id": "puts",
+          "start": 86,
+          "end": 90,
+          "start_line": 2,
+          "end_line": 0
+        },
+        "args": {
+          "type": "args",
+          "positional": [
+            {
+              "type": "name",
+              "id": "a",
+              "start": 91,
+              "end": 92,
+              "start_line": 2,
+              "end_line": 5
+            }
+          ],
+          "start": 91,
+          "end": 92,
+          "start_line": 2,
+          "end_line": 5
+        },
+        "start": 86,
+        "end": 92,
+        "start_line": 2,
+        "end_line": 5
       }
     ],
-    "start": 6,
-    "end": 14,
+    "start": 0,
+    "end": 92,
     "start_line": 1,
-    "end_line": 6
+    "end_line": 5
   },
-  "filename": "tests/class.rb",
-  "start": 6,
-  "end": 14,
+  "filename": "tests/dict.rb",
+  "start": 0,
+  "end": 92,
   "start_line": 1,
-  "end_line": 6
+  "end_line": 5
 }

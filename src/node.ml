@@ -70,7 +70,9 @@ and
   | StrEmbed of string
   | Starred of node
   | Array of node list
-  | Class of node * node * node * node * bool 
+  | Class of node * node * node * node * bool
+  | Handler of node list * node * node * node
+  | Dict of node list * node list
 and
   node = {
   info: node_info;
@@ -315,5 +317,23 @@ let make_class_node name super body doc static file s e =
   add_children node [name; super; body; doc];
   node
 
+let make_handler_node exceps binder handler orelse file s e =
+  let node = {
+    info = {path=""; file = file; ss = s; ee = e };
+    ty = Handler(exceps, binder, handler, orelse);
+    parent = None;
+  } in
+  add_children node [binder; handler; orelse];
+  add_children node exceps;
+  node
 
 
+let make_dict_node keys vals file s e =
+  let node = {
+    info = {path=""; file = file; ss = s; ee = e };
+    ty = Dict(keys, vals);
+    parent = None;
+  } in
+  add_children node keys;
+  add_children node vals;
+  node

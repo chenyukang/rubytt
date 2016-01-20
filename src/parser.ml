@@ -35,6 +35,7 @@ let rec convert json =
     make_symbol_node sym "file" ss ee
   | "string" ->
     let str = convert_to_s json "id" in
+    Printf.printf "str: %s\n" str;
     make_string_node str "file" ss ee
   | "name" ->
     let id = convert_to_s json "id" in
@@ -45,7 +46,7 @@ let rec convert json =
     make_attribute_node value attr "file" ss ee
   | "undef" ->
     let targets = convert_list (json |> member "names") in
-    make_undef_node targets "file" ss ee 
+    make_undef_node targets "file" ss ee
   | "keyword" ->
     let arg = convert_to_s json "arg" in
     let value = convert_elem json "value" in
@@ -118,9 +119,42 @@ let rec convert json =
     let name = convert_elem json "name" in
     let super = convert_elem json "super" in
     let body = convert_elem json "body" in
-    let doc = convert_elem json "doc" in 
+    let doc = convert_elem json "doc" in
     let is_static = json |> member "static" |> to_bool in
     make_class_node name super body doc is_static "file" ss ee
+  | "rescue" ->
+    let exceptions = convert_list (json |> member "exceptions") in
+    let binder = convert_elem json "binder" in
+    let handler = convert_elem json "handler" in
+    let orelse = convert_elem json "else" in
+    make_handler_node exceptions binder handler orelse "file" ss ee
+  | "args" -> (
+      let pos = (json |> member "positional") in
+      match pos with
+      | `Null -> (
+          let elts = convert_list (json |> member "star") in
+          make_array_node elts "file" ss ee
+        )
+      | _ -> (
+          let arr = convert_list pos in
+          make_array_node arr "file" ss ee
+        )
+    )
+  | "hash" -> (
+      let keys = ref [] in
+      let vals = ref [] in
+      let entries = json |> member "entries" in
+      (match entries with
+       | `List(v) ->
+           List.iter v ~f:(fun e ->
+               let _k = convert_elem e "key" in
+               let _v = convert_elem e "value" in
+               keys := !keys @ [_k];
+               vals := !vals @ [_v];
+           )
+       | _ -> Printf.printf ("type error convert hash\n") );
+      make_dict_node !keys !vals "file" ss ee
+    )
   | "binary" -> (
     let l = convert_elem json "left" in
     let r = convert_elem json "right" in
@@ -193,5 +227,5 @@ let parse_file file =
   build_ast_from_file file
 
 let run() =
-  build_ast_from_file "./ruby_op.json"
+  build_ast_from_file "./ruby.json"
 
