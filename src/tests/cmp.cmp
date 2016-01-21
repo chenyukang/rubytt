@@ -1,0 +1,7 @@
+(Block 
+ (Assign 
+  (Name a)
+  (BinOp:Cmp 
+   (String hell)
+   (Int 1)
+ (Nil))

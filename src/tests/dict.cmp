@@ -1,0 +1,19 @@
+(Block 
+ (Assign 
+  (Name a)
+  (Dict  
+   (Int 1)
+    (Int 2)
+   (String hello)
+    (String world)
+   (String haha)
+    (Dict  
+     (String xiaokang)
+      (String now)
+     (String DJI)
+      (String good)
+ (BinOp:And 
+  (BinOp:And 
+   (Int 1)
+   (Int 2)
+  (Int 3))

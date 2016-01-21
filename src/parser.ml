@@ -12,7 +12,10 @@ let convert_to_s json mem =
   String.drop_suffix x 1
 
 let convert_to_i json mem =
-  json |> member mem |> to_int
+  let elem = json |> member mem in
+  match elem with
+  | `Int(v) -> v
+  | _ -> 0
 
 let rec convert json =
   let ty = convert_to_s json "type" in
@@ -177,10 +180,13 @@ let rec convert json =
       make_unary_node Node.Not eq "file" ss ee
     | _ -> make_bin_node op l r "file" ss ee
     )
-  | _ -> Printf.printf "here\n"; nil_node
+  | _ -> Printf.printf "\nhere\n"; nil_node
 and
   convert_elem json mem =
-  convert (json |> member mem)
+  let elem = json |> member mem in
+  match elem with
+  | `Null -> nil_node
+  | _ -> convert elem
 and
   convert_list stmts =
   match stmts with
