@@ -6,12 +6,6 @@ open Printer
 open Util
 open Parser
 
-let run_file dir =
-  let files = Array.to_list (Sys.readdir dir) in
-  List.iter files ~f:(fun f ->
-      let p = Filename.concat dir f in
-      Sys.command_exn (Printf.sprintf "ruby dump_ruby.rb %s %s.json /tmp/res" p p ))
-
 let run_dir dir =
   let files = Array.to_list (Sys.readdir dir) in
   let rb = List.filter files ~f:(fun x -> extension x = "rb") in
@@ -27,7 +21,7 @@ let run_dir dir =
         let log = Printf.sprintf "%s.log" b in
         let cmp = Printf.sprintf "%s.cmp" b in (
           Out_channel.write_all log ~data: ast_str;
-          Sys.command_exn (Printf.sprintf "rm %s" o);
+          (* Sys.command_exn (Printf.sprintf "rm %s" o); *)
           if cmp_file cmp log then (
             Printf.printf "pass: %s\n" p;
             true)

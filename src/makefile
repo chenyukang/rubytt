@@ -21,5 +21,8 @@ native:
 test:
 	$(OCAMLBUILD) test.byte; ./test.byte
 
+update:
+	$(OCAMLBUILD) util.byte; ./util.byte
+
 clean:
 	$(OCAMLBUILD) -clean

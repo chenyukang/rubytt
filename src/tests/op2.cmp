@@ -5,4 +5,5 @@
   (Int 12)
   (Int 23))
  (Return 
-  (Nil)))
+  (Array 
+   (Int 1))))

@@ -1,6 +1,7 @@
 *.native
 *.byte
 *.log
+*.json
 _build
 _tests
 res

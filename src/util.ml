@@ -32,3 +32,16 @@ let extension f =
   match Filename.split_extension f with
   |(_, Some(b)) -> b
   | _ -> ""
+
+let update_cmp dir =
+  let files = Array.to_list (Sys.readdir dir) in
+  let logs = List.filter files ~f:(fun x -> extension x = "log") in
+  List.map ~f:(fun f ->
+      let p = Filename.concat dir f in
+      let b = Filename.chop_extension p in
+      let o = Printf.sprintf "%s.cmp" b in
+      Sys.command_exn (Printf.sprintf "cp %s %s" p o );
+    ) logs
+
+let () =
+  ignore(update_cmp "./tests")

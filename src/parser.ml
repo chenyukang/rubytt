@@ -119,6 +119,9 @@ let rec convert json =
     let _fr = convert_elem json "from" in
     let _to = convert_elem json "to" in
     make_array_node [_fr; _to] "file" ss ee
+  | "array" ->
+    let eles = convert_list (json |> member "elts") in
+    make_array_node eles "file" ss ee
   | "class" ->
     let name = convert_elem json "name" in
     let super = convert_elem json "super" in

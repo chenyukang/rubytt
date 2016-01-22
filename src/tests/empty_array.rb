@@ -1,0 +1,2 @@
+a = []
+puts a.size

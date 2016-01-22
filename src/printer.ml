@@ -93,6 +93,13 @@ let rec node_to_str node depth =
       node_to_str n1 (depth+1) ^
       node_to_str n2 (depth+1) ^
       node_to_str n3 (depth+1) ^ ")"
+    | Array(ns) ->
+      let res = ref "(Array " in
+      for i = 0 to (List.length ns - 1) do
+        let v = node_to_str (List.nth_exn ns i) (depth+1) in
+        res := !res ^ v
+      done;
+      !res ^ ")"
     | Dict(k, v) ->
       let res = ref "(Dict  " in
       for i = 0 to (List.length k - 1) do
