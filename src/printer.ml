@@ -54,12 +54,45 @@ let rec node_to_str node depth =
     | Assign(n1, n2) ->
       "(Assign " ^
       (node_to_str n1 (depth + 1)) ^
-      (node_to_str n2 (depth + 1))
+      (node_to_str n2 (depth + 1)) ^ ")"
     | BinOp(op, n1, n2) ->
       let ops = op_to_str op in
       "(BinOp:" ^ ops ^ " " ^
       node_to_str n1 (depth+1) ^
-      node_to_str n2 (depth+1)
+      node_to_str n2 (depth+1) ^ ")"
+    | UnaryOp(op, n) ->
+      let op = op_to_str op in
+      "(UnaryOp:" ^ op ^ " " ^
+      node_to_str n (depth+1) ^ ")"
+    | While(n1, n2) ->
+      "(While " ^
+      node_to_str n1 (depth+1) ^
+      node_to_str n2 (depth+1) ^ ")"
+    | Assign(n1, n2) ->
+      "(Assign " ^
+      node_to_str n1 (depth+1) ^
+      node_to_str n2 (depth+1) ^ ")"
+    | Yield(n1) ->
+      "(Yield " ^
+      node_to_str n1 (depth+1) ^ ")"
+    | Return(n1) ->
+      "(Return " ^
+      node_to_str n1 (depth+1) ^ ")"
+    | Attribute(n1, n2) ->
+      "(Attribute " ^
+      node_to_str n1 (depth+1) ^
+      node_to_str n2 (depth+1) ^ ")"
+    | Try(n1, n2, n3, n4) ->
+      "(Try " ^
+      node_to_str n1 (depth+1) ^
+      node_to_str n2 (depth+1) ^
+      node_to_str n3 (depth+1) ^
+      node_to_str n4 (depth+1) ^ ")"
+    | For(n1, n2, n3) ->
+      "(For " ^
+      node_to_str n1 (depth+1) ^
+      node_to_str n2 (depth+1) ^
+      node_to_str n3 (depth+1) ^ ")"
     | Dict(k, v) ->
       let res = ref "(Dict  " in
       for i = 0 to (List.length k - 1) do
@@ -67,7 +100,7 @@ let rec node_to_str node depth =
         let _v = node_to_str (List.nth_exn v i) (depth + 2) in
         res := !res ^ _k ^ _v
       done;
-      !res
+      !res ^ ")"
     | _ -> "other" in
   match depth with
   | 0 -> str

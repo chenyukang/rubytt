@@ -180,7 +180,7 @@ let rec convert json =
       make_unary_node Node.Not eq "file" ss ee
     | _ -> make_bin_node op l r "file" ss ee
     )
-  | _ -> Printf.printf "\nhere\n"; nil_node
+  | _ -> (* Printf.printf "\nhere\n"; *) nil_node
 and
   convert_elem json mem =
   let elem = json |> member mem in

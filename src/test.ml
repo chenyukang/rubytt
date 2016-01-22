@@ -29,10 +29,10 @@ let run_dir dir =
           Out_channel.write_all log ~data: ast_str;
           Sys.command_exn (Printf.sprintf "rm %s" o);
           if cmp_file cmp log then (
-            Printf.printf "pass: %s" p;
+            Printf.printf "pass: %s\n" p;
             true)
           else (
-            Printf.printf "fail: %s" p;
+            Printf.printf "fail: %s\n" p;
             false)
         )
       end) rb
