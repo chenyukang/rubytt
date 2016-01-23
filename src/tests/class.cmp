@@ -1,2 +1,6 @@
 (Block 
- other)
+ Class 
+  (Name Demo)
+  (Nil)
+   (Block 
+    (Void))))

@@ -118,6 +118,15 @@ let rec node_to_str node depth =
         res := !res ^ _k ^ _v
       done;
       !res ^ ")"
+    | Module(n1, n2, _) ->
+      "(Module " ^
+      node_to_str n1 (depth+1) ^
+      node_to_str n2 (depth+2) ^ ")"
+    | Class(n1, n2, n3, _, _) ->
+      "Class " ^
+      node_to_str n1 (depth+1) ^
+      node_to_str n2 (depth+1) ^
+      node_to_str n3 (depth+2) ^ ")"
     | _ -> "other" in
   match depth with
   | 0 -> str

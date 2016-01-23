@@ -26,7 +26,7 @@ let run_dir dir =
             (* Printf.printf "pass: %s\n" p; *)
             true)
           else (
-            Printf.printf "fail: %s\n" p;
+            Printf.printf "fail: %s\n\n" p;
             false)
         )
       end) rb
