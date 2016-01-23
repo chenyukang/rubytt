@@ -38,7 +38,7 @@ let rec node_to_str node depth =
     | Nil -> "(Nil)"
     | Void -> "(Void)"
     | Kwd(kwd, node) ->
-      "(Kwd " ^ (node_to_str node (depth + 1)) ^ ")"
+      "(Kwd " ^ kwd ^ (node_to_str node (depth + 1)) ^ ")"
     | Int(v) -> "(Int " ^ Int.to_string v ^ ")"
     | Float(v) -> "(Float " ^ Float.to_string v ^ ")"
     | String(s) -> "(String " ^ s ^ ")"
@@ -66,10 +66,6 @@ let rec node_to_str node depth =
       node_to_str n (depth+1) ^ ")"
     | While(n1, n2) ->
       "(While " ^
-      node_to_str n1 (depth+1) ^
-      node_to_str n2 (depth+1) ^ ")"
-    | Assign(n1, n2) ->
-      "(Assign " ^
       node_to_str n1 (depth+1) ^
       node_to_str n2 (depth+1) ^ ")"
     | Yield(n1) ->
@@ -127,23 +123,40 @@ let rec node_to_str node depth =
       node_to_str n1 (depth+1) ^
       node_to_str n2 (depth+1) ^
       node_to_str n3 (depth+2) ^ ")"
-    | Func(name, args, defaults, after_rest, block_arg, body, _) ->
-      let res = ref "(Func " in
-      for i = 0 to (List.length args - 1) do
-        let a = "arg: " ^ node_to_str (List.nth_exn args i) (depth + 1) in
-        res := !res ^ a;
-      done;
-      res := !res ^ "after_rest: ";
-      for i = 0 to (List.length after_rest - 1) do
-        res := !res ^ node_to_str (List.nth_exn after_rest i) (depth + 1);
-      done;
-      res := !res ^ "(body: " ^
+    | Func(name, args, _, after_rest, _, body, _) ->
+      let n = match name.ty with
+        | Name(s, _) -> s
+        | _ -> "__" in
+      let res = ref ("(Func " ^ n) in
+      if (List.length args) <> 0 then (
+        res := !res ^ nw (depth+1) ^ "(args: ";
+        List.iter args ~f:(fun x ->
+            let a = node_to_str x (depth+2) in
+            res := !res ^ a;
+          );
+        res := !res ^ ")"
+      );
+      if (List.length after_rest) <> 0 then (
+        res := !res ^ nw (depth+1) ^ "(after_rest: ";
+        List.iter after_rest ~f:(fun x ->
+            let a = node_to_str x (depth+2) in
+            res := !res ^ a;
+          );
+        res := !res ^ ")";
+      );
+      res := !res ^ nw (depth+1) ^ "(body: " ^
              node_to_str body (depth+2) ^ ")";
       !res
     | _ -> "other" in
   match depth with
   | 0 -> str
-  | _ -> "\n" ^ (String.init depth ~f:(fun _ -> ' ')) ^ str
+  | _ -> "\n" ^ (k_space depth) ^ str
+and
+  k_space n =
+  String.init n ~f:(fun _ -> ' ')
+and
+  nw n =
+  "\n" ^ k_space n
 
 
 

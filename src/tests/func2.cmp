@@ -1,0 +1,8 @@
+(Block 
+ (Func eat
+  (args: 
+   (Name meal))
+  (body: 
+   (Block 
+    other
+    (String delicious!))))

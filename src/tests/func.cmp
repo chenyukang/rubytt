@@ -1,0 +1,10 @@
+(Block 
+ (Func print
+  (args: 
+   (Name s)
+   (Name a))
+  (after_rest: 
+   (Name c))
+  (body: 
+   (Block 
+    (Nil))))

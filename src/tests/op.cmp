@@ -1,4 +1,5 @@
 (Block 
- (Func after_rest: (body: 
+ (Func test
+  (body: 
    (Block 
     other)))

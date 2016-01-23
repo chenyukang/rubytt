@@ -3,16 +3,20 @@
  (Nil)
  (Nil)
  (Nil)
- (Func arg: 
-  (Name s)after_rest: (body: 
+ (Func banner
+  (args: 
+   (Name s))
+  (body: 
    (Block 
     (Nil)))
  (Class 
   (Name AstSimplifier)
   (Nil)
    (Block 
-    (Func arg: 
-     (Name filename)after_rest: (body: 
+    (Func initialize
+     (args: 
+      (Name filename))
+     (body: 
       (Block 
        (Assign 
         (Name filename)
@@ -35,14 +39,17 @@
          (Int 0)))
        (Nil)
        (Nil)))
-    (Func arg: 
-     (Name s)after_rest: (body: 
+    (Func detect_encoding
+     (args: 
+      (Name s))
+     (body: 
       (Block 
        (Assign 
         (Name header)
         (Nil))
        other))
-    (Func after_rest: (body: 
+    (Func find_line_starts
+     (body: 
       (Block 
        (Assign 
         (Name lines)
@@ -51,7 +58,8 @@
         (Name total)
         (Int 0))
        (Nil)))
-    (Func after_rest: (body: 
+    (Func find_docs
+     (body: 
       (Block 
        (Assign 
         (Name docs)
@@ -69,8 +77,10 @@
         (Name accum)
         (Array ))
        (Nil)))
-    (Func arg: 
-     (Name loc)after_rest: (body: 
+    (Func node_start
+     (args: 
+      (Name loc))
+     (body: 
       (Block 
        (Assign 
         (Name line)
@@ -81,8 +91,10 @@
        (BinOp:Add 
         (Nil)
         (Name col))))
-    (Func arg: 
-     (Name start_idx)after_rest: (body: 
+    (Func ident_end
+     (args: 
+      (Name start_idx))
+     (body: 
       (Block 
        other
        (Assign 
@@ -101,7 +113,8 @@
            (Name idx)
            (Int 1)))))
        (Name idx)))
-    (Func after_rest: (body: 
+    (Func simplify
+     (body: 
       (Block 
        (Assign 
         (Name tree)
@@ -115,11 +128,15 @@
         (Nil))
        other
        (Name simplified)))
-    (Func arg: 
-     (Name obj)after_rest: (body: 
+    (Func find_locations
+     (args: 
+      (Name obj))
+     (body: 
       (Block 
-       (Func arg: 
-        (Name obj)after_rest: (body: 
+       (Func find1
+        (args: 
+         (Name obj))
+        (body: 
          (Block 
           other))
        (Assign 
@@ -131,26 +148,36 @@
          (Name _))
         (Nil))
        (Name node)))
-    (Func arg: 
-     (Name exp)after_rest: (body: 
+    (Func convert
+     (args: 
+      (Name exp))
+     (body: 
       (Block 
        other))
-    (Func arg: 
-     (Name arr)after_rest: (body: 
+    (Func convert_array
+     (args: 
+      (Name arr))
+     (body: 
       (Block 
        (Nil)))
-    (Func arg: 
-     (Name exp)arg: 
-     (Name value)after_rest: (body: 
+    (Func convert_when
+     (args: 
+      (Name exp)
+      (Name value))
+     (body: 
       (Block 
        other))
-    (Func arg: 
-     (Name args)after_rest: (body: 
+    (Func args_to_array
+     (args: 
+      (Name args))
+     (body: 
       (Block 
        other))
-    (Func arg: 
-     (Name content)arg: 
-     (Name location)after_rest: (body: 
+    (Func make_string
+     (args: 
+      (Name content)
+      (Name location))
+     (body: 
       (Block 
        (Assign 
         (Name ret)
@@ -161,16 +188,20 @@
           (Nil)))
        other
        (Name ret)))
-    (Func arg: 
-     (Name name)after_rest: (body: 
+    (Func op
+     (args: 
+      (Name name))
+     (body: 
       (Block 
        (Dict  
         (Symbol type)
          (Symbol op)
         (Symbol name)
          (Name name))))
-    (Func arg: 
-     (Name exp)after_rest: (body: 
+    (Func negate
+     (args: 
+      (Name exp))
+     (body: 
       (Block 
        (Dict  
         (Symbol type)
@@ -179,14 +210,18 @@
          (Nil)
         (Symbol operand)
          (Name exp))))))
- (Func arg: 
-  (Name hash)after_rest: (body: 
+ (Func hash_max_nest
+  (args: 
+   (Name hash))
+  (body: 
    (Block 
     other))
- (Func arg: 
-  (Name input)arg: 
-  (Name output)arg: 
-  (Name endmark)after_rest: (body: 
+ (Func parse_dump
+  (args: 
+   (Name input)
+   (Name output)
+   (Name endmark))
+  (body: 
    (Block 
     (Try 
      (Block 
