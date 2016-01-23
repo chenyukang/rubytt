@@ -43,5 +43,3 @@ let update_cmp dir =
       Sys.command_exn (Printf.sprintf "cp %s %s" p o );
     ) logs
 
-let () =
-  ignore(update_cmp "./tests")

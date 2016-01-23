@@ -7,9 +7,10 @@ open Node
 open Printer
 
 let convert_to_s json mem =
-  let r = json |> member mem |> to_string in
-  let x = String.drop_prefix r 1 in
-  String.drop_suffix x 1
+  let r = json |> member mem in
+  match r with
+  | `String(str) -> str
+  | _ -> ""
 
 let convert_to_i json mem =
   let elem = json |> member mem in
@@ -21,7 +22,7 @@ let rec convert json =
   let ty = convert_to_s json "type" in
   let ss = convert_to_i json "start" in
   let ee = convert_to_i json "end" in
-  (* Printf.printf "now type: %s" ty; *)
+  (* Printf.printf "now type: %s\n" ty; *)
   match ty with
   | "program" ->
     convert_elem json "body"
@@ -122,11 +123,17 @@ let rec convert json =
   | "array" ->
     let eles = convert_list (json |> member "elts") in
     make_array_node eles "file" ss ee
+  | "module" ->
+    let name = convert_elem json "name" in
+    let body = convert_elem json "body" in
+    let doc  = convert_to_s json "doc" in
+    (* Printf.printf "doc: %s\n" doc; *)
+    make_module_node name body doc "file" ss ee
   | "class" ->
     let name = convert_elem json "name" in
     let super = convert_elem json "super" in
     let body = convert_elem json "body" in
-    let doc = convert_elem json "doc" in
+    let doc = convert_to_s json "doc" in
     let is_static = json |> member "static" |> to_bool in
     make_class_node name super body doc is_static "file" ss ee
   | "rescue" ->

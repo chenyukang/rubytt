@@ -70,7 +70,8 @@ and
   | StrEmbed of string
   | Starred of node
   | Array of node list
-  | Class of node * node * node * node * bool
+  | Module of node * node * string
+  | Class of node * node * node * string * bool
   | Handler of node list * node * node * node
   | Dict of node list * node list
 and
@@ -308,13 +309,22 @@ let make_undef_node targets file s e =
   add_children node targets;
   node
 
+let make_module_node name body doc file s e =
+  let node = {
+    info = {path=""; file = file; ss = s; ee = e };
+    ty = Module(name, body, doc);
+    parent = None;
+  } in
+  add_children node [name; body];
+  node
+
 let make_class_node name super body doc static file s e =
   let node = {
     info = {path=""; file = file; ss = s; ee = e };
     ty = Class(name, super, body, doc, static);
     parent = None;
   } in
-  add_children node [name; super; body; doc];
+  add_children node [name; super; body];
   node
 
 let make_handler_node exceps binder handler orelse file s e =

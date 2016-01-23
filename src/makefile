@@ -22,7 +22,7 @@ test:
 	$(OCAMLBUILD) test.byte; ./test.byte
 
 update:
-	$(OCAMLBUILD) util.byte; ./util.byte
+	$(OCAMLBUILD) update_test.byte; ./update_test.byte
 
 clean:
 	$(OCAMLBUILD) -clean

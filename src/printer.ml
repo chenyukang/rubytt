@@ -5,7 +5,7 @@ let op_to_str op =
   match op with
   | Add -> "Add"
   | Sub -> "Sub"
-  | Mul -> "Mul" 
+  | Mul -> "Mul"
   | Div -> "Div"
   | Pow -> "Pow"
   | Cmp -> "Cmp"
@@ -93,6 +93,16 @@ let rec node_to_str node depth =
       node_to_str n1 (depth+1) ^
       node_to_str n2 (depth+1) ^
       node_to_str n3 (depth+1) ^ ")"
+    | Handler(ns, n1, n2, n3) ->
+      let res = ref "(Handler " in
+      for i = 0 to (List.length ns - 1) do
+        let n = node_to_str (List.nth_exn ns i) (depth+1) in
+        res := !res ^ n;
+      done;
+      !res ^
+      (node_to_str n1 (depth+2)) ^
+      (node_to_str n2 (depth+2)) ^
+      (node_to_str n3 (depth+2))
     | Array(ns) ->
       let res = ref "(Array " in
       for i = 0 to (List.length ns - 1) do

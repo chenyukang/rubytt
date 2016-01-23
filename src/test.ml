@@ -10,7 +10,7 @@ let run_dir dir =
   let files = Array.to_list (Sys.readdir dir) in
   let rb = List.filter files ~f:(fun x -> extension x = "rb") in
   List.map ~f:(fun f ->
-      Printf.printf "\nnow: %s\n" f;
+      (* Printf.printf "\nnow: %s\n" f; *)
       let p = Filename.concat dir f in
       let b = Filename.chop_extension p in
       let o = Printf.sprintf "%s.json" b in
@@ -23,7 +23,7 @@ let run_dir dir =
           Out_channel.write_all log ~data: ast_str;
           (* Sys.command_exn (Printf.sprintf "rm %s" o); *)
           if cmp_file cmp log then (
-            Printf.printf "pass: %s\n" p;
+            (* Printf.printf "pass: %s\n" p; *)
             true)
           else (
             Printf.printf "fail: %s\n" p;
