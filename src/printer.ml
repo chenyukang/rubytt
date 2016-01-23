@@ -123,10 +123,23 @@ let rec node_to_str node depth =
       node_to_str n1 (depth+1) ^
       node_to_str n2 (depth+2) ^ ")"
     | Class(n1, n2, n3, _, _) ->
-      "Class " ^
+      "(Class " ^
       node_to_str n1 (depth+1) ^
       node_to_str n2 (depth+1) ^
       node_to_str n3 (depth+2) ^ ")"
+    | Func(name, args, defaults, after_rest, block_arg, body, _) ->
+      let res = ref "(Func " in
+      for i = 0 to (List.length args - 1) do
+        let a = "arg: " ^ node_to_str (List.nth_exn args i) (depth + 1) in
+        res := !res ^ a;
+      done;
+      res := !res ^ "after_rest: ";
+      for i = 0 to (List.length after_rest - 1) do
+        res := !res ^ node_to_str (List.nth_exn after_rest i) (depth + 1);
+      done;
+      res := !res ^ "(body: " ^
+             node_to_str body (depth+2) ^ ")";
+      !res
     | _ -> "other" in
   match depth with
   | 0 -> str

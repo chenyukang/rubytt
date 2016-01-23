@@ -3,28 +3,214 @@
  (Nil)
  (Nil)
  (Nil)
- (Nil)
- Class 
+ (Func arg: 
+  (Name s)after_rest: (body: 
+   (Block 
+    (Nil)))
+ (Class 
   (Name AstSimplifier)
   (Nil)
    (Block 
-    (Nil)
-    (Nil)
-    (Nil)
-    (Nil)
-    (Nil)
-    (Nil)
-    (Nil)
-    (Nil)
-    (Nil)
-    (Nil)
-    (Nil)
-    (Nil)
-    (Nil)
-    (Nil)
-    (Nil)))
- (Nil)
- (Nil)
+    (Func arg: 
+     (Name filename)after_rest: (body: 
+      (Block 
+       (Assign 
+        (Name filename)
+        (Name filename))
+       (Assign 
+        (Name f)
+        (Nil))
+       (Assign 
+        (Name src)
+        (Nil))
+       (Nil)
+       (Assign 
+        (Name detected_enc)
+        (Nil))
+       other
+       (Nil)
+       (Assign 
+        (Name line_starts)
+        (Array 
+         (Int 0)))
+       (Nil)
+       (Nil)))
+    (Func arg: 
+     (Name s)after_rest: (body: 
+      (Block 
+       (Assign 
+        (Name header)
+        (Nil))
+       other))
+    (Func after_rest: (body: 
+      (Block 
+       (Assign 
+        (Name lines)
+        (Nil))
+       (Assign 
+        (Name total)
+        (Int 0))
+       (Nil)))
+    (Func after_rest: (body: 
+      (Block 
+       (Assign 
+        (Name docs)
+        (Dict  ))
+       (Assign 
+        (Name lines)
+        (Nil))
+       (Assign 
+        (Name first_line)
+        (Name nil))
+       (Assign 
+        (Name current_line)
+        (Int 0))
+       (Assign 
+        (Name accum)
+        (Array ))
+       (Nil)))
+    (Func arg: 
+     (Name loc)after_rest: (body: 
+      (Block 
+       (Assign 
+        (Name line)
+        (Nil))
+       (Assign 
+        (Name col)
+        (Nil))
+       (BinOp:Add 
+        (Nil)
+        (Name col))))
+    (Func arg: 
+     (Name start_idx)after_rest: (body: 
+      (Block 
+       other
+       (Assign 
+        (Name idx)
+        (Name start_idx))
+       (While 
+        (BinOp:And 
+         (BinOp:Lt 
+          (Name idx)
+          (Nil))
+         (Nil))
+        (Block 
+         (Assign 
+          (Name idx)
+          (BinOp:Add 
+           (Name idx)
+           (Int 1)))))
+       (Name idx)))
+    (Func after_rest: (body: 
+      (Block 
+       (Assign 
+        (Name tree)
+        (Nil))
+       other
+       (Assign 
+        (Name simplified)
+        (Nil))
+       (Assign 
+        (Name simplified)
+        (Nil))
+       other
+       (Name simplified)))
+    (Func arg: 
+     (Name obj)after_rest: (body: 
+      (Block 
+       (Func arg: 
+        (Name obj)after_rest: (body: 
+         (Block 
+          other))
+       (Assign 
+        (Array 
+         (Name node)
+         (Name _)
+         (Name _)
+         (Name _)
+         (Name _))
+        (Nil))
+       (Name node)))
+    (Func arg: 
+     (Name exp)after_rest: (body: 
+      (Block 
+       other))
+    (Func arg: 
+     (Name arr)after_rest: (body: 
+      (Block 
+       (Nil)))
+    (Func arg: 
+     (Name exp)arg: 
+     (Name value)after_rest: (body: 
+      (Block 
+       other))
+    (Func arg: 
+     (Name args)after_rest: (body: 
+      (Block 
+       other))
+    (Func arg: 
+     (Name content)arg: 
+     (Name location)after_rest: (body: 
+      (Block 
+       (Assign 
+        (Name ret)
+        (Dict  
+         (Symbol type)
+          (Symbol string)
+         (Symbol id)
+          (Nil)))
+       other
+       (Name ret)))
+    (Func arg: 
+     (Name name)after_rest: (body: 
+      (Block 
+       (Dict  
+        (Symbol type)
+         (Symbol op)
+        (Symbol name)
+         (Name name))))
+    (Func arg: 
+     (Name exp)after_rest: (body: 
+      (Block 
+       (Dict  
+        (Symbol type)
+         (Symbol unary)
+        (Symbol op)
+         (Nil)
+        (Symbol operand)
+         (Name exp))))))
+ (Func arg: 
+  (Name hash)after_rest: (body: 
+   (Block 
+    other))
+ (Func arg: 
+  (Name input)arg: 
+  (Name output)arg: 
+  (Name endmark)after_rest: (body: 
+   (Block 
+    (Try 
+     (Block 
+      (Assign 
+       (Name simplifier)
+       (Nil))
+      (Assign 
+       (Name hash)
+       (Nil))
+      (Assign 
+       (Name json_string)
+       (Nil))
+      (Assign 
+       (Name out)
+       (Nil))
+      (Nil)
+      (Nil))
+     (Nil)
+     (Nil)
+     (Block 
+      (Assign 
+       (Name end_file)
+       (Nil))
+      (Nil)))))
  (Assign 
   (Name $options)
   (Dict  ))

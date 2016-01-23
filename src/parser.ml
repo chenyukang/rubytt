@@ -142,6 +142,16 @@ let rec convert json =
     let handler = convert_elem json "handler" in
     let orelse = convert_elem json "else" in
     make_handler_node exceptions binder handler orelse ff ss ee
+  | "def" | "lambda" ->
+    let binder = convert_elem json "name" in
+    let body = convert_elem json "body" in
+    let params = json |> member "params" in
+    let positional = convert_list (params |> member "positional") in
+    let defaults = convert_list (params |> member "defaults") in
+    let after_rest = convert_list (params |> member "after_rest") in
+    let block_arg = convert_elem params "blockarg" in
+    let doc = convert_to_s json "doc" in
+    make_func_node binder positional defaults after_rest block_arg body doc ff ss ee
   | "args" -> (
       let pos = (json |> member "positional") in
       match pos with

@@ -1,2 +1,4 @@
 (Block 
- (Nil))
+ (Func after_rest: (body: 
+   (Block 
+    other)))
