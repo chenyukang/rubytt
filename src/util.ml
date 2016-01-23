@@ -33,6 +33,13 @@ let extension f =
   |(_, Some(b)) -> b
   | _ -> ""
 
+
+let run_dump_ruby filename =
+  let b = Filename.chop_extension filename in
+  let j = Printf.sprintf "%s.json" b in
+  Sys.command_exn (Printf.sprintf "ruby dump_ruby.rb %s %s /tmp/res" filename j);
+  j
+
 let update_cmp dir =
   let files = Array.to_list (Sys.readdir dir) in
   let logs = List.filter files ~f:(fun x -> extension x = "log") in

@@ -11,6 +11,7 @@ let () =
     Printf.eprintf "Usage: main filename\n"
   else
     let filename = Sys.argv.(1) in
-    let ast = parse_file filename in
+    let json = run_dump_ruby filename in
+    let ast = parse_file json in
     let ast_str = node_to_str ast 0 in
     Printf.printf "%s\n" ast_str
