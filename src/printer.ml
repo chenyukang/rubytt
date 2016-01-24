@@ -94,6 +94,14 @@ let rec node_to_str node depth =
       node_to_str n1 (depth+1) ^
       node_to_str n2 (depth+1) ^
       node_to_str n3 (depth+1) ^ ")"
+    | Subscript(name, slice) ->
+      let res = ref "(Subscript " in
+      res := !res ^ node_to_str name (depth+1);
+      for i = 0 to (List.length slice - 1) do
+        let n = node_to_str (List.nth_exn slice i) (depth+1) in
+        res := !res ^ n;
+      done;
+      !res ^ ")"
     | Handler(ns, n1, n2, n3) ->
       let res = ref "(Handler " in
       for i = 0 to (List.length ns - 1) do

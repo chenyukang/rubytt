@@ -923,7 +923,6 @@ end.parse!
 
 
 if ARGV.length > 0
-  puts "yes"
   parse_dump(ARGV[0], ARGV[1], ARGV[2])
 end
 

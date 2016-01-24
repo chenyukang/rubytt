@@ -124,22 +124,30 @@
        (If 
         (BinOp:And 
          (Name header)
-         (Nil))
+         (Subscript 
+          (Name header)
+          (Int 0)))
         (Block 
          (Assign 
           (Name matched)
           (Call 
            (Attribute 
-            (Nil)
+            (Subscript 
+             (Name header)
+             (Int 0))
             (Name match))
            (args: 
             (String ^\s*#.*coding\s*[:=]\s*([\w\d\-]+)))))
          (If 
           (BinOp:And 
            (Name matched)
-           (Nil))
+           (Subscript 
+            (Name matched)
+            (Int 1)))
           (Block 
-           (Nil))
+           (Subscript 
+            (Name matched)
+            (Int 1)))
           (Nil)))
         (Nil)))))
     (Func find_line_starts
@@ -194,12 +202,20 @@
       (Block 
        (Assign 
         (Name line)
-        (Nil))
+        (Subscript 
+         (Name loc)
+         (Int 0)))
        (Assign 
         (Name col)
-        (Nil))
+        (Subscript 
+         (Name loc)
+         (Int 1)))
        (BinOp:Add 
-        (Nil)
+        (Subscript 
+         (Name line_starts)
+         (BinOp:Sub 
+          (Name line)
+          (Int 1)))
         (Name col)))))
     (Func ident_end
      (args: 
@@ -209,10 +225,16 @@
        (If 
         (BinOp:And 
          (BinOp:Equal 
-          (Nil)
+          (Subscript 
+           (Name src)
+           (Name start_idx))
           (String [))
          (BinOp:Equal 
-          (Nil)
+          (Subscript 
+           (Name src)
+           (BinOp:Add 
+            (Name start_idx)
+            (Int 1)))
           (String ])))
         (Block 
          (Return 
@@ -234,7 +256,9 @@
             (Name length))))
          (Call 
           (Attribute 
-           (Nil)
+           (Subscript 
+            (Name src)
+            (Name idx))
            (Name match))
           (args: 
            other)))
@@ -262,7 +286,9 @@
             (Name src)))
           (Name parse))))
        (If 
-        (Nil)
+        (Subscript 
+         (Name $options)
+         (Symbol debug))
         (Block 
          (Call banner
           (args: 
@@ -282,7 +308,9 @@
          (args: 
           (Name simplified))))
        (If 
-        (Nil)
+        (Subscript 
+         (Name $options)
+         (Symbol debug))
         (Block 
          (Call banner
           (args: 
@@ -347,9 +375,13 @@
                    (Symbol for))
                   (Name               .include?))
                  (args: 
-                  (Nil)))
+                  (Subscript 
+                   (Name obj)
+                   (Symbol type))))
                 (UnaryOp:Not 
-                 (Nil)))
+                 (Subscript 
+                  (Name obj)
+                  (Symbol mod))))
                (Block 
                 (Assign 
                  (Name locator)
@@ -375,7 +407,18 @@
                      (String end)
                      (Name eql?))
                     (args: 
-                     (Nil)))))
+                     (Subscript 
+                      (Name src)
+                      (Array 
+                       (Name locator)
+                       (BinOp:Sub 
+                        (BinOp:Add 
+                         (Name locator)
+                         (Call 
+                          (Attribute 
+                           (String end)
+                           (Name length))))
+                        (Int 1))))))))
                  (Block 
                   (Assign 
                    (Name locator)
@@ -388,7 +431,18 @@
                    (String end)
                    (Name eql?))
                   (args: 
-                   (Nil)))
+                   (Subscript 
+                    (Name src)
+                    (Array 
+                     (Name locator)
+                     (BinOp:Sub 
+                      (BinOp:Add 
+                       (Name locator)
+                       (Call 
+                        (Attribute 
+                         (String end)
+                         (Name length))))
+                      (Int 1))))))
                  (Block 
                   (Assign 
                    (Name whole_end)
@@ -401,16 +455,24 @@
                  (Nil)))
                (Nil))
               (Assign 
-               (Nil)
+               (Subscript 
+                (Name ret)
+                (Symbol start))
                (Name whole_start))
               (Assign 
-               (Nil)
+               (Subscript 
+                (Name ret)
+                (Symbol end))
                (Name whole_end))
               (Assign 
-               (Nil)
+               (Subscript 
+                (Name ret)
+                (Symbol start_line))
                (Name start_line))
               (Assign 
-               (Nil)
+               (Subscript 
+                (Name ret)
+                (Symbol end_line))
                (Name end_line))
               (If 
                (Call 
@@ -421,16 +483,22 @@
                   (Symbol def))
                  (Name include?))
                 (args: 
-                 (Nil)))
+                 (Subscript 
+                  (Name ret)
+                  (Symbol type))))
                (Block 
                 (Assign 
                  (Name doc)
-                 (Nil))
+                 (Subscript 
+                  (Name docs)
+                  (Name start_line)))
                 (If 
                  (Name doc)
                  (Block 
                   (Assign 
-                   (Nil)
+                   (Subscript 
+                    (Name ret)
+                    (Symbol doc))
                    (Name doc)))
                  (Nil)))
                (Nil)))
@@ -575,7 +643,9 @@
           (Block 
            (If 
             (BinOp:In 
-             (Nil)
+             (Subscript 
+              (Name exp)
+              (Int 0))
              (Array 
               (Symbol program)))
             (Block 
@@ -585,12 +655,16 @@
               (Symbol body)
                (Call convert
                 (args: 
-                 (Nil)))
+                 (Subscript 
+                  (Name exp)
+                  (Int 1))))
               (Symbol filename)
                (Name filename)))
             (If 
              (BinOp:In 
-              (Nil)
+              (Subscript 
+               (Name exp)
+               (Int 0))
               (Array 
                (Symbol module)))
              (Block 
@@ -600,16 +674,22 @@
                (Symbol name)
                 (Call convert
                  (args: 
-                  (Nil)))
+                  (Subscript 
+                   (Name exp)
+                   (Int 1))))
                (Symbol body)
                 (Call convert
                  (args: 
-                  (Nil)))
+                  (Subscript 
+                   (Name exp)
+                   (Int 2))))
                (Symbol filename)
                 (Name filename)))
              (If 
               (BinOp:In 
-               (Nil)
+               (Subscript 
+                (Name exp)
+                (Int 0))
                (Array 
                 (Symbol ident)
                 (Symbol op)))
@@ -618,12 +698,18 @@
                 (Symbol type)
                  (Symbol name)
                 (Symbol id)
-                 (Nil)
+                 (Subscript 
+                  (Name exp)
+                  (Int 1))
                 (Symbol location)
-                 (Nil)))
+                 (Subscript 
+                  (Name exp)
+                  (Int 2))))
               (If 
                (BinOp:In 
-                (Nil)
+                (Subscript 
+                 (Name exp)
+                 (Int 0))
                 (Array 
                  (Symbol gvar)))
                (Block 
@@ -631,12 +717,18 @@
                  (Symbol type)
                   (Symbol gvar)
                  (Symbol id)
-                  (Nil)
+                  (Subscript 
+                   (Name exp)
+                   (Int 1))
                  (Symbol location)
-                  (Nil)))
+                  (Subscript 
+                   (Name exp)
+                   (Int 2))))
                (If 
                 (BinOp:In 
-                 (Nil)
+                 (Subscript 
+                  (Name exp)
+                  (Int 0))
                  (Array 
                   (Symbol dyna_symbol)))
                 (Block 
@@ -647,7 +739,9 @@
                    (String #dyna_symbol)))
                 (If 
                  (BinOp:In 
-                  (Nil)
+                  (Subscript 
+                   (Name exp)
+                   (Int 0))
                   (Array 
                    (Symbol symbol)))
                  (Block 
@@ -655,14 +749,20 @@
                    (Name sym)
                    (Call convert
                     (args: 
-                     (Nil))))
+                     (Subscript 
+                      (Name exp)
+                      (Int 1)))))
                   (Assign 
-                   (Nil)
+                   (Subscript 
+                    (Name sym)
+                    (Symbol type))
                    (Symbol symbol))
                   (Name sym))
                  (If 
                   (BinOp:In 
-                   (Nil)
+                   (Subscript 
+                    (Name exp)
+                    (Int 0))
                    (Array 
                     (Symbol cvar)))
                   (Block 
@@ -670,12 +770,23 @@
                     (Symbol type)
                      (Symbol cvar)
                     (Symbol id)
-                     (Nil)
+                     (Subscript 
+                      (Subscript 
+                       (Name exp)
+                       (Int 1))
+                      (Array 
+                       (Int 2)
+                       (UnaryOp:Sub 
+                        (Int 1))))
                     (Symbol location)
-                     (Nil)))
+                     (Subscript 
+                      (Name exp)
+                      (Int 2))))
                   (If 
                    (BinOp:In 
-                    (Nil)
+                    (Subscript 
+                     (Name exp)
+                     (Int 0))
                     (Array 
                      (Symbol ivar)))
                    (Block 
@@ -683,12 +794,23 @@
                      (Symbol type)
                       (Symbol ivar)
                      (Symbol id)
-                      (Nil)
+                      (Subscript 
+                       (Subscript 
+                        (Name exp)
+                        (Int 1))
+                       (Array 
+                        (Int 1)
+                        (UnaryOp:Sub 
+                         (Int 1))))
                      (Symbol location)
-                      (Nil)))
+                      (Subscript 
+                       (Name exp)
+                       (Int 2))))
                    (If 
                     (BinOp:In 
-                     (Nil)
+                     (Subscript 
+                      (Name exp)
+                      (Int 0))
                      (Array 
                       (Symbol const)
                       (Symbol kw)
@@ -698,12 +820,18 @@
                       (Symbol type)
                        (Symbol name)
                       (Symbol id)
-                       (Nil)
+                       (Subscript 
+                        (Name exp)
+                        (Int 1))
                       (Symbol location)
-                       (Nil)))
+                       (Subscript 
+                        (Name exp)
+                        (Int 2))))
                     (If 
                      (BinOp:In 
-                      (Nil)
+                      (Subscript 
+                       (Name exp)
+                       (Int 0))
                       (Array 
                        (Symbol label)))
                      (Block 
@@ -711,12 +839,23 @@
                        (Symbol type)
                         (Symbol name)
                        (Symbol id)
-                        (Nil)
+                        (Subscript 
+                         (Subscript 
+                          (Name exp)
+                          (Int 1))
+                         (Array 
+                          (Int 0)
+                          (UnaryOp:Sub 
+                           (Int 2))))
                        (Symbol location)
-                        (Nil)))
+                        (Subscript 
+                         (Name exp)
+                         (Int 2))))
                      (If 
                       (BinOp:In 
-                       (Nil)
+                       (Subscript 
+                        (Name exp)
+                        (Int 0))
                        (Array 
                         (Symbol def)))
                       (Block 
@@ -726,18 +865,26 @@
                         (Symbol name)
                          (Call convert
                           (args: 
-                           (Nil)))
+                           (Subscript 
+                            (Name exp)
+                            (Int 1))))
                         (Symbol params)
                          (Call convert
                           (args: 
-                           (Nil)))
+                           (Subscript 
+                            (Name exp)
+                            (Int 2))))
                         (Symbol body)
                          (Call convert
                           (args: 
-                           (Nil)))))
+                           (Subscript 
+                            (Name exp)
+                            (Int 3))))))
                       (If 
                        (BinOp:In 
-                        (Nil)
+                        (Subscript 
+                         (Name exp)
+                         (Int 0))
                         (Array 
                          (Symbol defs)))
                        (Block 
@@ -749,11 +896,15 @@
                           (Symbol value)
                            (Call convert
                             (args: 
-                             (Nil)))
+                             (Subscript 
+                              (Name exp)
+                              (Int 1))))
                           (Symbol attr)
                            (Call convert
                             (args: 
-                             (Nil)))))
+                             (Subscript 
+                              (Name exp)
+                              (Int 3))))))
                         (Dict  
                          (Symbol type)
                           (Symbol def)
@@ -762,14 +913,20 @@
                          (Symbol params)
                           (Call convert
                            (args: 
-                            (Nil)))
+                            (Subscript 
+                             (Name exp)
+                             (Int 4))))
                          (Symbol body)
                           (Call convert
                            (args: 
-                            (Nil)))))
+                            (Subscript 
+                             (Name exp)
+                             (Int 5))))))
                        (If 
                         (BinOp:In 
-                         (Nil)
+                         (Subscript 
+                          (Name exp)
+                          (Int 0))
                          (Array 
                           (Symbol do_block)))
                         (Block 
@@ -779,14 +936,20 @@
                           (Symbol params)
                            (Call convert
                             (args: 
-                             (Nil)))
+                             (Subscript 
+                              (Name exp)
+                              (Int 1))))
                           (Symbol body)
                            (Call convert
                             (args: 
-                             (Nil)))))
+                             (Subscript 
+                              (Name exp)
+                              (Int 2))))))
                         (If 
                          (BinOp:In 
-                          (Nil)
+                          (Subscript 
+                           (Name exp)
+                           (Int 0))
                           (Array 
                            (Symbol lambda)))
                          (Block 
@@ -796,14 +959,20 @@
                            (Symbol params)
                             (Call convert
                              (args: 
-                              (Nil)))
+                              (Subscript 
+                               (Name exp)
+                               (Int 1))))
                            (Symbol body)
                             (Call convert
                              (args: 
-                              (Nil)))))
+                              (Subscript 
+                               (Name exp)
+                               (Int 2))))))
                          (If 
                           (BinOp:In 
-                           (Nil)
+                           (Subscript 
+                            (Name exp)
+                            (Int 0))
                            (Array 
                             (Symbol brace_block)))
                           (Block 
@@ -813,14 +982,20 @@
                             (Symbol params)
                              (Call convert
                               (args: 
-                               (Nil)))
+                               (Subscript 
+                                (Name exp)
+                                (Int 1))))
                             (Symbol body)
                              (Call convert
                               (args: 
-                               (Nil)))))
+                               (Subscript 
+                                (Name exp)
+                                (Int 2))))))
                           (If 
                            (BinOp:In 
-                            (Nil)
+                            (Subscript 
+                             (Name exp)
+                             (Int 0))
                             (Array 
                              (Symbol params)))
                            (Block 
@@ -830,81 +1005,157 @@
                               (Symbol type)
                                (Symbol params)))
                             (If 
-                             (Nil)
+                             (Subscript 
+                              (Name exp)
+                              (Int 1))
                              (Block 
                               (Assign 
-                               (Nil)
+                               (Subscript 
+                                (Name ret)
+                                (Symbol positional))
                                (Call convert_array
                                 (args: 
-                                 (Nil)))))
+                                 (Subscript 
+                                  (Name exp)
+                                  (Int 1))))))
                              (Nil))
                             (If 
-                             (Nil)
+                             (Subscript 
+                              (Name exp)
+                              (Int 2))
                              (Block 
                               (If 
                                (UnaryOp:Not 
-                                (Nil))
+                                (Subscript 
+                                 (Name ret)
+                                 (Symbol positional)))
                                (Block 
                                 (Assign 
-                                 (Nil)
+                                 (Subscript 
+                                  (Name ret)
+                                  (Symbol positional))
                                  (Array )))
                                (Nil))
                               (Call 
                                (Attribute 
-                                (Nil)
+                                (Subscript 
+                                 (Name exp)
+                                 (Int 2))
                                 (Name each)))
                               (Assign 
-                               (Nil)
+                               (Subscript 
+                                (Name ret)
+                                (Symbol defaults))
                                (Call 
                                 (Attribute 
-                                 (Nil)
+                                 (Subscript 
+                                  (Name exp)
+                                  (Int 2))
                                  (Name map)))))
                              (Nil))
                             (If 
                              (BinOp:And 
-                              (Nil)
+                              (Subscript 
+                               (Name exp)
+                               (Int 3))
                               (UnaryOp:Not 
                                (BinOp:Equal 
-                                (Nil)
+                                (Subscript 
+                                 (Name exp)
+                                 (Int 3))
                                 (Int 0))))
                              (Block 
                               (Assign 
-                               (Nil)
+                               (Subscript 
+                                (Name ret)
+                                (Symbol rest))
                                (Call convert
                                 (args: 
-                                 (Nil)))))
+                                 (Subscript 
+                                  (Name exp)
+                                  (Int 3))))))
                              (Nil))
                             (If 
-                             (Nil)
+                             (Subscript 
+                              (Name exp)
+                              (Int 4))
                              (Block 
                               (Assign 
-                               (Nil)
+                               (Subscript 
+                                (Name ret)
+                                (Symbol after_rest))
                                (Call convert_array
                                 (args: 
-                                 (Nil)))))
+                                 (Subscript 
+                                  (Name exp)
+                                  (Int 4))))))
                              (Nil))
                             (If 
-                             (Nil)
+                             (Subscript 
+                              (Name exp)
+                              (Int 5))
                              (Block 
                               (Assign 
-                               (Nil)
-                               (Call convert
+                               (Subscript 
+                                (Name ret)
+                                (Symbol kw_keys))
+                               (Call convert_array
                                 (args: 
-                                 (Nil)))))
+                                 (Call 
+                                  (Attribute 
+                                   (Subscript 
+                                    (Name exp)
+                                    (Int 5))
+                                   (Name map))))))
+                              (Assign 
+                               (Subscript 
+                                (Name ret)
+                                (Symbol kw_values))
+                               (Call convert_array
+                                (args: 
+                                 (Call 
+                                  (Attribute 
+                                   (Subscript 
+                                    (Name exp)
+                                    (Int 5))
+                                   (Name map)))))))
                              (Nil))
                             (If 
-                             (Nil)
+                             (Subscript 
+                              (Name exp)
+                              (Int 6))
                              (Block 
                               (Assign 
-                               (Nil)
+                               (Subscript 
+                                (Name ret)
+                                (Symbol rest_kw))
                                (Call convert
                                 (args: 
-                                 (Nil)))))
+                                 (Subscript 
+                                  (Name exp)
+                                  (Int 6))))))
+                             (Nil))
+                            (If 
+                             (Subscript 
+                              (Name exp)
+                              (Int 7))
+                             (Block 
+                              (Assign 
+                               (Subscript 
+                                (Name ret)
+                                (Symbol blockarg))
+                               (Call convert
+                                (args: 
+                                 (Subscript 
+                                  (Name exp)
+                                  (Int 7))))))
                              (Nil))
                             (Name ret))
                            (If 
                             (BinOp:In 
-                             (Nil)
+                             (Subscript 
+                              (Name exp)
+                              (Int 0))
                              (Array 
                               (Symbol block_var)))
                             (Block 
@@ -912,20 +1163,30 @@
                               (Name params)
                               (Call convert
                                (args: 
-                                (Nil))))
+                                (Subscript 
+                                 (Name exp)
+                                 (Int 1)))))
                              (If 
-                              (Nil)
+                              (Subscript 
+                               (Name exp)
+                               (Int 2))
                               (Block 
                                (Assign 
-                                (Nil)
+                                (Subscript 
+                                 (Name params)
+                                 (Symbol block_var))
                                 (Call convert_array
                                  (args: 
-                                  (Nil)))))
+                                  (Subscript 
+                                   (Name exp)
+                                   (Int 2))))))
                               (Nil))
                              (Name params))
                             (If 
                              (BinOp:In 
-                              (Nil)
+                              (Subscript 
+                               (Name exp)
+                               (Int 0))
                               (Array 
                                (Symbol class)))
                              (Block 
@@ -939,24 +1200,36 @@
                                 (Symbol name)
                                  (Call convert
                                   (args: 
-                                   (Nil)))
+                                   (Subscript 
+                                    (Name exp)
+                                    (Int 1))))
                                 (Symbol body)
                                  (Call convert
                                   (args: 
-                                   (Nil)))))
+                                   (Subscript 
+                                    (Name exp)
+                                    (Int 3))))))
                               (If 
-                               (Nil)
+                               (Subscript 
+                                (Name exp)
+                                (Int 2))
                                (Block 
                                 (Assign 
-                                 (Nil)
+                                 (Subscript 
+                                  (Name ret)
+                                  (Symbol super))
                                  (Call convert
                                   (args: 
-                                   (Nil)))))
+                                   (Subscript 
+                                    (Name exp)
+                                    (Int 2))))))
                                (Nil))
                               (Name ret))
                              (If 
                               (BinOp:In 
-                               (Nil)
+                               (Subscript 
+                                (Name exp)
+                                (Int 0))
                                (Array 
                                 (Symbol sclass)))
                               (Block 
@@ -968,14 +1241,20 @@
                                 (Symbol name)
                                  (Call convert
                                   (args: 
-                                   (Nil)))
+                                   (Subscript 
+                                    (Name exp)
+                                    (Int 1))))
                                 (Symbol body)
                                  (Call convert
                                   (args: 
-                                   (Nil)))))
+                                   (Subscript 
+                                    (Name exp)
+                                    (Int 2))))))
                               (If 
                                (BinOp:In 
-                                (Nil)
+                                (Subscript 
+                                 (Name exp)
+                                 (Int 0))
                                 (Array 
                                  (Symbol method_add_block)))
                                (Block 
@@ -983,27 +1262,43 @@
                                  (Name call)
                                  (Call convert
                                   (args: 
-                                   (Nil))))
+                                   (Subscript 
+                                    (Name exp)
+                                    (Int 1)))))
                                 (If 
-                                 (Nil)
+                                 (Subscript 
+                                  (Name call)
+                                  (Symbol args))
                                  (Block 
                                   (Assign 
-                                   (Nil)
+                                   (Subscript 
+                                    (Subscript 
+                                     (Name call)
+                                     (Symbol args))
+                                    (Symbol blockarg))
                                    (Call convert
                                     (args: 
-                                     (Nil)))))
+                                     (Subscript 
+                                      (Name exp)
+                                      (Int 2))))))
                                  (Block 
                                   (Assign 
-                                   (Nil)
+                                   (Subscript 
+                                    (Name call)
+                                    (Symbol args))
                                    (Dict  
                                     (Symbol blockarg)
                                      (Call convert
                                       (args: 
-                                       (Nil)))))))
+                                       (Subscript 
+                                        (Name exp)
+                                        (Int 2))))))))
                                 (Name call))
                                (If 
                                 (BinOp:In 
-                                 (Nil)
+                                 (Subscript 
+                                  (Name exp)
+                                  (Int 0))
                                  (Array 
                                   (Symbol method_add_arg)))
                                 (Block 
@@ -1011,16 +1306,24 @@
                                   (Name call)
                                   (Call convert
                                    (args: 
-                                    (Nil))))
+                                    (Subscript 
+                                     (Name exp)
+                                     (Int 1)))))
                                  (Assign 
-                                  (Nil)
+                                  (Subscript 
+                                   (Name call)
+                                   (Symbol args))
                                   (Call convert
                                    (args: 
-                                    (Nil))))
+                                    (Subscript 
+                                     (Name exp)
+                                     (Int 2)))))
                                  (Name call))
                                 (If 
                                  (BinOp:In 
-                                  (Nil)
+                                  (Subscript 
+                                   (Name exp)
+                                   (Int 0))
                                   (Array 
                                    (Symbol vcall)))
                                  (Block 
@@ -1030,10 +1333,14 @@
                                    (Symbol func)
                                     (Call convert
                                      (args: 
-                                      (Nil)))))
+                                      (Subscript 
+                                       (Name exp)
+                                       (Int 1))))))
                                  (If 
                                   (BinOp:In 
-                                   (Nil)
+                                   (Subscript 
+                                    (Name exp)
+                                    (Int 0))
                                    (Array 
                                     (Symbol command)))
                                   (Block 
@@ -1043,24 +1350,34 @@
                                     (Symbol func)
                                      (Call convert
                                       (args: 
-                                       (Nil)))
+                                       (Subscript 
+                                        (Name exp)
+                                        (Int 1))))
                                     (Symbol args)
                                      (Call convert
                                       (args: 
-                                       (Nil)))))
+                                       (Subscript 
+                                        (Name exp)
+                                        (Int 2))))))
                                   (If 
                                    (BinOp:In 
-                                    (Nil)
+                                    (Subscript 
+                                     (Name exp)
+                                     (Int 0))
                                     (Array 
                                      (Symbol command_call)))
                                    (Block 
                                     (If 
                                      (BinOp:Or 
                                       (BinOp:Equal 
-                                       (Nil)
+                                       (Subscript 
+                                        (Name exp)
+                                        (Int 2))
                                        (Name #dyna_symbol))
                                       (BinOp:Equal 
-                                       (Nil)
+                                       (Subscript 
+                                        (Name exp)
+                                        (Int 2))
                                        (Name #dyna_symbol)))
                                      (Block 
                                       (Assign 
@@ -1071,17 +1388,23 @@
                                         (Symbol value)
                                          (Call convert
                                           (args: 
-                                           (Nil)))
+                                           (Subscript 
+                                            (Name exp)
+                                            (Int 1))))
                                         (Symbol attr)
                                          (Call convert
                                           (args: 
-                                           (Nil))))))
+                                           (Subscript 
+                                            (Name exp)
+                                            (Int 3)))))))
                                      (Block 
                                       (Assign 
                                        (Name func)
                                        (Call convert
                                         (args: 
-                                         (Nil))))))
+                                         (Subscript 
+                                          (Name exp)
+                                          (Int 1)))))))
                                     (Dict  
                                      (Symbol type)
                                       (Symbol call)
@@ -1090,10 +1413,14 @@
                                      (Symbol args)
                                       (Call convert
                                        (args: 
-                                        (Nil)))))
+                                        (Subscript 
+                                         (Name exp)
+                                         (Int 4))))))
                                    (If 
                                     (BinOp:In 
-                                     (Nil)
+                                     (Subscript 
+                                      (Name exp)
+                                      (Int 0))
                                      (Array 
                                       (Symbol super)
                                       (Symbol zsuper)))
@@ -1110,10 +1437,14 @@
                                       (Symbol args)
                                        (Call convert
                                         (args: 
-                                         (Nil)))))
+                                         (Subscript 
+                                          (Name exp)
+                                          (Int 1))))))
                                     (If 
                                      (BinOp:In 
-                                      (Nil)
+                                      (Subscript 
+                                       (Name exp)
+                                       (Int 0))
                                       (Array 
                                        (Symbol call)
                                        (Symbol fcall)))
@@ -1122,15 +1453,21 @@
                                        (BinOp:And 
                                         (UnaryOp:Not 
                                          (BinOp:Equal 
-                                          (Nil)
+                                          (Subscript 
+                                           (Name exp)
+                                           (Int 3))
                                           (Symbol call)))
                                         (Block 
                                          (BinOp:Or 
                                           (BinOp:Equal 
-                                           (Nil)
+                                           (Subscript 
+                                            (Name exp)
+                                            (Int 2))
                                            (Name #dyna_symbol))
                                           (BinOp:Equal 
-                                           (Nil)
+                                           (Subscript 
+                                            (Name exp)
+                                            (Int 2))
                                            (Name #dyna_symbol)))))
                                        (Block 
                                         (Assign 
@@ -1141,17 +1478,23 @@
                                           (Symbol value)
                                            (Call convert
                                             (args: 
-                                             (Nil)))
+                                             (Subscript 
+                                              (Name exp)
+                                              (Int 1))))
                                           (Symbol attr)
                                            (Call convert
                                             (args: 
-                                             (Nil))))))
+                                             (Subscript 
+                                              (Name exp)
+                                              (Int 3)))))))
                                        (Block 
                                         (Assign 
                                          (Name func)
                                          (Call convert
                                           (args: 
-                                           (Nil))))))
+                                           (Subscript 
+                                            (Name exp)
+                                            (Int 1)))))))
                                       (Dict  
                                        (Symbol type)
                                         (Symbol call)
@@ -1159,7 +1502,9 @@
                                         (Name func)))
                                      (If 
                                       (BinOp:In 
-                                       (Nil)
+                                       (Subscript 
+                                        (Name exp)
+                                        (Int 0))
                                        (Array 
                                         (Symbol args_new)
                                         (Symbol mlhs_new)
@@ -1177,7 +1522,9 @@
                                          (Array )))
                                       (If 
                                        (BinOp:In 
-                                        (Nil)
+                                        (Subscript 
+                                         (Name exp)
+                                         (Int 0))
                                         (Array 
                                          (Symbol args_add)
                                          (Symbol mlhs_add)
@@ -1192,19 +1539,27 @@
                                          (Name args)
                                          (Call convert
                                           (args: 
-                                           (Nil))))
+                                           (Subscript 
+                                            (Name exp)
+                                            (Int 1)))))
                                         (Call 
                                          (Attribute 
-                                          (Nil)
+                                          (Subscript 
+                                           (Name args)
+                                           (Symbol positional))
                                           (Name push))
                                          (args: 
                                           (Call convert
                                            (args: 
-                                            (Nil)))))
+                                            (Subscript 
+                                             (Name exp)
+                                             (Int 2))))))
                                         (Name args))
                                        (If 
                                         (BinOp:In 
-                                         (Nil)
+                                         (Subscript 
+                                          (Name exp)
+                                          (Int 0))
                                          (Array 
                                           (Symbol args_add_star)
                                           (Symbol mrhs_add_star)
@@ -1214,20 +1569,30 @@
                                           (Name args)
                                           (Call convert
                                            (args: 
-                                            (Nil))))
+                                            (Subscript 
+                                             (Name exp)
+                                             (Int 1)))))
                                          (If 
-                                          (Nil)
+                                          (Subscript 
+                                           (Name exp)
+                                           (Int 2))
                                           (Block 
                                            (Assign 
-                                            (Nil)
+                                            (Subscript 
+                                             (Name args)
+                                             (Symbol star))
                                             (Call convert
                                              (args: 
-                                              (Nil)))))
+                                              (Subscript 
+                                               (Name exp)
+                                               (Int 2))))))
                                           (Nil))
                                          (Name args))
                                         (If 
                                          (BinOp:In 
-                                          (Nil)
+                                          (Subscript 
+                                           (Name exp)
+                                           (Int 0))
                                           (Array 
                                            (Symbol args_add_block)))
                                          (Block 
@@ -1235,20 +1600,30 @@
                                            (Name args)
                                            (Call convert
                                             (args: 
-                                             (Nil))))
+                                             (Subscript 
+                                              (Name exp)
+                                              (Int 1)))))
                                           (If 
-                                           (Nil)
+                                           (Subscript 
+                                            (Name exp)
+                                            (Int 2))
                                            (Block 
                                             (Assign 
-                                             (Nil)
+                                             (Subscript 
+                                              (Name args)
+                                              (Symbol blockarg))
                                              (Call convert
                                               (args: 
-                                               (Nil)))))
+                                               (Subscript 
+                                                (Name exp)
+                                                (Int 2))))))
                                            (Nil))
                                           (Name args))
                                          (If 
                                           (BinOp:In 
-                                           (Nil)
+                                           (Subscript 
+                                            (Name exp)
+                                            (Int 0))
                                            (Array 
                                             (Symbol assign)
                                             (Symbol massign)))
@@ -1259,14 +1634,20 @@
                                             (Symbol target)
                                              (Call convert
                                               (args: 
-                                               (Nil)))
+                                               (Subscript 
+                                                (Name exp)
+                                                (Int 1))))
                                             (Symbol value)
                                              (Call convert
                                               (args: 
-                                               (Nil)))))
+                                               (Subscript 
+                                                (Name exp)
+                                                (Int 2))))))
                                           (If 
                                            (BinOp:In 
-                                            (Nil)
+                                            (Subscript 
+                                             (Name exp)
+                                             (Int 0))
                                             (Array 
                                              (Symbol opassign)))
                                            (Block 
@@ -1276,39 +1657,64 @@
                                               (args: 
                                                (Array 
                                                 (Symbol binary)
-                                                (Nil)
-                                                (Nil)
-                                                (Nil)))))
+                                                (Subscript 
+                                                 (Name exp)
+                                                 (Int 1))
+                                                (Subscript 
+                                                 (Subscript 
+                                                  (Subscript 
+                                                   (Name exp)
+                                                   (Int 2))
+                                                  (Int 1))
+                                                 (Array 
+                                                  (Int 0)
+                                                  (UnaryOp:Sub 
+                                                   (Int 2))))
+                                                (Subscript 
+                                                 (Name exp)
+                                                 (Int 3))))))
                                             (Dict  
                                              (Symbol type)
                                               (Symbol assign)
                                              (Symbol target)
                                               (Call convert
                                                (args: 
-                                                (Nil)))
+                                                (Subscript 
+                                                 (Name exp)
+                                                 (Int 1))))
                                              (Symbol value)
                                               (Name operation)))
                                            (If 
                                             (BinOp:In 
-                                             (Nil)
+                                             (Subscript 
+                                              (Name exp)
+                                              (Int 0))
                                              (Array 
                                               (Symbol dot2)
                                               (Symbol dot3)))
                                             (Block 
                                              (Dict  
                                               (Symbol type)
-                                               (Nil)
+                                               (Subscript 
+                                                (Name exp)
+                                                (Int 0))
                                               (Symbol from)
                                                (Call convert
                                                 (args: 
-                                                 (Nil)))
+                                                 (Subscript 
+                                                  (Name exp)
+                                                  (Int 1))))
                                               (Symbol to)
                                                (Call convert
                                                 (args: 
-                                                 (Nil)))))
+                                                 (Subscript 
+                                                  (Name exp)
+                                                  (Int 2))))))
                                             (If 
                                              (BinOp:In 
-                                              (Nil)
+                                              (Subscript 
+                                               (Name exp)
+                                               (Int 0))
                                               (Array 
                                                (Symbol alias)
                                                (Symbol var_alias)))
@@ -1319,14 +1725,20 @@
                                                (Symbol target)
                                                 (Call convert
                                                  (args: 
-                                                  (Nil)))
+                                                  (Subscript 
+                                                   (Name exp)
+                                                   (Int 1))))
                                                (Symbol value)
                                                 (Call convert
                                                  (args: 
-                                                  (Nil)))))
+                                                  (Subscript 
+                                                   (Name exp)
+                                                   (Int 2))))))
                                              (If 
                                               (BinOp:In 
-                                               (Nil)
+                                               (Subscript 
+                                                (Name exp)
+                                                (Int 0))
                                                (Array 
                                                 (Symbol undef)))
                                               (Block 
@@ -1336,10 +1748,14 @@
                                                 (Symbol names)
                                                  (Call convert_array
                                                   (args: 
-                                                   (Nil)))))
+                                                   (Subscript 
+                                                    (Name exp)
+                                                    (Int 1))))))
                                               (If 
                                                (BinOp:In 
-                                                (Nil)
+                                                (Subscript 
+                                                 (Name exp)
+                                                 (Int 0))
                                                 (Array 
                                                  (Symbol if)
                                                  (Symbol if_mod)
@@ -1354,62 +1770,88 @@
                                                   (Symbol test)
                                                    (Call convert
                                                     (args: 
-                                                     (Nil)))
+                                                     (Subscript 
+                                                      (Name exp)
+                                                      (Int 1))))
                                                   (Symbol body)
                                                    (Call convert
                                                     (args: 
-                                                     (Nil)))))
+                                                     (Subscript 
+                                                      (Name exp)
+                                                      (Int 2))))))
                                                 (If 
-                                                 (Nil)
+                                                 (Subscript 
+                                                  (Name exp)
+                                                  (Int 3))
                                                  (Block 
                                                   (Assign 
-                                                   (Nil)
+                                                   (Subscript 
+                                                    (Name ret)
+                                                    (Symbol else))
                                                    (Call convert
                                                     (args: 
-                                                     (Nil)))))
+                                                     (Subscript 
+                                                      (Name exp)
+                                                      (Int 3))))))
                                                  (Nil))
                                                 (If 
                                                  (BinOp:Equal 
-                                                  (Nil)
+                                                  (Subscript 
+                                                   (Name exp)
+                                                   (Int 0))
                                                   (Symbol if_mod))
                                                  (Block 
                                                   (Assign 
-                                                   (Nil)
+                                                   (Subscript 
+                                                    (Name ret)
+                                                    (Symbol mod))
                                                    (Name true)))
                                                  (Nil))
                                                 (Name ret))
                                                (If 
                                                 (BinOp:In 
-                                                 (Nil)
+                                                 (Subscript 
+                                                  (Name exp)
+                                                  (Int 0))
                                                  (Array 
                                                   (Symbol case)))
                                                 (Block 
                                                  (If 
-                                                  (Nil)
+                                                  (Subscript 
+                                                   (Name exp)
+                                                   (Int 1))
                                                   (Block 
                                                    (Assign 
                                                     (Name value)
                                                     (Call convert
                                                      (args: 
-                                                      (Nil)))))
+                                                      (Subscript 
+                                                       (Name exp)
+                                                       (Int 1))))))
                                                   (Block 
                                                    (Assign 
                                                     (Name value)
                                                     (Name nil))))
                                                  (Call convert_when
                                                   (args: 
-                                                   (Nil)
+                                                   (Subscript 
+                                                    (Name exp)
+                                                    (Int 2))
                                                    (Name value))))
                                                 (If 
                                                  (BinOp:In 
-                                                  (Nil)
+                                                  (Subscript 
+                                                   (Name exp)
+                                                   (Int 0))
                                                   (Array 
                                                    (Symbol while)
                                                    (Symbol while_mod)))
                                                  (Block 
                                                   (If 
                                                    (BinOp:Equal 
-                                                    (Nil)
+                                                    (Subscript 
+                                                     (Name exp)
+                                                     (Int 0))
                                                     (Symbol while_mod))
                                                    (Block 
                                                     (Assign 
@@ -1425,23 +1867,31 @@
                                                    (Symbol test)
                                                     (Call convert
                                                      (args: 
-                                                      (Nil)))
+                                                      (Subscript 
+                                                       (Name exp)
+                                                       (Int 1))))
                                                    (Symbol body)
                                                     (Call convert
                                                      (args: 
-                                                      (Nil)))
+                                                      (Subscript 
+                                                       (Name exp)
+                                                       (Int 2))))
                                                    (Symbol mod)
                                                     (Name mod)))
                                                  (If 
                                                   (BinOp:In 
-                                                   (Nil)
+                                                   (Subscript 
+                                                    (Name exp)
+                                                    (Int 0))
                                                    (Array 
                                                     (Symbol until)
                                                     (Symbol until_mod)))
                                                   (Block 
                                                    (If 
                                                     (BinOp:Equal 
-                                                     (Nil)
+                                                     (Subscript 
+                                                      (Name exp)
+                                                      (Int 0))
                                                      (Symbol until_mod))
                                                     (Block 
                                                      (Assign 
@@ -1459,23 +1909,31 @@
                                                       (args: 
                                                        (Call convert
                                                         (args: 
-                                                         (Nil)))))
+                                                         (Subscript 
+                                                          (Name exp)
+                                                          (Int 1))))))
                                                     (Symbol body)
                                                      (Call convert
                                                       (args: 
-                                                       (Nil)))
+                                                       (Subscript 
+                                                        (Name exp)
+                                                        (Int 2))))
                                                     (Symbol mod)
                                                      (Name mod)))
                                                   (If 
                                                    (BinOp:In 
-                                                    (Nil)
+                                                    (Subscript 
+                                                     (Name exp)
+                                                     (Int 0))
                                                     (Array 
                                                      (Symbol unless)
                                                      (Symbol unless_mod)))
                                                    (Block 
                                                     (If 
                                                      (BinOp:Equal 
-                                                      (Nil)
+                                                      (Subscript 
+                                                       (Name exp)
+                                                       (Int 0))
                                                       (Symbol unless_mod))
                                                      (Block 
                                                       (Assign 
@@ -1495,26 +1953,38 @@
                                                         (args: 
                                                          (Call convert
                                                           (args: 
-                                                           (Nil)))))
+                                                           (Subscript 
+                                                            (Name exp)
+                                                            (Int 1))))))
                                                       (Symbol body)
                                                        (Call convert
                                                         (args: 
-                                                         (Nil)))
+                                                         (Subscript 
+                                                          (Name exp)
+                                                          (Int 2))))
                                                       (Symbol mod)
                                                        (Name mod)))
                                                     (If 
-                                                     (Nil)
+                                                     (Subscript 
+                                                      (Name exp)
+                                                      (Int 3))
                                                      (Block 
                                                       (Assign 
-                                                       (Nil)
+                                                       (Subscript 
+                                                        (Name ret)
+                                                        (Symbol else))
                                                        (Call convert
                                                         (args: 
-                                                         (Nil)))))
+                                                         (Subscript 
+                                                          (Name exp)
+                                                          (Int 3))))))
                                                      (Nil))
                                                     (Name ret))
                                                    (If 
                                                     (BinOp:In 
-                                                     (Nil)
+                                                     (Subscript 
+                                                      (Name exp)
+                                                      (Int 0))
                                                      (Array 
                                                       (Symbol for)))
                                                     (Block 
@@ -1524,46 +1994,66 @@
                                                       (Symbol target)
                                                        (Call convert
                                                         (args: 
-                                                         (Nil)))
+                                                         (Subscript 
+                                                          (Name exp)
+                                                          (Int 1))))
                                                       (Symbol iter)
                                                        (Call convert
                                                         (args: 
-                                                         (Nil)))
+                                                         (Subscript 
+                                                          (Name exp)
+                                                          (Int 2))))
                                                       (Symbol body)
                                                        (Call convert
                                                         (args: 
-                                                         (Nil)))))
+                                                         (Subscript 
+                                                          (Name exp)
+                                                          (Int 3))))))
                                                     (If 
                                                      (BinOp:In 
-                                                      (Nil)
+                                                      (Subscript 
+                                                       (Name exp)
+                                                       (Int 0))
                                                       (Array 
                                                        (Symbol begin)))
                                                      (Block 
                                                       (Assign 
                                                        (Name bodystmt)
-                                                       (Nil))
+                                                       (Subscript 
+                                                        (Name exp)
+                                                        (Int 1)))
                                                       (Dict  
                                                        (Symbol type)
                                                         (Symbol begin)
                                                        (Symbol body)
                                                         (Call convert
                                                          (args: 
-                                                          (Nil)))
+                                                          (Subscript 
+                                                           (Name bodystmt)
+                                                           (Int 1))))
                                                        (Symbol rescue)
                                                         (Call convert
                                                          (args: 
-                                                          (Nil)))
+                                                          (Subscript 
+                                                           (Name bodystmt)
+                                                           (Int 2))))
                                                        (Symbol else)
                                                         (Call convert
                                                          (args: 
-                                                          (Nil)))
+                                                          (Subscript 
+                                                           (Name bodystmt)
+                                                           (Int 3))))
                                                        (Symbol ensure)
                                                         (Call convert
                                                          (args: 
-                                                          (Nil)))))
+                                                          (Subscript 
+                                                           (Name bodystmt)
+                                                           (Int 4))))))
                                                      (If 
                                                       (BinOp:In 
-                                                       (Nil)
+                                                       (Subscript 
+                                                        (Name exp)
+                                                        (Int 0))
                                                        (Array 
                                                         (Symbol rescue)))
                                                       (Block 
@@ -1573,57 +2063,95 @@
                                                          (Symbol type)
                                                           (Symbol rescue)))
                                                        (If 
-                                                        (Nil)
+                                                        (Subscript 
+                                                         (Name exp)
+                                                         (Int 1))
                                                         (Block 
                                                          (If 
                                                           (Call 
                                                            (Attribute 
-                                                            (Nil)
+                                                            (Subscript 
+                                                             (Subscript 
+                                                              (Name exp)
+                                                              (Int 1))
+                                                             (Int 0))
                                                             (Name is_a?))
                                                            (args: 
                                                             (Name Array)))
                                                           (Block 
                                                            (Assign 
-                                                            (Nil)
+                                                            (Subscript 
+                                                             (Name ret)
+                                                             (Symbol exceptions))
                                                             (Call convert_array
                                                              (args: 
-                                                              (Nil)))))
+                                                              (Subscript 
+                                                               (Name exp)
+                                                               (Int 1))))))
                                                           (Block 
                                                            (Assign 
-                                                            (Nil)
-                                                            (Nil)))))
+                                                            (Subscript 
+                                                             (Name ret)
+                                                             (Symbol expections))
+                                                            (Subscript 
+                                                             (Call convert
+                                                              (args: 
+                                                               (Subscript 
+                                                                (Name exp)
+                                                                (Int 1))))
+                                                             (Symbol positional))))))
                                                         (Nil))
                                                        (If 
-                                                        (Nil)
+                                                        (Subscript 
+                                                         (Name exp)
+                                                         (Int 2))
                                                         (Block 
                                                          (Assign 
-                                                          (Nil)
+                                                          (Subscript 
+                                                           (Name ret)
+                                                           (Symbol binder))
                                                           (Call convert
                                                            (args: 
-                                                            (Nil)))))
+                                                            (Subscript 
+                                                             (Name exp)
+                                                             (Int 2))))))
                                                         (Nil))
                                                        (If 
-                                                        (Nil)
+                                                        (Subscript 
+                                                         (Name exp)
+                                                         (Int 3))
                                                         (Block 
                                                          (Assign 
-                                                          (Nil)
+                                                          (Subscript 
+                                                           (Name ret)
+                                                           (Symbol handler))
                                                           (Call convert
                                                            (args: 
-                                                            (Nil)))))
+                                                            (Subscript 
+                                                             (Name exp)
+                                                             (Int 3))))))
                                                         (Nil))
                                                        (If 
-                                                        (Nil)
+                                                        (Subscript 
+                                                         (Name exp)
+                                                         (Int 4))
                                                         (Block 
                                                          (Assign 
-                                                          (Nil)
+                                                          (Subscript 
+                                                           (Name ret)
+                                                           (Symbol else))
                                                           (Call convert
                                                            (args: 
-                                                            (Nil)))))
+                                                            (Subscript 
+                                                             (Name exp)
+                                                             (Int 4))))))
                                                         (Nil))
                                                        (Name ret))
                                                       (If 
                                                        (BinOp:In 
-                                                        (Nil)
+                                                        (Subscript 
+                                                         (Name exp)
+                                                         (Int 0))
                                                         (Array 
                                                          (Symbol rescue_mod)))
                                                        (Block 
@@ -1633,16 +2161,22 @@
                                                          (Symbol body)
                                                           (Call convert
                                                            (args: 
-                                                            (Nil)))
+                                                            (Subscript 
+                                                             (Name exp)
+                                                             (Int 1))))
                                                          (Symbol rescue)
                                                           (Call convert
                                                            (args: 
-                                                            (Nil)))
+                                                            (Subscript 
+                                                             (Name exp)
+                                                             (Int 2))))
                                                          (Symbol mod)
                                                           (Name true)))
                                                        (If 
                                                         (BinOp:In 
-                                                         (Nil)
+                                                         (Subscript 
+                                                          (Name exp)
+                                                          (Int 0))
                                                          (Array 
                                                           (Symbol stmts_new)))
                                                         (Block 
@@ -1653,7 +2187,9 @@
                                                            (Array )))
                                                         (If 
                                                          (BinOp:In 
-                                                          (Nil)
+                                                          (Subscript 
+                                                           (Name exp)
+                                                           (Int 0))
                                                           (Array 
                                                            (Symbol stmts_add)))
                                                          (Block 
@@ -1661,22 +2197,30 @@
                                                            (Name block)
                                                            (Call convert
                                                             (args: 
-                                                             (Nil))))
+                                                             (Subscript 
+                                                              (Name exp)
+                                                              (Int 1)))))
                                                           (Assign 
                                                            (Name stmt)
                                                            (Call convert
                                                             (args: 
-                                                             (Nil))))
+                                                             (Subscript 
+                                                              (Name exp)
+                                                              (Int 2)))))
                                                           (Call 
                                                            (Attribute 
-                                                            (Nil)
+                                                            (Subscript 
+                                                             (Name block)
+                                                             (Symbol stmts))
                                                             (Name push))
                                                            (args: 
                                                             (Name stmt)))
                                                           (Name block))
                                                          (If 
                                                           (BinOp:In 
-                                                           (Nil)
+                                                           (Subscript 
+                                                            (Name exp)
+                                                            (Int 0))
                                                            (Array 
                                                             (Symbol bodystmt)))
                                                           (Block 
@@ -1684,18 +2228,26 @@
                                                             (Name block)
                                                             (Call convert
                                                              (args: 
-                                                              (Nil))))
+                                                              (Subscript 
+                                                               (Name exp)
+                                                               (Int 1)))))
                                                            (If 
-                                                            (Nil)
+                                                            (Subscript 
+                                                             (Name exp)
+                                                             (Int 2))
                                                             (Block 
                                                              (Assign 
                                                               (Name res)
                                                               (Call convert
                                                                (args: 
-                                                                (Nil))))
+                                                                (Subscript 
+                                                                 (Name exp)
+                                                                 (Int 2)))))
                                                              (Call 
                                                               (Attribute 
-                                                               (Nil)
+                                                               (Subscript 
+                                                                (Name block)
+                                                                (Symbol stmts))
                                                                (Name push))
                                                               (args: 
                                                                (Name res))))
@@ -1703,7 +2255,9 @@
                                                            (Name block))
                                                           (If 
                                                            (BinOp:In 
-                                                            (Nil)
+                                                            (Subscript 
+                                                             (Name exp)
+                                                             (Int 0))
                                                             (Array 
                                                              (Symbol binary)))
                                                            (Block 
@@ -1713,18 +2267,26 @@
                                                              (Symbol left)
                                                               (Call convert
                                                                (args: 
-                                                                (Nil)))
+                                                                (Subscript 
+                                                                 (Name exp)
+                                                                 (Int 1))))
                                                              (Symbol op)
                                                               (Call op
                                                                (args: 
-                                                                (Nil)))
+                                                                (Subscript 
+                                                                 (Name exp)
+                                                                 (Int 2))))
                                                              (Symbol right)
                                                               (Call convert
                                                                (args: 
-                                                                (Nil)))))
+                                                                (Subscript 
+                                                                 (Name exp)
+                                                                 (Int 3))))))
                                                            (If 
                                                             (BinOp:In 
-                                                             (Nil)
+                                                             (Subscript 
+                                                              (Name exp)
+                                                              (Int 0))
                                                              (Array 
                                                               (Symbol array)))
                                                             (Block 
@@ -1732,15 +2294,21 @@
                                                               (Name args)
                                                               (Call convert
                                                                (args: 
-                                                                (Nil))))
+                                                                (Subscript 
+                                                                 (Name exp)
+                                                                 (Int 1)))))
                                                              (Dict  
                                                               (Symbol type)
                                                                (Symbol array)
                                                               (Symbol elts)
-                                                               (Nil)))
+                                                               (Subscript 
+                                                                (Name args)
+                                                                (Symbol positional))))
                                                             (If 
                                                              (BinOp:In 
-                                                              (Nil)
+                                                              (Subscript 
+                                                               (Name exp)
+                                                               (Int 0))
                                                               (Array 
                                                                (Symbol aref)
                                                                (Symbol aref_field)))
@@ -1749,19 +2317,27 @@
                                                                (Name args)
                                                                (Call convert
                                                                 (args: 
-                                                                 (Nil))))
+                                                                 (Subscript 
+                                                                  (Name exp)
+                                                                  (Int 2)))))
                                                               (Dict  
                                                                (Symbol type)
                                                                 (Symbol subscript)
                                                                (Symbol value)
                                                                 (Call convert
                                                                  (args: 
-                                                                  (Nil)))
+                                                                  (Subscript 
+                                                                   (Name exp)
+                                                                   (Int 1))))
                                                                (Symbol slice)
-                                                                (Nil)))
+                                                                (Subscript 
+                                                                 (Name args)
+                                                                 (Symbol positional))))
                                                              (If 
                                                               (BinOp:In 
-                                                               (Nil)
+                                                               (Subscript 
+                                                                (Name exp)
+                                                                (Int 0))
                                                                (Array 
                                                                 (Symbol unary)))
                                                               (Block 
@@ -1771,14 +2347,20 @@
                                                                 (Symbol op)
                                                                  (Call op
                                                                   (args: 
-                                                                   (Nil)))
+                                                                   (Subscript 
+                                                                    (Name exp)
+                                                                    (Int 1))))
                                                                 (Symbol operand)
                                                                  (Call convert
                                                                   (args: 
-                                                                   (Nil)))))
+                                                                   (Subscript 
+                                                                    (Name exp)
+                                                                    (Int 2))))))
                                                               (If 
                                                                (BinOp:In 
-                                                                (Nil)
+                                                                (Subscript 
+                                                                 (Name exp)
+                                                                 (Int 0))
                                                                 (Array 
                                                                  (Symbol int)))
                                                                (Block 
@@ -1786,12 +2368,18 @@
                                                                  (Symbol type)
                                                                   (Symbol int)
                                                                  (Symbol value)
-                                                                  (Nil)
+                                                                  (Subscript 
+                                                                   (Name exp)
+                                                                   (Int 1))
                                                                  (Symbol location)
-                                                                  (Nil)))
+                                                                  (Subscript 
+                                                                   (Name exp)
+                                                                   (Int 2))))
                                                                (If 
                                                                 (BinOp:In 
-                                                                 (Nil)
+                                                                 (Subscript 
+                                                                  (Name exp)
+                                                                  (Int 0))
                                                                  (Array 
                                                                   (Symbol float)))
                                                                 (Block 
@@ -1799,12 +2387,18 @@
                                                                   (Symbol type)
                                                                    (Symbol float)
                                                                   (Symbol value)
-                                                                   (Nil)
+                                                                   (Subscript 
+                                                                    (Name exp)
+                                                                    (Int 1))
                                                                   (Symbol location)
-                                                                   (Nil)))
+                                                                   (Subscript 
+                                                                    (Name exp)
+                                                                    (Int 2))))
                                                                 (If 
                                                                  (BinOp:In 
-                                                                  (Nil)
+                                                                  (Subscript 
+                                                                   (Name exp)
+                                                                   (Int 0))
                                                                   (Array 
                                                                    (Symbol regexp_literal)))
                                                                  (Block 
@@ -1812,16 +2406,24 @@
                                                                    (Name regexp)
                                                                    (Call convert
                                                                     (args: 
-                                                                     (Nil))))
+                                                                     (Subscript 
+                                                                      (Name exp)
+                                                                      (Int 1)))))
                                                                   (Assign 
-                                                                   (Nil)
+                                                                   (Subscript 
+                                                                    (Name regexp)
+                                                                    (Symbol regexp_end))
                                                                    (Call convert
                                                                     (args: 
-                                                                     (Nil))))
+                                                                     (Subscript 
+                                                                      (Name exp)
+                                                                      (Int 2)))))
                                                                   (Name regexp))
                                                                  (If 
                                                                   (BinOp:In 
-                                                                   (Nil)
+                                                                   (Subscript 
+                                                                    (Name exp)
+                                                                    (Int 0))
                                                                    (Array 
                                                                     (Symbol regexp_new)))
                                                                   (Block 
@@ -1830,7 +2432,9 @@
                                                                      (Symbol regexp)))
                                                                   (If 
                                                                    (BinOp:In 
-                                                                    (Nil)
+                                                                    (Subscript 
+                                                                     (Name exp)
+                                                                     (Int 0))
                                                                     (Array 
                                                                      (Symbol regexp_add)))
                                                                    (Block 
@@ -1840,41 +2444,63 @@
                                                                      (Symbol pattern)
                                                                       (Call convert
                                                                        (args: 
-                                                                        (Nil)))))
+                                                                        (Subscript 
+                                                                         (Name exp)
+                                                                         (Int 2))))))
                                                                    (If 
                                                                     (BinOp:In 
-                                                                     (Nil)
+                                                                     (Subscript 
+                                                                      (Name exp)
+                                                                      (Int 0))
                                                                      (Array 
                                                                       (Symbol regexp_end)))
                                                                     (Block 
                                                                      (Call make_string
                                                                       (args: 
-                                                                       (Nil)
-                                                                       (Nil))))
+                                                                       (Subscript 
+                                                                        (Name exp)
+                                                                        (Int 1))
+                                                                       (Subscript 
+                                                                        (Name exp)
+                                                                        (Int 2)))))
                                                                     (If 
                                                                      (BinOp:In 
-                                                                      (Nil)
+                                                                      (Subscript 
+                                                                       (Name exp)
+                                                                       (Int 0))
                                                                       (Array 
                                                                        (Symbol backref)))
                                                                      (Block 
                                                                       (Call make_string
                                                                        (args: 
-                                                                        (Nil)
-                                                                        (Nil))))
+                                                                        (Subscript 
+                                                                         (Name exp)
+                                                                         (Int 1))
+                                                                        (Subscript 
+                                                                         (Name exp)
+                                                                         (Int 2)))))
                                                                      (If 
                                                                       (BinOp:In 
-                                                                       (Nil)
+                                                                       (Subscript 
+                                                                        (Name exp)
+                                                                        (Int 0))
                                                                        (Array 
                                                                         (Symbol tstring_content)
                                                                         (Symbol CHAR)))
                                                                       (Block 
                                                                        (Call make_string
                                                                         (args: 
-                                                                         (Nil)
-                                                                         (Nil))))
+                                                                         (Subscript 
+                                                                          (Name exp)
+                                                                          (Int 1))
+                                                                         (Subscript 
+                                                                          (Name exp)
+                                                                          (Int 2)))))
                                                                       (If 
                                                                        (BinOp:In 
-                                                                        (Nil)
+                                                                        (Subscript 
+                                                                         (Name exp)
+                                                                         (Int 0))
                                                                         (Array 
                                                                          (Symbol string_content)
                                                                          (Symbol xstring_new)))
@@ -1884,7 +2510,9 @@
                                                                           (String ))))
                                                                        (If 
                                                                         (BinOp:In 
-                                                                         (Nil)
+                                                                         (Subscript 
+                                                                          (Name exp)
+                                                                          (Int 0))
                                                                          (Array 
                                                                           (Symbol string_add)
                                                                           (Symbol xstring_add)
@@ -1894,19 +2522,27 @@
                                                                           (BinOp:Or 
                                                                            (BinOp:Or 
                                                                             (UnaryOp:Not 
-                                                                             (Nil))
+                                                                             (Subscript 
+                                                                              (Name exp)
+                                                                              (Int 1)))
                                                                             (BinOp:Equal 
-                                                                             (Nil)
+                                                                             (Subscript 
+                                                                              (Name exp)
+                                                                              (Int 1))
                                                                              (Array 
                                                                               (Symbol string_content))))
                                                                            (BinOp:Equal 
-                                                                            (Nil)
+                                                                            (Subscript 
+                                                                             (Name exp)
+                                                                             (Int 1))
                                                                             (Array 
                                                                              (Symbol xstring_new))))
                                                                           (Block 
                                                                            (Call convert
                                                                             (args: 
-                                                                             (Nil))))
+                                                                             (Subscript 
+                                                                              (Name exp)
+                                                                              (Int 2)))))
                                                                           (Block 
                                                                            (Dict  
                                                                             (Symbol type)
@@ -1918,14 +2554,20 @@
                                                                             (Symbol left)
                                                                              (Call convert
                                                                               (args: 
-                                                                               (Nil)))
+                                                                               (Subscript 
+                                                                                (Name exp)
+                                                                                (Int 1))))
                                                                             (Symbol right)
                                                                              (Call convert
                                                                               (args: 
-                                                                               (Nil)))))))
+                                                                               (Subscript 
+                                                                                (Name exp)
+                                                                                (Int 2))))))))
                                                                         (If 
                                                                          (BinOp:In 
-                                                                          (Nil)
+                                                                          (Subscript 
+                                                                           (Name exp)
+                                                                           (Int 0))
                                                                           (Array 
                                                                            (Symbol string_concat)
                                                                            (Symbol xstring_concat)))
@@ -1934,28 +2576,40 @@
                                                                            (args: 
                                                                             (Array 
                                                                              (Symbol binary)
-                                                                             (Nil)
+                                                                             (Subscript 
+                                                                              (Name exp)
+                                                                              (Int 1))
                                                                              (Symbol +)
-                                                                             (Nil)))))
+                                                                             (Subscript 
+                                                                              (Name exp)
+                                                                              (Int 2))))))
                                                                          (If 
                                                                           (BinOp:In 
-                                                                           (Nil)
+                                                                           (Subscript 
+                                                                            (Name exp)
+                                                                            (Int 0))
                                                                            (Array 
                                                                             (Symbol hash)))
                                                                           (Block 
                                                                            (If 
-                                                                            (Nil)
+                                                                            (Subscript 
+                                                                             (Name exp)
+                                                                             (Int 1))
                                                                             (Block 
                                                                              (Call convert
                                                                               (args: 
-                                                                               (Nil))))
+                                                                               (Subscript 
+                                                                                (Name exp)
+                                                                                (Int 1)))))
                                                                             (Block 
                                                                              (Dict  
                                                                               (Symbol type)
                                                                                (Symbol hash)))))
                                                                           (If 
                                                                            (BinOp:In 
-                                                                            (Nil)
+                                                                            (Subscript 
+                                                                             (Name exp)
+                                                                             (Int 0))
                                                                             (Array 
                                                                              (Symbol assoclist_from_args)
                                                                              (Symbol bare_assoc_hash)))
@@ -1966,10 +2620,14 @@
                                                                              (Symbol entries)
                                                                               (Call convert_array
                                                                                (args: 
-                                                                                (Nil)))))
+                                                                                (Subscript 
+                                                                                 (Name exp)
+                                                                                 (Int 1))))))
                                                                            (If 
                                                                             (BinOp:In 
-                                                                             (Nil)
+                                                                             (Subscript 
+                                                                              (Name exp)
+                                                                              (Int 0))
                                                                              (Array 
                                                                               (Symbol assoc_new)))
                                                                             (Block 
@@ -1979,14 +2637,20 @@
                                                                               (Symbol key)
                                                                                (Call convert
                                                                                 (args: 
-                                                                                 (Nil)))
+                                                                                 (Subscript 
+                                                                                  (Name exp)
+                                                                                  (Int 1))))
                                                                               (Symbol value)
                                                                                (Call convert
                                                                                 (args: 
-                                                                                 (Nil)))))
+                                                                                 (Subscript 
+                                                                                  (Name exp)
+                                                                                  (Int 2))))))
                                                                             (If 
                                                                              (BinOp:In 
-                                                                              (Nil)
+                                                                              (Subscript 
+                                                                               (Name exp)
+                                                                               (Int 0))
                                                                               (Array 
                                                                                (Symbol const_path_ref)
                                                                                (Symbol const_path_field)))
@@ -1997,14 +2661,20 @@
                                                                                (Symbol value)
                                                                                 (Call convert
                                                                                  (args: 
-                                                                                  (Nil)))
+                                                                                  (Subscript 
+                                                                                   (Name exp)
+                                                                                   (Int 1))))
                                                                                (Symbol attr)
                                                                                 (Call convert
                                                                                  (args: 
-                                                                                  (Nil)))))
+                                                                                  (Subscript 
+                                                                                   (Name exp)
+                                                                                   (Int 2))))))
                                                                              (If 
                                                                               (BinOp:In 
-                                                                               (Nil)
+                                                                               (Subscript 
+                                                                                (Name exp)
+                                                                                (Int 0))
                                                                                (Array 
                                                                                 (Symbol field)))
                                                                               (Block 
@@ -2014,14 +2684,20 @@
                                                                                 (Symbol value)
                                                                                  (Call convert
                                                                                   (args: 
-                                                                                   (Nil)))
+                                                                                   (Subscript 
+                                                                                    (Name exp)
+                                                                                    (Int 1))))
                                                                                 (Symbol attr)
                                                                                  (Call convert
                                                                                   (args: 
-                                                                                   (Nil)))))
+                                                                                   (Subscript 
+                                                                                    (Name exp)
+                                                                                    (Int 3))))))
                                                                               (If 
                                                                                (BinOp:In 
-                                                                                (Nil)
+                                                                                (Subscript 
+                                                                                 (Name exp)
+                                                                                 (Int 0))
                                                                                 (Array 
                                                                                  (Symbol void_stmt)))
                                                                                (Block 
@@ -2030,7 +2706,9 @@
                                                                                   (Symbol void)))
                                                                                (If 
                                                                                 (BinOp:In 
-                                                                                 (Nil)
+                                                                                 (Subscript 
+                                                                                  (Name exp)
+                                                                                  (Int 0))
                                                                                  (Array 
                                                                                   (Symbol yield0)))
                                                                                 (Block 
@@ -2039,7 +2717,9 @@
                                                                                    (Symbol yield)))
                                                                                 (If 
                                                                                  (BinOp:In 
-                                                                                  (Nil)
+                                                                                  (Subscript 
+                                                                                   (Name exp)
+                                                                                   (Int 0))
                                                                                   (Array 
                                                                                    (Symbol return0)))
                                                                                  (Block 
@@ -2048,7 +2728,9 @@
                                                                                     (Symbol return)))
                                                                                  (If 
                                                                                   (BinOp:In 
-                                                                                   (Nil)
+                                                                                   (Subscript 
+                                                                                    (Name exp)
+                                                                                    (Int 0))
                                                                                    (Array 
                                                                                     (Symbol break)))
                                                                                   (Block 
@@ -2057,7 +2739,9 @@
                                                                                      (Symbol break)))
                                                                                   (If 
                                                                                    (BinOp:In 
-                                                                                    (Nil)
+                                                                                    (Subscript 
+                                                                                     (Name exp)
+                                                                                     (Int 0))
                                                                                     (Array 
                                                                                      (Symbol retry)))
                                                                                    (Block 
@@ -2066,7 +2750,9 @@
                                                                                       (Symbol retry)))
                                                                                    (If 
                                                                                     (BinOp:In 
-                                                                                     (Nil)
+                                                                                     (Subscript 
+                                                                                      (Name exp)
+                                                                                      (Int 0))
                                                                                      (Array 
                                                                                       (Symbol redo)))
                                                                                     (Block 
@@ -2075,7 +2761,9 @@
                                                                                        (Symbol redo)))
                                                                                     (If 
                                                                                      (BinOp:In 
-                                                                                      (Nil)
+                                                                                      (Subscript 
+                                                                                       (Name exp)
+                                                                                       (Int 0))
                                                                                       (Array 
                                                                                        (Symbol defined)))
                                                                                      (Block 
@@ -2089,26 +2777,36 @@
                                                                                        (Symbol operand)
                                                                                         (Call convert
                                                                                          (args: 
-                                                                                          (Nil)))))
+                                                                                          (Subscript 
+                                                                                           (Name exp)
+                                                                                           (Int 1))))))
                                                                                      (If 
                                                                                       (BinOp:In 
-                                                                                       (Nil)
+                                                                                       (Subscript 
+                                                                                        (Name exp)
+                                                                                        (Int 0))
                                                                                        (Array 
                                                                                         (Symbol return)
                                                                                         (Symbol yield)))
                                                                                       (Block 
                                                                                        (Dict  
                                                                                         (Symbol type)
-                                                                                         (Nil)
+                                                                                         (Subscript 
+                                                                                          (Name exp)
+                                                                                          (Int 0))
                                                                                         (Symbol value)
                                                                                          (Call args_to_array
                                                                                           (args: 
                                                                                            (Call convert
                                                                                             (args: 
-                                                                                             (Nil)))))))
+                                                                                             (Subscript 
+                                                                                              (Name exp)
+                                                                                              (Int 1))))))))
                                                                                       (If 
                                                                                        (BinOp:In 
-                                                                                        (Nil)
+                                                                                        (Subscript 
+                                                                                         (Name exp)
+                                                                                         (Int 0))
                                                                                         (Array 
                                                                                          (Symbol string_embexpr)))
                                                                                        (Block 
@@ -2118,10 +2816,14 @@
                                                                                          (Symbol value)
                                                                                           (Call convert
                                                                                            (args: 
-                                                                                            (Nil)))))
+                                                                                            (Subscript 
+                                                                                             (Name exp)
+                                                                                             (Int 1))))))
                                                                                        (If 
                                                                                         (BinOp:In 
-                                                                                         (Nil)
+                                                                                         (Subscript 
+                                                                                          (Name exp)
+                                                                                          (Int 0))
                                                                                          (Array 
                                                                                           (Symbol var_ref)
                                                                                           (Symbol var_field)
@@ -2149,7 +2851,9 @@
                                                                                         (Block 
                                                                                          (Call convert
                                                                                           (args: 
-                                                                                           (Nil))))
+                                                                                           (Subscript 
+                                                                                            (Name exp)
+                                                                                            (Int 1)))))
                                                                                         (Block 
                                                                                          (Call banner
                                                                                           (args: 
@@ -2175,7 +2879,9 @@
       (Block 
        (If 
         (BinOp:Equal 
-         (Nil)
+         (Subscript 
+          (Name exp)
+          (Int 0))
          (Symbol when))
         (Block 
          (If 
@@ -2197,7 +2903,9 @@
                (args: 
                 (Call convert
                  (args: 
-                  (Nil))))))))
+                  (Subscript 
+                   (Name exp)
+                   (Int 1)))))))))
           (Block 
            (Assign 
             (Name test)
@@ -2205,7 +2913,9 @@
              (args: 
               (Call convert
                (args: 
-                (Nil))))))))
+                (Subscript 
+                 (Name exp)
+                 (Int 1)))))))))
          (Assign 
           (Name ret)
           (Dict  
@@ -2216,26 +2926,38 @@
            (Symbol body)
             (Call convert
              (args: 
-              (Nil)))))
+              (Subscript 
+               (Name exp)
+               (Int 2))))))
          (If 
-          (Nil)
+          (Subscript 
+           (Name exp)
+           (Int 3))
           (Block 
            (Assign 
-            (Nil)
+            (Subscript 
+             (Name ret)
+             (Symbol else))
             (Call convert_when
              (args: 
-              (Nil)
+              (Subscript 
+               (Name exp)
+               (Int 3))
               (Name value)))))
           (Nil))
          (Name ret))
         (If 
          (BinOp:Equal 
-          (Nil)
+          (Subscript 
+           (Name exp)
+           (Int 0))
           (Symbol else))
          (Block 
           (Call convert
            (args: 
-            (Nil))))
+            (Subscript 
+             (Name exp)
+             (Int 1)))))
          (Nil))))))
     (Func args_to_array
      (args: 
@@ -2244,14 +2966,18 @@
       (Block 
        (If 
         (BinOp:Equal 
-         (Nil)
+         (Subscript 
+          (Name args)
+          (Symbol type))
          (Symbol args))
         (Block 
          (Dict  
           (Symbol type)
            (Symbol array)
           (Symbol elts)
-           (Nil)))
+           (Subscript 
+            (Name args)
+            (Symbol positional))))
         (Block 
          (Name args))))))
     (Func make_string
@@ -2276,7 +3002,9 @@
         (Name location)
         (Block 
          (Assign 
-          (Nil)
+          (Subscript 
+           (Name ret)
+           (Symbol location))
           (Name location)))
         (Nil))
        (Name ret))))
@@ -2445,7 +3173,13 @@
   (Block 
    (Call parse_dump
     (args: 
-     (Nil)
-     (Nil)
-     (Nil))))
+     (Subscript 
+      (Name ARGV)
+      (Int 0))
+     (Subscript 
+      (Name ARGV)
+      (Int 1))
+     (Subscript 
+      (Name ARGV)
+      (Int 2)))))
   (Nil)))

@@ -1,0 +1,11 @@
+(Block 
+ (Func demo
+  (body: 
+   (Block 
+    (Array 
+     (Int 1)
+     (Int 2)
+     (Int 3)))))
+ (Subscript 
+  (Call demo)
+  (Int 1)))

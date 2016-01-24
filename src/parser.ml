@@ -129,6 +129,10 @@ let rec convert json =
     let doc  = convert_to_s json "doc" in
     (* Printf.printf "doc: %s\n" doc; *)
     make_module_node name body doc ff ss ee
+  | "subscript" ->
+    let value = convert_elem json "value" in
+    let slice = convert_list (json |> member "slice") in
+    make_subscript_node value slice ff ss ee 
   | "class" ->
     let name = convert_elem json "name" in
     let super = convert_elem json "super" in

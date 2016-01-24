@@ -10,16 +10,16 @@ let run_dir dir =
   let files = Array.to_list (Sys.readdir dir) in
   let rb = List.filter files ~f:(fun x -> extension x = "rb") in
   List.map ~f:(fun f ->
-      (* Printf.printf "\nnow: %s\n" f; *)
+      Printf.printf "\nnow: %s\n" f;
       let p = Filename.concat dir f in
       let b = Filename.chop_extension p in
       begin
         let j = run_dump_ruby p in
-        (* let ast = parse_file j in *)
-        (* let ast_str = node_to_str ast 0 in *)
+        let ast = parse_file j in
+        let ast_str = node_to_str ast 0 in
         let log = Printf.sprintf "%s.log" b in
         let cmp = Printf.sprintf "%s.cmp" b in (
-          (* Out_channel.write_all log ~data: ast_str; *)
+          Out_channel.write_all log ~data: ast_str;
           (* Sys.command_exn (Printf.sprintf "rm %s" j); *)
           if cmp_file cmp log then (
             (* Printf.printf "pass: %s\n" p; *)

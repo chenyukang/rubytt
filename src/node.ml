@@ -71,10 +71,11 @@ and
   | Starred of node
   | Array of node list
   | Module of node * node * string
+  | Subscript of node * node list 
   | Class of node * node * node * string * bool
   | Handler of node list * node * node * node
   | Dict of node list * node list
-  | Call of node * node list * node * node 
+  | Call of node * node list * node * node
   | Func of node * node list * node list * node list * node list * node list *
             node * node * string
 and
@@ -310,6 +311,16 @@ let make_undef_node targets file s e =
     parent = None;
   } in
   add_children node targets;
+  node
+
+let make_subscript_node name slice file s e =
+  let node = {
+    info = {path=""; file = file; ss = s; ee = e };
+    ty = Subscript(name, slice);
+    parent = None;
+  } in
+  set_node_parent name node;
+  add_children node slice;
   node
 
 let make_module_node name body doc file s e =

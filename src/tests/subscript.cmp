@@ -1,0 +1,35 @@
+(Block 
+ (Assign 
+  (Name a)
+  (Array 
+   (Int 1)
+   (Int 2)
+   (Int 3)))
+ (Call puts
+  (args: 
+   (Call 
+    (Attribute 
+     (Subscript 
+      (Name a)
+      (Int 0))
+     (Name inspect)))))
+ (Call puts
+  (args: 
+   (Call 
+    (Attribute 
+     (Subscript 
+      (Name a)
+      (Array 
+       (Int 0)
+       (Int 1)))
+     (Name inspect)))))
+ (Call puts
+  (args: 
+   (Call 
+    (Attribute 
+     (Subscript 
+      (Name a)
+      (Array 
+       (Int 0)
+       (Int 1)))
+     (Name inspect))))))

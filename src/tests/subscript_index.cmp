@@ -1,0 +1,13 @@
+(Block 
+ (Assign 
+  (Name a)
+  (Array 
+   (Array )
+   (Array )))
+ (Call puts
+  (args: 
+   (Subscript 
+    (Subscript 
+     (Name a)
+     (Int 1))
+    (Int 2)))))
