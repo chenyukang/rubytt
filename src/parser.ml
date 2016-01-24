@@ -176,7 +176,8 @@ let rec convert json =
                keys := !keys @ [_k];
                vals := !vals @ [_v];
            )
-       | _ -> Printf.printf ("type error convert hash\n") );
+       | `Null -> ();
+       | _ -> failwith "type error convert hash\n" );
       make_dict_node !keys !vals ff ss ee
     )
   | "binary" -> (
@@ -212,7 +213,8 @@ and
   match stmts with
   | `List(v) ->
     List.map v ~f:(fun e -> convert e)
-  | _ -> Printf.printf "type error in convert_list\n"; []
+  | `Null -> []
+  | _ -> failwith "type error in convert_list\n"; []
 and
   convert_op op =
   let o = convert_to_s op "name" in
