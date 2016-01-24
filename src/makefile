@@ -19,7 +19,7 @@ native:
 	$(OCAMLBUILD) $(TARGET).native
 
 test:
-	$(OCAMLBUILD) test.byte; ./test.byte
+	$(OCAMLBUILD) test.native; ./test.native
 
 update:
 	$(OCAMLBUILD) update_test.byte; ./update_test.byte

@@ -1,2 +1,8 @@
 (Block 
- other)
+ (If 
+  (Name true)
+  (Block 
+   (Call puts
+    (args: 
+     (String yes))))
+  (Nil)))

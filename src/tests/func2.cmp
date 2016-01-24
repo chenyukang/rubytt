@@ -4,5 +4,12 @@
    (Name meal))
   (body: 
    (Block 
-    other
-    (String delicious!))))
+    (If 
+     (Call block_given?)
+     (Block 
+      (Call 
+       (Attribute 
+        (Name meal)
+        (Name each))))
+     (Nil))
+    (String delicious!)))))

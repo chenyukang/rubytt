@@ -74,7 +74,9 @@ and
   | Class of node * node * node * string * bool
   | Handler of node list * node * node * node
   | Dict of node list * node list
-  | Func of node * node list * node list * node list * node * node * string 
+  | Call of node * node list * node * node 
+  | Func of node * node list * node list * node list * node list * node list *
+            node * node * string
 and
   node = {
   info: node_info;
@@ -349,14 +351,28 @@ let make_dict_node keys vals file s e =
   add_children node vals;
   node
 
-let make_func_node binder positional defaults after_rest block_arg body doc file s e =
+let make_func_node binder positional defaults kw_ks kw_vs
+    after_rest block_arg body doc file s e =
   let node = {
     info = {path=""; file = file; ss = s; ee = e };
-    ty = Func(binder, positional, defaults, after_rest, block_arg, body, doc);
+    ty = Func(binder, positional, defaults, kw_ks, kw_vs,
+              after_rest, block_arg, body, doc);
     parent = None;
   } in
   add_children node positional;
   add_children node defaults;
   add_children node after_rest;
+  add_children node kw_ks;
+  add_children node kw_vs;
   add_children node [binder; body; block_arg];
+  node
+
+let make_call_node func pos star block_arg file s e =
+  let node = {
+    info = {path=""; file = file; ss = s; ee = e };
+    ty = Call(func, pos, star, block_arg);
+    parent = None;
+  } in
+  add_children node pos;
+  add_children node [func; star; block_arg];
   node

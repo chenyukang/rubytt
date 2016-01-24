@@ -2,4 +2,15 @@
  (Func test
   (body: 
    (Block 
-    other)))
+    (If 
+     (BinOp:And 
+      (Name true)
+      (Name true))
+     (Block 
+      (Call puts
+       (args: 
+        (String yes))))
+     (Block 
+      (Call puts
+       (args: 
+        (String no)))))))))

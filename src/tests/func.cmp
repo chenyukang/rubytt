@@ -7,4 +7,6 @@
    (Name c))
   (body: 
    (Block 
-    (Nil))))
+    (Call puts
+     (args: 
+      (Name s)))))))

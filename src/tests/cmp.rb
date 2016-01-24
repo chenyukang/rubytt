@@ -1,3 +1,3 @@
-a = "hell" <=> 1
+a = "hello" <=> 1
 puts a.class
 

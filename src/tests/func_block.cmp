@@ -1,0 +1,18 @@
+(Block 
+ (Func contrived
+  (args: 
+   (Name a))
+  (body: 
+   (Block 
+    (Call 
+     (Attribute 
+      (Name f)
+      (Name call))
+     (args: 
+      (Name a)))
+    (Yield 
+     (Array 
+      (Name a))))))
+ (Call contrived
+  (args: 
+   (Int 25))))

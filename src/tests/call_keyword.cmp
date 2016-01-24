@@ -1,0 +1,26 @@
+(Block 
+ (Func my_puts
+  (args: 
+   (Name a)
+   (Name b))
+  (kw: 
+   (Name c) --> 
+   (Int 3))
+  (body: 
+   (Block 
+    (Call puts
+     (args: 
+      (Call 
+       (Attribute 
+        (Array 
+         (Name a)
+         (Name b)
+         (Name c))
+        (Name inspect))))))))
+ (Call my_puts
+  (args: 
+   (Int 3)
+   (Int 2)
+   (Dict  
+    (Name c)
+     (Int 1)))))

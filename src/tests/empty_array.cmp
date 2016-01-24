@@ -2,4 +2,9 @@
  (Assign 
   (Name a)
   (Array ))
- (Nil))
+ (Call puts
+  (args: 
+   (Call 
+    (Attribute 
+     (Name a)
+     (Name size))))))

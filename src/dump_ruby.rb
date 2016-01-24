@@ -369,6 +369,10 @@ class AstSimplifier
           if exp[4]
             ret[:after_rest] = convert_array(exp[4])
           end
+          if exp[5]
+            ret[:kw_keys] = convert_array(exp[5].map{ |x| x[0]})
+            ret[:kw_values] = convert_array(exp[5].map{ |x| x[1] })
+          end
           if exp[6]
             ret[:rest_kw] = convert(exp[6])
           end
@@ -919,6 +923,7 @@ end.parse!
 
 
 if ARGV.length > 0
+  puts "yes"
   parse_dump(ARGV[0], ARGV[1], ARGV[2])
 end
 

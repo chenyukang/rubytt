@@ -78,6 +78,11 @@ let rec node_to_str node depth =
       "(Attribute " ^
       node_to_str n1 (depth+1) ^
       node_to_str n2 (depth+1) ^ ")"
+    | If(n1, n2, n3) ->
+      "(If " ^
+      node_to_str n1 (depth+1) ^
+      node_to_str n2 (depth+1) ^
+      node_to_str n3 (depth+1) ^ ")"
     | Try(n1, n2, n3, n4) ->
       "(Try " ^
       node_to_str n1 (depth+1) ^
@@ -123,7 +128,21 @@ let rec node_to_str node depth =
       node_to_str n1 (depth+1) ^
       node_to_str n2 (depth+1) ^
       node_to_str n3 (depth+2) ^ ")"
-    | Func(name, args, _, after_rest, _, body, _) ->
+    | Call(name, pos, _, _) ->
+      let res = ref "(Call " in (
+      match name.ty with
+      | Name(s, _) -> res := !res ^ s
+      | _ -> res := !res ^ node_to_str name (depth+1));
+      if (List.length pos) <> 0 then (
+        res := !res ^ nw (depth+1) ^ "(args: ";
+        List.iter pos ~f:(fun x ->
+            let a = node_to_str x (depth+2) in
+            res := !res ^ a;
+          );
+        res := !res ^ ")";
+      );
+      !res ^ ")"
+    | Func(name, args, _, kw_ks, kw_vs, after_rest, _, body, _) ->
       let n = match name.ty with
         | Name(s, _) -> s
         | _ -> "__" in
@@ -136,6 +155,15 @@ let rec node_to_str node depth =
           );
         res := !res ^ ")"
       );
+      if (List.length kw_ks) <> 0 then (
+        res := !res ^ nw (depth+1) ^ "(kw: ";
+        for i = 0 to (List.length kw_ks - 1) do
+          let k = node_to_str (List.nth_exn kw_ks i) (depth+2) in
+          let v = node_to_str (List.nth_exn kw_vs i) (depth+2) in
+          res := !res ^ k ^ " --> " ^ v;
+        done;
+        res := !res ^ ")"
+      );
       if (List.length after_rest) <> 0 then (
         res := !res ^ nw (depth+1) ^ "(after_rest: ";
         List.iter after_rest ~f:(fun x ->
@@ -144,9 +172,9 @@ let rec node_to_str node depth =
           );
         res := !res ^ ")";
       );
-      res := !res ^ nw (depth+1) ^ "(body: " ^
-             node_to_str body (depth+2) ^ ")";
-      !res
+      res := !res ^ nw (depth+1) ^
+             "(body: " ^ node_to_str body (depth+2) ^ ")";
+      !res ^ ")"
     | _ -> "other" in
   match depth with
   | 0 -> str

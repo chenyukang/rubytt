@@ -1,0 +1,11 @@
+(Block 
+ (Func puts
+  (args: 
+   (Name a))
+  (body: 
+   (Block 
+    (Void))))
+ (Call puts
+  (args: 
+   (Int 1)
+   (Int 2))))

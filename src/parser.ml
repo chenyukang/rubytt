@@ -150,8 +150,26 @@ let rec convert json =
     let defaults = convert_list (params |> member "defaults") in
     let after_rest = convert_list (params |> member "after_rest") in
     let block_arg = convert_elem params "blockarg" in
+    let kw_keys = convert_list (params |> member "kw_keys") in
+    let kw_values = convert_list (params |> member "kw_values") in
     let doc = convert_to_s json "doc" in
-    make_func_node binder positional defaults after_rest block_arg body doc ff ss ee
+    make_func_node binder positional defaults
+      kw_keys kw_values after_rest
+      block_arg body doc ff ss ee
+  | "call" -> (
+    let func = convert_elem json "func" in
+    let args = json |> member "args" in
+    match args with
+      | `Null -> (
+          make_call_node func [] nil_node nil_node ff ss ee
+        )
+      | _ -> (
+          let positional = convert_list (args |> member "positional") in
+          let star = convert_elem args "star" in
+          let block_arg = convert_elem args "blockarg" in
+          make_call_node func positional star block_arg ff ss ee
+        )
+    )
   | "args" -> (
       let pos = (json |> member "positional") in
       match pos with

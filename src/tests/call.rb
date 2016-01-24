@@ -1,4 +1,4 @@
-def puts a
+def puts a, *left
 end
 
-puts 1
+puts 1, 2

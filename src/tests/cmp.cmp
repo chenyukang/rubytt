@@ -2,6 +2,11 @@
  (Assign 
   (Name a)
   (BinOp:Cmp 
-   (String hell)
+   (String hello)
    (Int 1)))
- (Nil))
+ (Call puts
+  (args: 
+   (Call 
+    (Attribute 
+     (Name a)
+     (Name class))))))

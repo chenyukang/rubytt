@@ -1,14 +1,28 @@
 (Block 
- (Nil)
- (Nil)
- (Nil)
- (Nil)
+ (Call require
+  (args: 
+   (String ripper)))
+ (Call require
+  (args: 
+   (String pp)))
+ (Call require
+  (args: 
+   (String json)))
+ (Call require
+  (args: 
+   (String optparse)))
  (Func banner
   (args: 
    (Name s))
   (body: 
    (Block 
-    (Nil)))
+    (Call puts
+     (args: 
+      (BinOp:Add 
+       (BinOp:Add 
+        (String \033[93m)
+        (Nil))
+       (String :\033[0m)))))))
  (Class 
   (Name AstSimplifier)
   (Nil)
@@ -23,22 +37,77 @@
         (Name filename))
        (Assign 
         (Name f)
-        (Nil))
+        (Call 
+         (Attribute 
+          (Name File)
+          (Name open))
+         (args: 
+          (Name filename)
+          (String rb))))
        (Assign 
         (Name src)
-        (Nil))
-       (Nil)
+        (Call 
+         (Attribute 
+          (Name f)
+          (Name read))))
+       (Call 
+        (Attribute 
+         (Name f)
+         (Name close)))
        (Assign 
         (Name detected_enc)
-        (Nil))
-       other
-       (Nil)
+        (Call detect_encoding
+         (args: 
+          (Name src))))
+       (If 
+        (Name detected_enc)
+        (Block 
+         (Try 
+          (Block 
+           (Call 
+            (Attribute 
+             (Name src)
+             (Name force_encoding))
+            (args: 
+             (Name detected_enc))))
+          (Handler 
+            (Nil)
+            (Block 
+             (Call 
+              (Attribute 
+               (Name src)
+               (Name force_encoding))
+              (args: 
+               (String utf-8))))
+            (Nil)
+          (Nil)
+          (Nil)))
+        (Block 
+         (Call 
+          (Attribute 
+           (Name src)
+           (Name force_encoding))
+          (args: 
+           (String utf-8)))))
+       (Call 
+        (Attribute 
+         (Name src)
+         (Name encode))
+        (args: 
+         (String utf-8)
+         (Dict  
+          (Symbol undef)
+           (Symbol replace)
+          (Symbol invalid)
+           (Symbol replace)
+          (Symbol universal_newline)
+           (Name true))))
        (Assign 
         (Name line_starts)
         (Array 
          (Int 0)))
-       (Nil)
-       (Nil)))
+       (Call find_line_starts)
+       (Call find_docs))))
     (Func detect_encoding
      (args: 
       (Name s))
@@ -46,18 +115,51 @@
       (Block 
        (Assign 
         (Name header)
-        (Nil))
-       other))
+        (Call 
+         (Attribute 
+          (Name s)
+          (Name match))
+         (args: 
+          (String ^.*\n?.*\n?))))
+       (If 
+        (BinOp:And 
+         (Name header)
+         (Nil))
+        (Block 
+         (Assign 
+          (Name matched)
+          (Call 
+           (Attribute 
+            (Nil)
+            (Name match))
+           (args: 
+            (String ^\s*#.*coding\s*[:=]\s*([\w\d\-]+)))))
+         (If 
+          (BinOp:And 
+           (Name matched)
+           (Nil))
+          (Block 
+           (Nil))
+          (Nil)))
+        (Nil)))))
     (Func find_line_starts
      (body: 
       (Block 
        (Assign 
         (Name lines)
-        (Nil))
+        (Call 
+         (Attribute 
+          (Name src)
+          (Name split))
+         (args: 
+          other)))
        (Assign 
         (Name total)
         (Int 0))
-       (Nil)))
+       (Call 
+        (Attribute 
+         (Name lines)
+         (Name each))))))
     (Func find_docs
      (body: 
       (Block 
@@ -66,7 +168,12 @@
         (Dict  ))
        (Assign 
         (Name lines)
-        (Nil))
+        (Call 
+         (Attribute 
+          (Name src)
+          (Name split))
+         (args: 
+          other)))
        (Assign 
         (Name first_line)
         (Name nil))
@@ -76,7 +183,10 @@
        (Assign 
         (Name accum)
         (Array ))
-       (Nil)))
+       (Call 
+        (Attribute 
+         (Name lines)
+         (Name each))))))
     (Func node_start
      (args: 
       (Name loc))
@@ -90,13 +200,27 @@
         (Nil))
        (BinOp:Add 
         (Nil)
-        (Name col))))
+        (Name col)))))
     (Func ident_end
      (args: 
       (Name start_idx))
      (body: 
       (Block 
-       other
+       (If 
+        (BinOp:And 
+         (BinOp:Equal 
+          (Nil)
+          (String [))
+         (BinOp:Equal 
+          (Nil)
+          (String ])))
+        (Block 
+         (Return 
+          (Array 
+           (BinOp:Add 
+            (Name start_idx)
+            (Int 2)))))
+        (Nil))
        (Assign 
         (Name idx)
         (Name start_idx))
@@ -104,30 +228,70 @@
         (BinOp:And 
          (BinOp:Lt 
           (Name idx)
-          (Nil))
-         (Nil))
+          (Call 
+           (Attribute 
+            (Name src)
+            (Name length))))
+         (Call 
+          (Attribute 
+           (Nil)
+           (Name match))
+          (args: 
+           other)))
         (Block 
          (Assign 
           (Name idx)
           (BinOp:Add 
            (Name idx)
            (Int 1)))))
-       (Name idx)))
+       (Name idx))))
     (Func simplify
      (body: 
       (Block 
        (Assign 
         (Name tree)
+        (Call 
+         (Attribute 
+          (Call 
+           (Attribute 
+            (Attribute 
+             (Name Ripper)
+             (Name SexpBuilder))
+            (Name new))
+           (args: 
+            (Name src)))
+          (Name parse))))
+       (If 
+        (Nil)
+        (Block 
+         (Call banner
+          (args: 
+           (String sexp)))
+         (Call pp
+          (args: 
+           (Name tree))))
         (Nil))
-       other
        (Assign 
         (Name simplified)
-        (Nil))
+        (Call convert
+         (args: 
+          (Name tree))))
        (Assign 
         (Name simplified)
+        (Call find_locations
+         (args: 
+          (Name simplified))))
+       (If 
+        (Nil)
+        (Block 
+         (Call banner
+          (args: 
+           (String simplified)))
+         (Call pp
+          (args: 
+           (Name simplified))))
         (Nil))
-       other
-       (Name simplified)))
+       (Name simplified))))
     (Func find_locations
      (args: 
       (Name obj))
@@ -138,7 +302,234 @@
          (Name obj))
         (body: 
          (Block 
-          other))
+          (If 
+           (Call 
+            (Attribute 
+             (Name obj)
+             (Name is_a?))
+            (args: 
+             (Name Hash)))
+           (Block 
+            (Assign 
+             (Name ret)
+             (Dict  ))
+            (Assign 
+             (Name whole_start)
+             (Name nil))
+            (Assign 
+             (Name whole_end)
+             (Name nil))
+            (Assign 
+             (Name start_line)
+             (Name nil))
+            (Assign 
+             (Name end_line)
+             (Name nil))
+            (Call 
+             (Attribute 
+              (Name obj)
+              (Name each)))
+            (If 
+             (Name whole_start)
+             (Block 
+              (If 
+               (BinOp:And 
+                (Call 
+                 (Attribute 
+                  (Array 
+                   (Symbol module)
+                   (Symbol class)
+                   (Symbol def)
+                   (Symbol lambda)
+                   (Symbol if)
+                   (Symbol begin)
+                   (Symbol while)
+                   (Symbol for))
+                  (Name               .include?))
+                 (args: 
+                  (Nil)))
+                (UnaryOp:Not 
+                 (Nil)))
+               (Block 
+                (Assign 
+                 (Name locator)
+                 (Name whole_end))
+                (While 
+                 (BinOp:And 
+                  (BinOp:Or 
+                   (BinOp:Lt 
+                    (Name locator)
+                    (Call 
+                     (Attribute 
+                      (Name src)
+                      (Name length))))
+                   (BinOp:Eq 
+                    (Name locator)
+                    (Call 
+                     (Attribute 
+                      (Name src)
+                      (Name length)))))
+                  (UnaryOp:Not 
+                   (Call 
+                    (Attribute 
+                     (String end)
+                     (Name eql?))
+                    (args: 
+                     (Nil)))))
+                 (Block 
+                  (Assign 
+                   (Name locator)
+                   (BinOp:Add 
+                    (Name locator)
+                    (Int 1)))))
+                (If 
+                 (Call 
+                  (Attribute 
+                   (String end)
+                   (Name eql?))
+                  (args: 
+                   (Nil)))
+                 (Block 
+                  (Assign 
+                   (Name whole_end)
+                   (BinOp:Add 
+                    (Name locator)
+                    (Call 
+                     (Attribute 
+                      (String end)
+                      (Name length))))))
+                 (Nil)))
+               (Nil))
+              (Assign 
+               (Nil)
+               (Name whole_start))
+              (Assign 
+               (Nil)
+               (Name whole_end))
+              (Assign 
+               (Nil)
+               (Name start_line))
+              (Assign 
+               (Nil)
+               (Name end_line))
+              (If 
+               (Call 
+                (Attribute 
+                 (Array 
+                  (Symbol module)
+                  (Symbol class)
+                  (Symbol def))
+                 (Name include?))
+                (args: 
+                 (Nil)))
+               (Block 
+                (Assign 
+                 (Name doc)
+                 (Nil))
+                (If 
+                 (Name doc)
+                 (Block 
+                  (Assign 
+                   (Nil)
+                   (Name doc)))
+                 (Nil)))
+               (Nil)))
+             (Nil))
+            (Return 
+             (Array 
+              (Name ret)
+              (Name whole_start)
+              (Name whole_end)
+              (Name start_line)
+              (Name end_line))))
+           (If 
+            (Call 
+             (Attribute 
+              (Name obj)
+              (Name is_a?))
+             (args: 
+              (Name Array)))
+            (Block 
+             (Assign 
+              (Name ret)
+              (Array ))
+             (Assign 
+              (Name whole_start)
+              (Name nil))
+             (Assign 
+              (Name whole_end)
+              (Name nil))
+             (For 
+              (Name v)
+              (Name obj)
+              (Block 
+               (Assign 
+                (Array 
+                 (Name new_node)
+                 (Name start_idx)
+                 (Name end_idx)
+                 (Name line_start)
+                 (Name line_end))
+                (Call find1
+                 (args: 
+                  (Name v))))
+               (Call 
+                (Attribute 
+                 (Name ret)
+                 (Name push))
+                (args: 
+                 (Name new_node)))
+               (If 
+                (BinOp:And 
+                 (Name start_idx)
+                 (Block 
+                  (BinOp:Or 
+                   (UnaryOp:Not 
+                    (Name whole_start))
+                   (BinOp:Gt 
+                    (Name whole_start)
+                    (Name start_idx)))))
+                (Block 
+                 (Assign 
+                  (Name whole_start)
+                  (Name start_idx))
+                 (Assign 
+                  (Name start_line)
+                  (Name line_start)))
+                (Nil))
+               (If 
+                (BinOp:And 
+                 (Name end_idx)
+                 (Block 
+                  (BinOp:Or 
+                   (UnaryOp:Not 
+                    (Name whole_end))
+                   (BinOp:Lt 
+                    (Name whole_end)
+                    (Name end_idx)))))
+                (Block 
+                 (Assign 
+                  (Name whole_end)
+                  (Name end_idx))
+                 (Assign 
+                  (Name end_line)
+                  (Name line_end)))
+                (Nil))))
+             (Return 
+              (Array 
+               (Name ret)
+               (Name whole_start)
+               (Name whole_end)
+               (Name start_line)
+               (Name end_line))))
+            (Block 
+             (Return 
+              (Array 
+               (Name obj)
+               (Name nil)
+               (Name nil)
+               (Name nil)
+               (Name nil)))))))))
        (Assign 
         (Array 
          (Name node)
@@ -146,33 +537,1723 @@
          (Name _)
          (Name _)
          (Name _))
-        (Nil))
-       (Name node)))
+        (Call find1
+         (args: 
+          (Name obj))))
+       (Name node))))
     (Func convert
      (args: 
       (Name exp))
      (body: 
       (Block 
-       other))
+       (If 
+        (BinOp:Equal 
+         (Name exp)
+         (Name nil))
+        (Block 
+         (Dict  ))
+        (If 
+         (BinOp:Equal 
+          (Name exp)
+          (Name false))
+         (Block 
+          (Dict  
+           (Symbol type)
+            (Symbol name)
+           (Symbol id)
+            (String false)))
+         (If 
+          (BinOp:Equal 
+           (Name exp)
+           (Name true))
+          (Block 
+           (Dict  
+            (Symbol type)
+             (Symbol name)
+            (Symbol id)
+             (String true)))
+          (Block 
+           (If 
+            (BinOp:In 
+             (Nil)
+             (Array 
+              (Symbol program)))
+            (Block 
+             (Dict  
+              (Symbol type)
+               (Symbol program)
+              (Symbol body)
+               (Call convert
+                (args: 
+                 (Nil)))
+              (Symbol filename)
+               (Name filename)))
+            (If 
+             (BinOp:In 
+              (Nil)
+              (Array 
+               (Symbol module)))
+             (Block 
+              (Dict  
+               (Symbol type)
+                (Symbol module)
+               (Symbol name)
+                (Call convert
+                 (args: 
+                  (Nil)))
+               (Symbol body)
+                (Call convert
+                 (args: 
+                  (Nil)))
+               (Symbol filename)
+                (Name filename)))
+             (If 
+              (BinOp:In 
+               (Nil)
+               (Array 
+                (Symbol ident)
+                (Symbol op)))
+              (Block 
+               (Dict  
+                (Symbol type)
+                 (Symbol name)
+                (Symbol id)
+                 (Nil)
+                (Symbol location)
+                 (Nil)))
+              (If 
+               (BinOp:In 
+                (Nil)
+                (Array 
+                 (Symbol gvar)))
+               (Block 
+                (Dict  
+                 (Symbol type)
+                  (Symbol gvar)
+                 (Symbol id)
+                  (Nil)
+                 (Symbol location)
+                  (Nil)))
+               (If 
+                (BinOp:In 
+                 (Nil)
+                 (Array 
+                  (Symbol dyna_symbol)))
+                (Block 
+                 (Dict  
+                  (Symbol type)
+                   (Symbol name)
+                  (Symbol id)
+                   (String #dyna_symbol)))
+                (If 
+                 (BinOp:In 
+                  (Nil)
+                  (Array 
+                   (Symbol symbol)))
+                 (Block 
+                  (Assign 
+                   (Name sym)
+                   (Call convert
+                    (args: 
+                     (Nil))))
+                  (Assign 
+                   (Nil)
+                   (Symbol symbol))
+                  (Name sym))
+                 (If 
+                  (BinOp:In 
+                   (Nil)
+                   (Array 
+                    (Symbol cvar)))
+                  (Block 
+                   (Dict  
+                    (Symbol type)
+                     (Symbol cvar)
+                    (Symbol id)
+                     (Nil)
+                    (Symbol location)
+                     (Nil)))
+                  (If 
+                   (BinOp:In 
+                    (Nil)
+                    (Array 
+                     (Symbol ivar)))
+                   (Block 
+                    (Dict  
+                     (Symbol type)
+                      (Symbol ivar)
+                     (Symbol id)
+                      (Nil)
+                     (Symbol location)
+                      (Nil)))
+                   (If 
+                    (BinOp:In 
+                     (Nil)
+                     (Array 
+                      (Symbol const)
+                      (Symbol kw)
+                      (Symbol backtick)))
+                    (Block 
+                     (Dict  
+                      (Symbol type)
+                       (Symbol name)
+                      (Symbol id)
+                       (Nil)
+                      (Symbol location)
+                       (Nil)))
+                    (If 
+                     (BinOp:In 
+                      (Nil)
+                      (Array 
+                       (Symbol label)))
+                     (Block 
+                      (Dict  
+                       (Symbol type)
+                        (Symbol name)
+                       (Symbol id)
+                        (Nil)
+                       (Symbol location)
+                        (Nil)))
+                     (If 
+                      (BinOp:In 
+                       (Nil)
+                       (Array 
+                        (Symbol def)))
+                      (Block 
+                       (Dict  
+                        (Symbol type)
+                         (Symbol def)
+                        (Symbol name)
+                         (Call convert
+                          (args: 
+                           (Nil)))
+                        (Symbol params)
+                         (Call convert
+                          (args: 
+                           (Nil)))
+                        (Symbol body)
+                         (Call convert
+                          (args: 
+                           (Nil)))))
+                      (If 
+                       (BinOp:In 
+                        (Nil)
+                        (Array 
+                         (Symbol defs)))
+                       (Block 
+                        (Assign 
+                         (Name name)
+                         (Dict  
+                          (Symbol type)
+                           (Symbol attribute)
+                          (Symbol value)
+                           (Call convert
+                            (args: 
+                             (Nil)))
+                          (Symbol attr)
+                           (Call convert
+                            (args: 
+                             (Nil)))))
+                        (Dict  
+                         (Symbol type)
+                          (Symbol def)
+                         (Symbol name)
+                          (Name name)
+                         (Symbol params)
+                          (Call convert
+                           (args: 
+                            (Nil)))
+                         (Symbol body)
+                          (Call convert
+                           (args: 
+                            (Nil)))))
+                       (If 
+                        (BinOp:In 
+                         (Nil)
+                         (Array 
+                          (Symbol do_block)))
+                        (Block 
+                         (Dict  
+                          (Symbol type)
+                           (Symbol lambda)
+                          (Symbol params)
+                           (Call convert
+                            (args: 
+                             (Nil)))
+                          (Symbol body)
+                           (Call convert
+                            (args: 
+                             (Nil)))))
+                        (If 
+                         (BinOp:In 
+                          (Nil)
+                          (Array 
+                           (Symbol lambda)))
+                         (Block 
+                          (Dict  
+                           (Symbol type)
+                            (Symbol lambda)
+                           (Symbol params)
+                            (Call convert
+                             (args: 
+                              (Nil)))
+                           (Symbol body)
+                            (Call convert
+                             (args: 
+                              (Nil)))))
+                         (If 
+                          (BinOp:In 
+                           (Nil)
+                           (Array 
+                            (Symbol brace_block)))
+                          (Block 
+                           (Dict  
+                            (Symbol type)
+                             (Symbol lambda)
+                            (Symbol params)
+                             (Call convert
+                              (args: 
+                               (Nil)))
+                            (Symbol body)
+                             (Call convert
+                              (args: 
+                               (Nil)))))
+                          (If 
+                           (BinOp:In 
+                            (Nil)
+                            (Array 
+                             (Symbol params)))
+                           (Block 
+                            (Assign 
+                             (Name ret)
+                             (Dict  
+                              (Symbol type)
+                               (Symbol params)))
+                            (If 
+                             (Nil)
+                             (Block 
+                              (Assign 
+                               (Nil)
+                               (Call convert_array
+                                (args: 
+                                 (Nil)))))
+                             (Nil))
+                            (If 
+                             (Nil)
+                             (Block 
+                              (If 
+                               (UnaryOp:Not 
+                                (Nil))
+                               (Block 
+                                (Assign 
+                                 (Nil)
+                                 (Array )))
+                               (Nil))
+                              (Call 
+                               (Attribute 
+                                (Nil)
+                                (Name each)))
+                              (Assign 
+                               (Nil)
+                               (Call 
+                                (Attribute 
+                                 (Nil)
+                                 (Name map)))))
+                             (Nil))
+                            (If 
+                             (BinOp:And 
+                              (Nil)
+                              (UnaryOp:Not 
+                               (BinOp:Equal 
+                                (Nil)
+                                (Int 0))))
+                             (Block 
+                              (Assign 
+                               (Nil)
+                               (Call convert
+                                (args: 
+                                 (Nil)))))
+                             (Nil))
+                            (If 
+                             (Nil)
+                             (Block 
+                              (Assign 
+                               (Nil)
+                               (Call convert_array
+                                (args: 
+                                 (Nil)))))
+                             (Nil))
+                            (If 
+                             (Nil)
+                             (Block 
+                              (Assign 
+                               (Nil)
+                               (Call convert
+                                (args: 
+                                 (Nil)))))
+                             (Nil))
+                            (If 
+                             (Nil)
+                             (Block 
+                              (Assign 
+                               (Nil)
+                               (Call convert
+                                (args: 
+                                 (Nil)))))
+                             (Nil))
+                            (Name ret))
+                           (If 
+                            (BinOp:In 
+                             (Nil)
+                             (Array 
+                              (Symbol block_var)))
+                            (Block 
+                             (Assign 
+                              (Name params)
+                              (Call convert
+                               (args: 
+                                (Nil))))
+                             (If 
+                              (Nil)
+                              (Block 
+                               (Assign 
+                                (Nil)
+                                (Call convert_array
+                                 (args: 
+                                  (Nil)))))
+                              (Nil))
+                             (Name params))
+                            (If 
+                             (BinOp:In 
+                              (Nil)
+                              (Array 
+                               (Symbol class)))
+                             (Block 
+                              (Assign 
+                               (Name ret)
+                               (Dict  
+                                (Symbol type)
+                                 (Symbol class)
+                                (Symbol static)
+                                 (Name false)
+                                (Symbol name)
+                                 (Call convert
+                                  (args: 
+                                   (Nil)))
+                                (Symbol body)
+                                 (Call convert
+                                  (args: 
+                                   (Nil)))))
+                              (If 
+                               (Nil)
+                               (Block 
+                                (Assign 
+                                 (Nil)
+                                 (Call convert
+                                  (args: 
+                                   (Nil)))))
+                               (Nil))
+                              (Name ret))
+                             (If 
+                              (BinOp:In 
+                               (Nil)
+                               (Array 
+                                (Symbol sclass)))
+                              (Block 
+                               (Dict  
+                                (Symbol type)
+                                 (Symbol class)
+                                (Symbol static)
+                                 (Name true)
+                                (Symbol name)
+                                 (Call convert
+                                  (args: 
+                                   (Nil)))
+                                (Symbol body)
+                                 (Call convert
+                                  (args: 
+                                   (Nil)))))
+                              (If 
+                               (BinOp:In 
+                                (Nil)
+                                (Array 
+                                 (Symbol method_add_block)))
+                               (Block 
+                                (Assign 
+                                 (Name call)
+                                 (Call convert
+                                  (args: 
+                                   (Nil))))
+                                (If 
+                                 (Nil)
+                                 (Block 
+                                  (Assign 
+                                   (Nil)
+                                   (Call convert
+                                    (args: 
+                                     (Nil)))))
+                                 (Block 
+                                  (Assign 
+                                   (Nil)
+                                   (Dict  
+                                    (Symbol blockarg)
+                                     (Call convert
+                                      (args: 
+                                       (Nil)))))))
+                                (Name call))
+                               (If 
+                                (BinOp:In 
+                                 (Nil)
+                                 (Array 
+                                  (Symbol method_add_arg)))
+                                (Block 
+                                 (Assign 
+                                  (Name call)
+                                  (Call convert
+                                   (args: 
+                                    (Nil))))
+                                 (Assign 
+                                  (Nil)
+                                  (Call convert
+                                   (args: 
+                                    (Nil))))
+                                 (Name call))
+                                (If 
+                                 (BinOp:In 
+                                  (Nil)
+                                  (Array 
+                                   (Symbol vcall)))
+                                 (Block 
+                                  (Dict  
+                                   (Symbol type)
+                                    (Symbol call)
+                                   (Symbol func)
+                                    (Call convert
+                                     (args: 
+                                      (Nil)))))
+                                 (If 
+                                  (BinOp:In 
+                                   (Nil)
+                                   (Array 
+                                    (Symbol command)))
+                                  (Block 
+                                   (Dict  
+                                    (Symbol type)
+                                     (Symbol call)
+                                    (Symbol func)
+                                     (Call convert
+                                      (args: 
+                                       (Nil)))
+                                    (Symbol args)
+                                     (Call convert
+                                      (args: 
+                                       (Nil)))))
+                                  (If 
+                                   (BinOp:In 
+                                    (Nil)
+                                    (Array 
+                                     (Symbol command_call)))
+                                   (Block 
+                                    (If 
+                                     (BinOp:Or 
+                                      (BinOp:Equal 
+                                       (Nil)
+                                       (Name #dyna_symbol))
+                                      (BinOp:Equal 
+                                       (Nil)
+                                       (Name #dyna_symbol)))
+                                     (Block 
+                                      (Assign 
+                                       (Name func)
+                                       (Dict  
+                                        (Symbol type)
+                                         (Symbol attribute)
+                                        (Symbol value)
+                                         (Call convert
+                                          (args: 
+                                           (Nil)))
+                                        (Symbol attr)
+                                         (Call convert
+                                          (args: 
+                                           (Nil))))))
+                                     (Block 
+                                      (Assign 
+                                       (Name func)
+                                       (Call convert
+                                        (args: 
+                                         (Nil))))))
+                                    (Dict  
+                                     (Symbol type)
+                                      (Symbol call)
+                                     (Symbol func)
+                                      (Name func)
+                                     (Symbol args)
+                                      (Call convert
+                                       (args: 
+                                        (Nil)))))
+                                   (If 
+                                    (BinOp:In 
+                                     (Nil)
+                                     (Array 
+                                      (Symbol super)
+                                      (Symbol zsuper)))
+                                    (Block 
+                                     (Dict  
+                                      (Symbol type)
+                                       (Symbol call)
+                                      (Symbol func)
+                                       (Dict  
+                                        (Symbol type)
+                                         (Symbol name)
+                                        (Symbol id)
+                                         (Symbol super))
+                                      (Symbol args)
+                                       (Call convert
+                                        (args: 
+                                         (Nil)))))
+                                    (If 
+                                     (BinOp:In 
+                                      (Nil)
+                                      (Array 
+                                       (Symbol call)
+                                       (Symbol fcall)))
+                                     (Block 
+                                      (If 
+                                       (BinOp:And 
+                                        (UnaryOp:Not 
+                                         (BinOp:Equal 
+                                          (Nil)
+                                          (Symbol call)))
+                                        (Block 
+                                         (BinOp:Or 
+                                          (BinOp:Equal 
+                                           (Nil)
+                                           (Name #dyna_symbol))
+                                          (BinOp:Equal 
+                                           (Nil)
+                                           (Name #dyna_symbol)))))
+                                       (Block 
+                                        (Assign 
+                                         (Name func)
+                                         (Dict  
+                                          (Symbol type)
+                                           (Symbol attribute)
+                                          (Symbol value)
+                                           (Call convert
+                                            (args: 
+                                             (Nil)))
+                                          (Symbol attr)
+                                           (Call convert
+                                            (args: 
+                                             (Nil))))))
+                                       (Block 
+                                        (Assign 
+                                         (Name func)
+                                         (Call convert
+                                          (args: 
+                                           (Nil))))))
+                                      (Dict  
+                                       (Symbol type)
+                                        (Symbol call)
+                                       (Symbol func)
+                                        (Name func)))
+                                     (If 
+                                      (BinOp:In 
+                                       (Nil)
+                                       (Array 
+                                        (Symbol args_new)
+                                        (Symbol mlhs_new)
+                                        (Symbol mrhs_new)
+                                        (Symbol words_new)
+                                        (Symbol word_new)
+                                        (Symbol qwords_new)
+                                        (Symbol qsymbols_new)
+                                        (Symbol symbols_new)))
+                                      (Block 
+                                       (Dict  
+                                        (Symbol type)
+                                         (Symbol args)
+                                        (Symbol positional)
+                                         (Array )))
+                                      (If 
+                                       (BinOp:In 
+                                        (Nil)
+                                        (Array 
+                                         (Symbol args_add)
+                                         (Symbol mlhs_add)
+                                         (Symbol mrhs_add)
+                                         (Symbol word_add)
+                                         (Symbol words_add)
+                                         (Symbol qwords_add)
+                                         (Symbol qsymbols_add)
+                                         (Symbol symbols_add)))
+                                       (Block 
+                                        (Assign 
+                                         (Name args)
+                                         (Call convert
+                                          (args: 
+                                           (Nil))))
+                                        (Call 
+                                         (Attribute 
+                                          (Nil)
+                                          (Name push))
+                                         (args: 
+                                          (Call convert
+                                           (args: 
+                                            (Nil)))))
+                                        (Name args))
+                                       (If 
+                                        (BinOp:In 
+                                         (Nil)
+                                         (Array 
+                                          (Symbol args_add_star)
+                                          (Symbol mrhs_add_star)
+                                          (Symbol mlhs_add_star)))
+                                        (Block 
+                                         (Assign 
+                                          (Name args)
+                                          (Call convert
+                                           (args: 
+                                            (Nil))))
+                                         (If 
+                                          (Nil)
+                                          (Block 
+                                           (Assign 
+                                            (Nil)
+                                            (Call convert
+                                             (args: 
+                                              (Nil)))))
+                                          (Nil))
+                                         (Name args))
+                                        (If 
+                                         (BinOp:In 
+                                          (Nil)
+                                          (Array 
+                                           (Symbol args_add_block)))
+                                         (Block 
+                                          (Assign 
+                                           (Name args)
+                                           (Call convert
+                                            (args: 
+                                             (Nil))))
+                                          (If 
+                                           (Nil)
+                                           (Block 
+                                            (Assign 
+                                             (Nil)
+                                             (Call convert
+                                              (args: 
+                                               (Nil)))))
+                                           (Nil))
+                                          (Name args))
+                                         (If 
+                                          (BinOp:In 
+                                           (Nil)
+                                           (Array 
+                                            (Symbol assign)
+                                            (Symbol massign)))
+                                          (Block 
+                                           (Dict  
+                                            (Symbol type)
+                                             (Symbol assign)
+                                            (Symbol target)
+                                             (Call convert
+                                              (args: 
+                                               (Nil)))
+                                            (Symbol value)
+                                             (Call convert
+                                              (args: 
+                                               (Nil)))))
+                                          (If 
+                                           (BinOp:In 
+                                            (Nil)
+                                            (Array 
+                                             (Symbol opassign)))
+                                           (Block 
+                                            (Assign 
+                                             (Name operation)
+                                             (Call convert
+                                              (args: 
+                                               (Array 
+                                                (Symbol binary)
+                                                (Nil)
+                                                (Nil)
+                                                (Nil)))))
+                                            (Dict  
+                                             (Symbol type)
+                                              (Symbol assign)
+                                             (Symbol target)
+                                              (Call convert
+                                               (args: 
+                                                (Nil)))
+                                             (Symbol value)
+                                              (Name operation)))
+                                           (If 
+                                            (BinOp:In 
+                                             (Nil)
+                                             (Array 
+                                              (Symbol dot2)
+                                              (Symbol dot3)))
+                                            (Block 
+                                             (Dict  
+                                              (Symbol type)
+                                               (Nil)
+                                              (Symbol from)
+                                               (Call convert
+                                                (args: 
+                                                 (Nil)))
+                                              (Symbol to)
+                                               (Call convert
+                                                (args: 
+                                                 (Nil)))))
+                                            (If 
+                                             (BinOp:In 
+                                              (Nil)
+                                              (Array 
+                                               (Symbol alias)
+                                               (Symbol var_alias)))
+                                             (Block 
+                                              (Dict  
+                                               (Symbol type)
+                                                (Symbol assign)
+                                               (Symbol target)
+                                                (Call convert
+                                                 (args: 
+                                                  (Nil)))
+                                               (Symbol value)
+                                                (Call convert
+                                                 (args: 
+                                                  (Nil)))))
+                                             (If 
+                                              (BinOp:In 
+                                               (Nil)
+                                               (Array 
+                                                (Symbol undef)))
+                                              (Block 
+                                               (Dict  
+                                                (Symbol type)
+                                                 (Symbol undef)
+                                                (Symbol names)
+                                                 (Call convert_array
+                                                  (args: 
+                                                   (Nil)))))
+                                              (If 
+                                               (BinOp:In 
+                                                (Nil)
+                                                (Array 
+                                                 (Symbol if)
+                                                 (Symbol if_mod)
+                                                 (Symbol elsif)
+                                                 (Symbol ifop)))
+                                               (Block 
+                                                (Assign 
+                                                 (Name ret)
+                                                 (Dict  
+                                                  (Symbol type)
+                                                   (Symbol if)
+                                                  (Symbol test)
+                                                   (Call convert
+                                                    (args: 
+                                                     (Nil)))
+                                                  (Symbol body)
+                                                   (Call convert
+                                                    (args: 
+                                                     (Nil)))))
+                                                (If 
+                                                 (Nil)
+                                                 (Block 
+                                                  (Assign 
+                                                   (Nil)
+                                                   (Call convert
+                                                    (args: 
+                                                     (Nil)))))
+                                                 (Nil))
+                                                (If 
+                                                 (BinOp:Equal 
+                                                  (Nil)
+                                                  (Symbol if_mod))
+                                                 (Block 
+                                                  (Assign 
+                                                   (Nil)
+                                                   (Name true)))
+                                                 (Nil))
+                                                (Name ret))
+                                               (If 
+                                                (BinOp:In 
+                                                 (Nil)
+                                                 (Array 
+                                                  (Symbol case)))
+                                                (Block 
+                                                 (If 
+                                                  (Nil)
+                                                  (Block 
+                                                   (Assign 
+                                                    (Name value)
+                                                    (Call convert
+                                                     (args: 
+                                                      (Nil)))))
+                                                  (Block 
+                                                   (Assign 
+                                                    (Name value)
+                                                    (Name nil))))
+                                                 (Call convert_when
+                                                  (args: 
+                                                   (Nil)
+                                                   (Name value))))
+                                                (If 
+                                                 (BinOp:In 
+                                                  (Nil)
+                                                  (Array 
+                                                   (Symbol while)
+                                                   (Symbol while_mod)))
+                                                 (Block 
+                                                  (If 
+                                                   (BinOp:Equal 
+                                                    (Nil)
+                                                    (Symbol while_mod))
+                                                   (Block 
+                                                    (Assign 
+                                                     (Name mod)
+                                                     (Name true)))
+                                                   (Block 
+                                                    (Assign 
+                                                     (Name mod)
+                                                     (Name false))))
+                                                  (Dict  
+                                                   (Symbol type)
+                                                    (Symbol while)
+                                                   (Symbol test)
+                                                    (Call convert
+                                                     (args: 
+                                                      (Nil)))
+                                                   (Symbol body)
+                                                    (Call convert
+                                                     (args: 
+                                                      (Nil)))
+                                                   (Symbol mod)
+                                                    (Name mod)))
+                                                 (If 
+                                                  (BinOp:In 
+                                                   (Nil)
+                                                   (Array 
+                                                    (Symbol until)
+                                                    (Symbol until_mod)))
+                                                  (Block 
+                                                   (If 
+                                                    (BinOp:Equal 
+                                                     (Nil)
+                                                     (Symbol until_mod))
+                                                    (Block 
+                                                     (Assign 
+                                                      (Name mod)
+                                                      (Name true)))
+                                                    (Block 
+                                                     (Assign 
+                                                      (Name mod)
+                                                      (Name false))))
+                                                   (Dict  
+                                                    (Symbol type)
+                                                     (Symbol while)
+                                                    (Symbol test)
+                                                     (Call negate
+                                                      (args: 
+                                                       (Call convert
+                                                        (args: 
+                                                         (Nil)))))
+                                                    (Symbol body)
+                                                     (Call convert
+                                                      (args: 
+                                                       (Nil)))
+                                                    (Symbol mod)
+                                                     (Name mod)))
+                                                  (If 
+                                                   (BinOp:In 
+                                                    (Nil)
+                                                    (Array 
+                                                     (Symbol unless)
+                                                     (Symbol unless_mod)))
+                                                   (Block 
+                                                    (If 
+                                                     (BinOp:Equal 
+                                                      (Nil)
+                                                      (Symbol unless_mod))
+                                                     (Block 
+                                                      (Assign 
+                                                       (Name mod)
+                                                       (Name true)))
+                                                     (Block 
+                                                      (Assign 
+                                                       (Name mod)
+                                                       (Name false))))
+                                                    (Assign 
+                                                     (Name ret)
+                                                     (Dict  
+                                                      (Symbol type)
+                                                       (Symbol if)
+                                                      (Symbol test)
+                                                       (Call negate
+                                                        (args: 
+                                                         (Call convert
+                                                          (args: 
+                                                           (Nil)))))
+                                                      (Symbol body)
+                                                       (Call convert
+                                                        (args: 
+                                                         (Nil)))
+                                                      (Symbol mod)
+                                                       (Name mod)))
+                                                    (If 
+                                                     (Nil)
+                                                     (Block 
+                                                      (Assign 
+                                                       (Nil)
+                                                       (Call convert
+                                                        (args: 
+                                                         (Nil)))))
+                                                     (Nil))
+                                                    (Name ret))
+                                                   (If 
+                                                    (BinOp:In 
+                                                     (Nil)
+                                                     (Array 
+                                                      (Symbol for)))
+                                                    (Block 
+                                                     (Dict  
+                                                      (Symbol type)
+                                                       (Symbol for)
+                                                      (Symbol target)
+                                                       (Call convert
+                                                        (args: 
+                                                         (Nil)))
+                                                      (Symbol iter)
+                                                       (Call convert
+                                                        (args: 
+                                                         (Nil)))
+                                                      (Symbol body)
+                                                       (Call convert
+                                                        (args: 
+                                                         (Nil)))))
+                                                    (If 
+                                                     (BinOp:In 
+                                                      (Nil)
+                                                      (Array 
+                                                       (Symbol begin)))
+                                                     (Block 
+                                                      (Assign 
+                                                       (Name bodystmt)
+                                                       (Nil))
+                                                      (Dict  
+                                                       (Symbol type)
+                                                        (Symbol begin)
+                                                       (Symbol body)
+                                                        (Call convert
+                                                         (args: 
+                                                          (Nil)))
+                                                       (Symbol rescue)
+                                                        (Call convert
+                                                         (args: 
+                                                          (Nil)))
+                                                       (Symbol else)
+                                                        (Call convert
+                                                         (args: 
+                                                          (Nil)))
+                                                       (Symbol ensure)
+                                                        (Call convert
+                                                         (args: 
+                                                          (Nil)))))
+                                                     (If 
+                                                      (BinOp:In 
+                                                       (Nil)
+                                                       (Array 
+                                                        (Symbol rescue)))
+                                                      (Block 
+                                                       (Assign 
+                                                        (Name ret)
+                                                        (Dict  
+                                                         (Symbol type)
+                                                          (Symbol rescue)))
+                                                       (If 
+                                                        (Nil)
+                                                        (Block 
+                                                         (If 
+                                                          (Call 
+                                                           (Attribute 
+                                                            (Nil)
+                                                            (Name is_a?))
+                                                           (args: 
+                                                            (Name Array)))
+                                                          (Block 
+                                                           (Assign 
+                                                            (Nil)
+                                                            (Call convert_array
+                                                             (args: 
+                                                              (Nil)))))
+                                                          (Block 
+                                                           (Assign 
+                                                            (Nil)
+                                                            (Nil)))))
+                                                        (Nil))
+                                                       (If 
+                                                        (Nil)
+                                                        (Block 
+                                                         (Assign 
+                                                          (Nil)
+                                                          (Call convert
+                                                           (args: 
+                                                            (Nil)))))
+                                                        (Nil))
+                                                       (If 
+                                                        (Nil)
+                                                        (Block 
+                                                         (Assign 
+                                                          (Nil)
+                                                          (Call convert
+                                                           (args: 
+                                                            (Nil)))))
+                                                        (Nil))
+                                                       (If 
+                                                        (Nil)
+                                                        (Block 
+                                                         (Assign 
+                                                          (Nil)
+                                                          (Call convert
+                                                           (args: 
+                                                            (Nil)))))
+                                                        (Nil))
+                                                       (Name ret))
+                                                      (If 
+                                                       (BinOp:In 
+                                                        (Nil)
+                                                        (Array 
+                                                         (Symbol rescue_mod)))
+                                                       (Block 
+                                                        (Dict  
+                                                         (Symbol type)
+                                                          (Symbol begin)
+                                                         (Symbol body)
+                                                          (Call convert
+                                                           (args: 
+                                                            (Nil)))
+                                                         (Symbol rescue)
+                                                          (Call convert
+                                                           (args: 
+                                                            (Nil)))
+                                                         (Symbol mod)
+                                                          (Name true)))
+                                                       (If 
+                                                        (BinOp:In 
+                                                         (Nil)
+                                                         (Array 
+                                                          (Symbol stmts_new)))
+                                                        (Block 
+                                                         (Dict  
+                                                          (Symbol type)
+                                                           (Symbol block)
+                                                          (Symbol stmts)
+                                                           (Array )))
+                                                        (If 
+                                                         (BinOp:In 
+                                                          (Nil)
+                                                          (Array 
+                                                           (Symbol stmts_add)))
+                                                         (Block 
+                                                          (Assign 
+                                                           (Name block)
+                                                           (Call convert
+                                                            (args: 
+                                                             (Nil))))
+                                                          (Assign 
+                                                           (Name stmt)
+                                                           (Call convert
+                                                            (args: 
+                                                             (Nil))))
+                                                          (Call 
+                                                           (Attribute 
+                                                            (Nil)
+                                                            (Name push))
+                                                           (args: 
+                                                            (Name stmt)))
+                                                          (Name block))
+                                                         (If 
+                                                          (BinOp:In 
+                                                           (Nil)
+                                                           (Array 
+                                                            (Symbol bodystmt)))
+                                                          (Block 
+                                                           (Assign 
+                                                            (Name block)
+                                                            (Call convert
+                                                             (args: 
+                                                              (Nil))))
+                                                           (If 
+                                                            (Nil)
+                                                            (Block 
+                                                             (Assign 
+                                                              (Name res)
+                                                              (Call convert
+                                                               (args: 
+                                                                (Nil))))
+                                                             (Call 
+                                                              (Attribute 
+                                                               (Nil)
+                                                               (Name push))
+                                                              (args: 
+                                                               (Name res))))
+                                                            (Nil))
+                                                           (Name block))
+                                                          (If 
+                                                           (BinOp:In 
+                                                            (Nil)
+                                                            (Array 
+                                                             (Symbol binary)))
+                                                           (Block 
+                                                            (Dict  
+                                                             (Symbol type)
+                                                              (Symbol binary)
+                                                             (Symbol left)
+                                                              (Call convert
+                                                               (args: 
+                                                                (Nil)))
+                                                             (Symbol op)
+                                                              (Call op
+                                                               (args: 
+                                                                (Nil)))
+                                                             (Symbol right)
+                                                              (Call convert
+                                                               (args: 
+                                                                (Nil)))))
+                                                           (If 
+                                                            (BinOp:In 
+                                                             (Nil)
+                                                             (Array 
+                                                              (Symbol array)))
+                                                            (Block 
+                                                             (Assign 
+                                                              (Name args)
+                                                              (Call convert
+                                                               (args: 
+                                                                (Nil))))
+                                                             (Dict  
+                                                              (Symbol type)
+                                                               (Symbol array)
+                                                              (Symbol elts)
+                                                               (Nil)))
+                                                            (If 
+                                                             (BinOp:In 
+                                                              (Nil)
+                                                              (Array 
+                                                               (Symbol aref)
+                                                               (Symbol aref_field)))
+                                                             (Block 
+                                                              (Assign 
+                                                               (Name args)
+                                                               (Call convert
+                                                                (args: 
+                                                                 (Nil))))
+                                                              (Dict  
+                                                               (Symbol type)
+                                                                (Symbol subscript)
+                                                               (Symbol value)
+                                                                (Call convert
+                                                                 (args: 
+                                                                  (Nil)))
+                                                               (Symbol slice)
+                                                                (Nil)))
+                                                             (If 
+                                                              (BinOp:In 
+                                                               (Nil)
+                                                               (Array 
+                                                                (Symbol unary)))
+                                                              (Block 
+                                                               (Dict  
+                                                                (Symbol type)
+                                                                 (Symbol unary)
+                                                                (Symbol op)
+                                                                 (Call op
+                                                                  (args: 
+                                                                   (Nil)))
+                                                                (Symbol operand)
+                                                                 (Call convert
+                                                                  (args: 
+                                                                   (Nil)))))
+                                                              (If 
+                                                               (BinOp:In 
+                                                                (Nil)
+                                                                (Array 
+                                                                 (Symbol int)))
+                                                               (Block 
+                                                                (Dict  
+                                                                 (Symbol type)
+                                                                  (Symbol int)
+                                                                 (Symbol value)
+                                                                  (Nil)
+                                                                 (Symbol location)
+                                                                  (Nil)))
+                                                               (If 
+                                                                (BinOp:In 
+                                                                 (Nil)
+                                                                 (Array 
+                                                                  (Symbol float)))
+                                                                (Block 
+                                                                 (Dict  
+                                                                  (Symbol type)
+                                                                   (Symbol float)
+                                                                  (Symbol value)
+                                                                   (Nil)
+                                                                  (Symbol location)
+                                                                   (Nil)))
+                                                                (If 
+                                                                 (BinOp:In 
+                                                                  (Nil)
+                                                                  (Array 
+                                                                   (Symbol regexp_literal)))
+                                                                 (Block 
+                                                                  (Assign 
+                                                                   (Name regexp)
+                                                                   (Call convert
+                                                                    (args: 
+                                                                     (Nil))))
+                                                                  (Assign 
+                                                                   (Nil)
+                                                                   (Call convert
+                                                                    (args: 
+                                                                     (Nil))))
+                                                                  (Name regexp))
+                                                                 (If 
+                                                                  (BinOp:In 
+                                                                   (Nil)
+                                                                   (Array 
+                                                                    (Symbol regexp_new)))
+                                                                  (Block 
+                                                                   (Dict  
+                                                                    (Symbol type)
+                                                                     (Symbol regexp)))
+                                                                  (If 
+                                                                   (BinOp:In 
+                                                                    (Nil)
+                                                                    (Array 
+                                                                     (Symbol regexp_add)))
+                                                                   (Block 
+                                                                    (Dict  
+                                                                     (Symbol type)
+                                                                      (Symbol regexp)
+                                                                     (Symbol pattern)
+                                                                      (Call convert
+                                                                       (args: 
+                                                                        (Nil)))))
+                                                                   (If 
+                                                                    (BinOp:In 
+                                                                     (Nil)
+                                                                     (Array 
+                                                                      (Symbol regexp_end)))
+                                                                    (Block 
+                                                                     (Call make_string
+                                                                      (args: 
+                                                                       (Nil)
+                                                                       (Nil))))
+                                                                    (If 
+                                                                     (BinOp:In 
+                                                                      (Nil)
+                                                                      (Array 
+                                                                       (Symbol backref)))
+                                                                     (Block 
+                                                                      (Call make_string
+                                                                       (args: 
+                                                                        (Nil)
+                                                                        (Nil))))
+                                                                     (If 
+                                                                      (BinOp:In 
+                                                                       (Nil)
+                                                                       (Array 
+                                                                        (Symbol tstring_content)
+                                                                        (Symbol CHAR)))
+                                                                      (Block 
+                                                                       (Call make_string
+                                                                        (args: 
+                                                                         (Nil)
+                                                                         (Nil))))
+                                                                      (If 
+                                                                       (BinOp:In 
+                                                                        (Nil)
+                                                                        (Array 
+                                                                         (Symbol string_content)
+                                                                         (Symbol xstring_new)))
+                                                                       (Block 
+                                                                        (Call make_string
+                                                                         (args: 
+                                                                          (String ))))
+                                                                       (If 
+                                                                        (BinOp:In 
+                                                                         (Nil)
+                                                                         (Array 
+                                                                          (Symbol string_add)
+                                                                          (Symbol xstring_add)
+                                                                          (Symbol qwords_add)))
+                                                                        (Block 
+                                                                         (If 
+                                                                          (BinOp:Or 
+                                                                           (BinOp:Or 
+                                                                            (UnaryOp:Not 
+                                                                             (Nil))
+                                                                            (BinOp:Equal 
+                                                                             (Nil)
+                                                                             (Array 
+                                                                              (Symbol string_content))))
+                                                                           (BinOp:Equal 
+                                                                            (Nil)
+                                                                            (Array 
+                                                                             (Symbol xstring_new))))
+                                                                          (Block 
+                                                                           (Call convert
+                                                                            (args: 
+                                                                             (Nil))))
+                                                                          (Block 
+                                                                           (Dict  
+                                                                            (Symbol type)
+                                                                             (Symbol binary)
+                                                                            (Symbol op)
+                                                                             (Call op
+                                                                              (args: 
+                                                                               (Symbol +)))
+                                                                            (Symbol left)
+                                                                             (Call convert
+                                                                              (args: 
+                                                                               (Nil)))
+                                                                            (Symbol right)
+                                                                             (Call convert
+                                                                              (args: 
+                                                                               (Nil)))))))
+                                                                        (If 
+                                                                         (BinOp:In 
+                                                                          (Nil)
+                                                                          (Array 
+                                                                           (Symbol string_concat)
+                                                                           (Symbol xstring_concat)))
+                                                                         (Block 
+                                                                          (Call convert
+                                                                           (args: 
+                                                                            (Array 
+                                                                             (Symbol binary)
+                                                                             (Nil)
+                                                                             (Symbol +)
+                                                                             (Nil)))))
+                                                                         (If 
+                                                                          (BinOp:In 
+                                                                           (Nil)
+                                                                           (Array 
+                                                                            (Symbol hash)))
+                                                                          (Block 
+                                                                           (If 
+                                                                            (Nil)
+                                                                            (Block 
+                                                                             (Call convert
+                                                                              (args: 
+                                                                               (Nil))))
+                                                                            (Block 
+                                                                             (Dict  
+                                                                              (Symbol type)
+                                                                               (Symbol hash)))))
+                                                                          (If 
+                                                                           (BinOp:In 
+                                                                            (Nil)
+                                                                            (Array 
+                                                                             (Symbol assoclist_from_args)
+                                                                             (Symbol bare_assoc_hash)))
+                                                                           (Block 
+                                                                            (Dict  
+                                                                             (Symbol type)
+                                                                              (Symbol hash)
+                                                                             (Symbol entries)
+                                                                              (Call convert_array
+                                                                               (args: 
+                                                                                (Nil)))))
+                                                                           (If 
+                                                                            (BinOp:In 
+                                                                             (Nil)
+                                                                             (Array 
+                                                                              (Symbol assoc_new)))
+                                                                            (Block 
+                                                                             (Dict  
+                                                                              (Symbol type)
+                                                                               (Symbol assoc)
+                                                                              (Symbol key)
+                                                                               (Call convert
+                                                                                (args: 
+                                                                                 (Nil)))
+                                                                              (Symbol value)
+                                                                               (Call convert
+                                                                                (args: 
+                                                                                 (Nil)))))
+                                                                            (If 
+                                                                             (BinOp:In 
+                                                                              (Nil)
+                                                                              (Array 
+                                                                               (Symbol const_path_ref)
+                                                                               (Symbol const_path_field)))
+                                                                             (Block 
+                                                                              (Dict  
+                                                                               (Symbol type)
+                                                                                (Symbol attribute)
+                                                                               (Symbol value)
+                                                                                (Call convert
+                                                                                 (args: 
+                                                                                  (Nil)))
+                                                                               (Symbol attr)
+                                                                                (Call convert
+                                                                                 (args: 
+                                                                                  (Nil)))))
+                                                                             (If 
+                                                                              (BinOp:In 
+                                                                               (Nil)
+                                                                               (Array 
+                                                                                (Symbol field)))
+                                                                              (Block 
+                                                                               (Dict  
+                                                                                (Symbol type)
+                                                                                 (Symbol attribute)
+                                                                                (Symbol value)
+                                                                                 (Call convert
+                                                                                  (args: 
+                                                                                   (Nil)))
+                                                                                (Symbol attr)
+                                                                                 (Call convert
+                                                                                  (args: 
+                                                                                   (Nil)))))
+                                                                              (If 
+                                                                               (BinOp:In 
+                                                                                (Nil)
+                                                                                (Array 
+                                                                                 (Symbol void_stmt)))
+                                                                               (Block 
+                                                                                (Dict  
+                                                                                 (Symbol type)
+                                                                                  (Symbol void)))
+                                                                               (If 
+                                                                                (BinOp:In 
+                                                                                 (Nil)
+                                                                                 (Array 
+                                                                                  (Symbol yield0)))
+                                                                                (Block 
+                                                                                 (Dict  
+                                                                                  (Symbol type)
+                                                                                   (Symbol yield)))
+                                                                                (If 
+                                                                                 (BinOp:In 
+                                                                                  (Nil)
+                                                                                  (Array 
+                                                                                   (Symbol return0)))
+                                                                                 (Block 
+                                                                                  (Dict  
+                                                                                   (Symbol type)
+                                                                                    (Symbol return)))
+                                                                                 (If 
+                                                                                  (BinOp:In 
+                                                                                   (Nil)
+                                                                                   (Array 
+                                                                                    (Symbol break)))
+                                                                                  (Block 
+                                                                                   (Dict  
+                                                                                    (Symbol type)
+                                                                                     (Symbol break)))
+                                                                                  (If 
+                                                                                   (BinOp:In 
+                                                                                    (Nil)
+                                                                                    (Array 
+                                                                                     (Symbol retry)))
+                                                                                   (Block 
+                                                                                    (Dict  
+                                                                                     (Symbol type)
+                                                                                      (Symbol retry)))
+                                                                                   (If 
+                                                                                    (BinOp:In 
+                                                                                     (Nil)
+                                                                                     (Array 
+                                                                                      (Symbol redo)))
+                                                                                    (Block 
+                                                                                     (Dict  
+                                                                                      (Symbol type)
+                                                                                       (Symbol redo)))
+                                                                                    (If 
+                                                                                     (BinOp:In 
+                                                                                      (Nil)
+                                                                                      (Array 
+                                                                                       (Symbol defined)))
+                                                                                     (Block 
+                                                                                      (Dict  
+                                                                                       (Symbol type)
+                                                                                        (Symbol unary)
+                                                                                       (Symbol op)
+                                                                                        (Call op
+                                                                                         (args: 
+                                                                                          (Symbol defined)))
+                                                                                       (Symbol operand)
+                                                                                        (Call convert
+                                                                                         (args: 
+                                                                                          (Nil)))))
+                                                                                     (If 
+                                                                                      (BinOp:In 
+                                                                                       (Nil)
+                                                                                       (Array 
+                                                                                        (Symbol return)
+                                                                                        (Symbol yield)))
+                                                                                      (Block 
+                                                                                       (Dict  
+                                                                                        (Symbol type)
+                                                                                         (Nil)
+                                                                                        (Symbol value)
+                                                                                         (Call args_to_array
+                                                                                          (args: 
+                                                                                           (Call convert
+                                                                                            (args: 
+                                                                                             (Nil)))))))
+                                                                                      (If 
+                                                                                       (BinOp:In 
+                                                                                        (Nil)
+                                                                                        (Array 
+                                                                                         (Symbol string_embexpr)))
+                                                                                       (Block 
+                                                                                        (Dict  
+                                                                                         (Symbol type)
+                                                                                          (Symbol string_embexpr)
+                                                                                         (Symbol value)
+                                                                                          (Call convert
+                                                                                           (args: 
+                                                                                            (Nil)))))
+                                                                                       (If 
+                                                                                        (BinOp:In 
+                                                                                         (Nil)
+                                                                                         (Array 
+                                                                                          (Symbol var_ref)
+                                                                                          (Symbol var_field)
+                                                                                          (Symbol const_ref)
+                                                                                          (Symbol top_const_ref)
+                                                                                          (Symbol top_const_field)
+                                                                                          (Symbol paren)
+                                                                                          (Symbol else)
+                                                                                          (Symbol ensure)
+                                                                                          (Symbol arg_paren)
+                                                                                          (Symbol mlhs_paren)
+                                                                                          (Symbol rest_param)
+                                                                                          (Symbol blockarg)
+                                                                                          (Symbol symbol_literal)
+                                                                                          (Symbol regexp_literal)
+                                                                                          (Symbol param_error)
+                                                                                          (Symbol string_literal)
+                                                                                          (Symbol xstring_literal)
+                                                                                          (Symbol string_dvar)
+                                                                                          (Symbol mrhs_new_from_args)
+                                                                                          (Symbol assoc_splat)
+                                                                                          (Symbol next)
+                                                                                          (Symbol END)
+                                                                                          (Symbol BEGIN)))
+                                                                                        (Block 
+                                                                                         (Call convert
+                                                                                          (args: 
+                                                                                           (Nil))))
+                                                                                        (Block 
+                                                                                         (Call banner
+                                                                                          (args: 
+                                                                                           (String unknown)))
+                                                                                         (Call puts
+                                                                                          (args: 
+                                                                                           (Nil)))
+                                                                                         (Name exp))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))
     (Func convert_array
      (args: 
       (Name arr))
      (body: 
       (Block 
-       (Nil)))
+       (Call 
+        (Attribute 
+         (Name arr)
+         (Name map))))))
     (Func convert_when
      (args: 
       (Name exp)
       (Name value))
      (body: 
       (Block 
-       other))
+       (If 
+        (BinOp:Equal 
+         (Nil)
+         (Symbol when))
+        (Block 
+         (If 
+          (Name value)
+          (Block 
+           (Assign 
+            (Name test)
+            (Dict  
+             (Symbol type)
+              (Symbol binary)
+             (Symbol op)
+              (Call op
+               (args: 
+                (Symbol in)))
+             (Symbol left)
+              (Name value)
+             (Symbol right)
+              (Call args_to_array
+               (args: 
+                (Call convert
+                 (args: 
+                  (Nil))))))))
+          (Block 
+           (Assign 
+            (Name test)
+            (Call args_to_array
+             (args: 
+              (Call convert
+               (args: 
+                (Nil))))))))
+         (Assign 
+          (Name ret)
+          (Dict  
+           (Symbol type)
+            (Symbol if)
+           (Symbol test)
+            (Name test)
+           (Symbol body)
+            (Call convert
+             (args: 
+              (Nil)))))
+         (If 
+          (Nil)
+          (Block 
+           (Assign 
+            (Nil)
+            (Call convert_when
+             (args: 
+              (Nil)
+              (Name value)))))
+          (Nil))
+         (Name ret))
+        (If 
+         (BinOp:Equal 
+          (Nil)
+          (Symbol else))
+         (Block 
+          (Call convert
+           (args: 
+            (Nil))))
+         (Nil))))))
     (Func args_to_array
      (args: 
       (Name args))
      (body: 
       (Block 
-       other))
+       (If 
+        (BinOp:Equal 
+         (Nil)
+         (Symbol args))
+        (Block 
+         (Dict  
+          (Symbol type)
+           (Symbol array)
+          (Symbol elts)
+           (Nil)))
+        (Block 
+         (Name args))))))
     (Func make_string
      (args: 
       (Name content)
@@ -185,9 +2266,20 @@
          (Symbol type)
           (Symbol string)
          (Symbol id)
-          (Nil)))
-       other
-       (Name ret)))
+          (Call 
+           (Attribute 
+            (Name content)
+            (Name force_encoding))
+           (args: 
+            (String utf-8)))))
+       (If 
+        (Name location)
+        (Block 
+         (Assign 
+          (Nil)
+          (Name location)))
+        (Nil))
+       (Name ret))))
     (Func op
      (args: 
       (Name name))
@@ -197,7 +2289,7 @@
         (Symbol type)
          (Symbol op)
         (Symbol name)
-         (Name name))))
+         (Name name)))))
     (Func negate
      (args: 
       (Name exp))
@@ -207,15 +2299,61 @@
         (Symbol type)
          (Symbol unary)
         (Symbol op)
-         (Nil)
+         (Call op
+          (args: 
+           (Symbol not)))
         (Symbol operand)
-         (Name exp))))))
+         (Name exp)))))))
  (Func hash_max_nest
   (args: 
    (Name hash))
   (body: 
    (Block 
-    other))
+    (If 
+     (Call 
+      (Attribute 
+       (Name hash)
+       (Name is_a?))
+      (args: 
+       (Name Array)))
+     (Block 
+      (BinOp:Add 
+       (Call 
+        (Attribute 
+         (Call 
+          (Attribute 
+           (Call 
+            (Attribute 
+             (Name hash)
+             (Name map)))
+           (Name max)))
+         (Name to_i)))
+       (Int 1)))
+     (If 
+      (Call 
+       (Attribute 
+        (Name hash)
+        (Name is_a?))
+       (args: 
+        (Name Hash)))
+      (Block 
+       (BinOp:Add 
+        (Call 
+         (Attribute 
+          (Call 
+           (Attribute 
+            (Call 
+             (Attribute 
+              (Call 
+               (Attribute 
+                (Name hash)
+                (Name values)))
+              (Name map)))
+            (Name max)))
+          (Name to_i)))
+        (Int 1)))
+      (Block 
+       (Int 0)))))))
  (Func parse_dump
   (args: 
    (Name input)
@@ -227,27 +2365,87 @@
      (Block 
       (Assign 
        (Name simplifier)
-       (Nil))
+       (Call 
+        (Attribute 
+         (Name AstSimplifier)
+         (Name new))
+        (args: 
+         (Name input))))
       (Assign 
        (Name hash)
-       (Nil))
+       (Call 
+        (Attribute 
+         (Name simplifier)
+         (Name simplify))))
       (Assign 
        (Name json_string)
-       (Nil))
+       (Call 
+        (Attribute 
+         (Name JSON)
+         (Name pretty_generate))
+        (args: 
+         (Name hash)
+         (Dict  
+          (Name max_nesting)
+           (Call hash_max_nest
+            (args: 
+             (Name hash)))))))
       (Assign 
        (Name out)
-       (Nil))
-      (Nil)
-      (Nil))
+       (Call 
+        (Attribute 
+         (Name File)
+         (Name open))
+        (args: 
+         (Name output)
+         (String wb))))
+      (Call 
+       (Attribute 
+        (Name out)
+        (Name write))
+       (args: 
+        (Name json_string)))
+      (Call 
+       (Attribute 
+        (Name out)
+        (Name close))))
      (Nil)
      (Nil)
      (Block 
       (Assign 
        (Name end_file)
-       (Nil))
-      (Nil)))))
+       (Call 
+        (Attribute 
+         (Name File)
+         (Name open))
+        (args: 
+         (Name endmark)
+         (String wb))))
+      (Call 
+       (Attribute 
+        (Name end_file)
+        (Name close))))))))
  (Assign 
   (Name $options)
   (Dict  ))
- (Nil)
- other)
+ (Call 
+  (Attribute 
+   (Call 
+    (Attribute 
+     (Name OptionParser)
+     (Name new)))
+   (Name parse!)))
+ (If 
+  (BinOp:Gt 
+   (Call 
+    (Attribute 
+     (Name ARGV)
+     (Name length)))
+   (Int 0))
+  (Block 
+   (Call parse_dump
+    (args: 
+     (Nil)
+     (Nil)
+     (Nil))))
+  (Nil)))
