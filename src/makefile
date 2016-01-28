@@ -24,5 +24,8 @@ test:
 update:
 	$(OCAMLBUILD) update_test.byte; ./update_test.byte
 
+pro:
+	$(OCAMLBUILD) process.byte; ./process.byte
+
 clean:
 	$(OCAMLBUILD) -clean
