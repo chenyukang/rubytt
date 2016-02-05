@@ -4,6 +4,7 @@ open Parser
 open Printer
 open Node
 open Util
+open Type
 open Typestack
 
 let () =

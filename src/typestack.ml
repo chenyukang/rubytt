@@ -25,5 +25,5 @@ module TypeStack =
           | (_a, _b) -> true
           | _ -> contains rest a b
         )
-        
+
   end

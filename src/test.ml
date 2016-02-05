@@ -5,6 +5,7 @@ open Node
 open Printer
 open Util
 open Parser
+open Typestack
 
 let run_dir dir =
   let files = Array.to_list (Sys.readdir dir) in
@@ -79,6 +80,13 @@ let test_printer() =
   let _i = node_to_str i 0 in
   assert_equal _i "(Int 2)"
 
+let test_typestack() =
+  let a = TypeStack.empty in
+  let a = TypeStack.push a 1 2 in
+  assert_equal (TypeStack.size a) 1;
+  let a = TypeStack.pop a in
+  assert_equal (TypeStack.size a) 0
+
 let test_dir() =
   let res = run_dir "tests" in
   assert_equal (List.exists res ~f:(fun x -> x = false)) false
@@ -88,6 +96,7 @@ let test_unit = [
   "Node_add_children", `Quick, test_node_add_children;
   "Node_block", `Quick, test_block;
   "Printer", `Quick, test_printer;
+  "TypeStck", `Quick, test_typestack;
   "Cases", `Quick, test_dir;
 ]
 
