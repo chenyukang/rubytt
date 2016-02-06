@@ -71,7 +71,7 @@ and
   | Starred of node
   | Array of node list
   | Module of node * node * string
-  | Subscript of node * node list 
+  | Subscript of node * node list
   | Class of node * node * node * string * bool
   | Handler of node list * node * node * node
   | Dict of node list * node list

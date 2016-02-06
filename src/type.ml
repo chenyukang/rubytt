@@ -31,10 +31,10 @@ and
   | Scope
 and
 state = {
-  parent: state option;
-  supers: state option;
-  s_type: state_type;
-  t_type: type_t option;
+  mutable parent: state option;
+  mutable supers: state option;
+  mutable s_type: state_type;
+  mutable t_type: type_t option;
   s_table: (string, binding list) Hashtbl.t;
   mutable path: string;
 }
@@ -138,3 +138,13 @@ let bool_swap b =
   match b.ty with
   | Bool_ty(v, s1, s2) -> { info = b.info; ty = Bool_ty(v, s2, s1) }
   | _ -> failwith "bool_swap"
+
+
+let set_state_parent st parent =
+  st.parent <- Some(parent)
+
+let set_state_stype st stype =
+  st.s_type <- stype
+
+let state_remove st id =
+  Hashtbl.remove st.s_table id
