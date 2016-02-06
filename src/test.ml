@@ -6,6 +6,7 @@ open Printer
 open Util
 open Parser
 open Typestack
+open Type
 
 let run_dir dir =
   let files = Array.to_list (Sys.readdir dir) in
@@ -87,6 +88,35 @@ let test_typestack() =
   let a = TypeStack.pop a in
   assert_equal (TypeStack.size a) 0
 
+let test_state() =
+  let a = Type.new_state Type.Class in
+  assert_equal a.parent None
+
+let test_bool_type() =
+  let b = new_bool_type () in(
+  match b.ty with
+  | Bool_ty(v, s1, s2) ->
+    if not (v = Undecided && s1 = None && s2 = None) then assert_failure "default bool value"
+  | _ -> assert_failure "default bool type error"
+  );
+  let s = new_state Type.Class in
+  let b = set_bool_s1 b (Some s) in (
+  match b.ty with
+  | Bool_ty(v, s1, s2) ->
+    if not(v = Undecided && s1 = Some(s) && s2 = None) then assert_failure "set_bool_s1 failed"
+  | _ -> ()
+  );
+  let b = bool_swap b in(
+  match b.ty with
+  | Bool_ty(_, s1, s2) ->
+    if not(s1 = None && s2 = Some(s)) then assert_failure "bool_swap failed"
+  | _ -> ())
+
+let test_type() =
+  let a = new_bool_type() in
+  let b = new_bool_type() in
+  assert_equal (equal_type a b) true
+
 let test_dir() =
   let res = run_dir "tests" in
   assert_equal (List.exists res ~f:(fun x -> x = false)) false
@@ -96,7 +126,10 @@ let test_unit = [
   "Node_add_children", `Quick, test_node_add_children;
   "Node_block", `Quick, test_block;
   "Printer", `Quick, test_printer;
-  "TypeStck", `Quick, test_typestack;
+  "TypeStack", `Quick, test_typestack;
+  "State", `Quick, test_state;
+  "Bool", `Quick, test_bool_type;
+  "Type", `Quick, test_type;
   "Cases", `Quick, test_dir;
 ]
 

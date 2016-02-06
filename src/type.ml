@@ -1,4 +1,5 @@
 open Typestack
+open Core
 
 type ty_info = {
   mutable file: string;
@@ -50,7 +51,7 @@ and
 | ConstK
 and
   binding = {
-  node: Node.node;
+  (* node: Node.node; *)
   qname: string;
   bfile: string;
   bty: type_t;
@@ -91,7 +92,7 @@ let is_str_type t =
 let is_unknow_type t =
   false (* fixme *)
 
-let equal ty1 ty2 =
+let equal_type ty1 ty2 =
   match ty1.ty, ty2.ty with
   | Int_ty, Int_ty
   | Str_ty _, Str_ty _
@@ -100,7 +101,7 @@ let equal ty1 ty2 =
   | _, _ -> false
 
 
-let new_state parent state_ty =
+let new_state ?(parent = None) state_ty : state =
   {
     parent = parent;
     supers = None;
@@ -113,27 +114,27 @@ let new_state parent state_ty =
 let new_ty_info() =
   { file = ""; mutated = false; table = None}
 
-let new_bool_type v ?(s1 = None) ?(s2 = None)=
+let new_bool_type ?(v = Undecided) ?(s1 = None) ?(s2 = None) () =
   { info = new_ty_info();
     ty = Bool_ty(v, s1, s2);
   }
 
 let set_bool_value b v =
   match b.ty with
-  | Bool_ty(_, s1, s2) -> b.ty = Bool_ty(v, s1, s2)
+  | Bool_ty(_, s1, s2) -> {info = b.info; ty = Bool_ty(v, s1, s2)}
   | _ -> failwith "set_bool_value"
 
 let set_bool_s1 b s1 =
   match b.ty with
-  | Bool_ty(v, _, s2) -> b.ty = Bool_ty(v, s1, s2)
+  | Bool_ty(v, _, s2) -> {info = b.info; ty = Bool_ty(v, s1, s2)}
   | _ -> failwith "set_bool_s1"
 
 let set_bool_s2 b s2 =
   match b.ty with
-  | Bool_ty(v, s1, _) -> b.ty = Bool_ty(v, s1, s2)
+  | Bool_ty(v, s1, _) -> {info = b.info; ty = Bool_ty(v, s1, s2)}
   | _ -> failwith "set_bool_s2"
 
 let bool_swap b =
   match b.ty with
-  | Bool_ty(v, s1, s2) -> { info = b.info; ty = Bool_ty(v, s2, s2) }
+  | Bool_ty(v, s1, s2) -> { info = b.info; ty = Bool_ty(v, s2, s1) }
   | _ -> failwith "bool_swap"
