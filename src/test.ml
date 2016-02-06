@@ -100,12 +100,12 @@ let test_bool_type() =
   | _ -> assert_failure "default bool type error"
   );
   let s = new_state Type.Class in
-  let b = set_bool_s1 b (Some s) in (
+  ignore(set_bool_s1 b (Some s));
   match b.ty with
   | Bool_ty(v, s1, s2) ->
     if not(v = Undecided && s1 = Some(s) && s2 = None) then assert_failure "set_bool_s1 failed"
   | _ -> ()
-  );
+  ;
   let b = bool_swap b in(
   match b.ty with
   | Bool_ty(_, s1, s2) ->
@@ -115,7 +115,13 @@ let test_bool_type() =
 let test_type() =
   let a = new_bool_type() in
   let b = new_bool_type() in
-  assert_equal (equal_type a b) true
+  assert_equal (equal_type a b) true;
+  assert_equal (is_mutated a) false;
+  set_file a "file";
+  assert_equal (a.info.file) "file";
+  set_mutated a true;
+  assert_equal (is_mutated a) true;
+  assert_equal (is_undecided_bool a) true
 
 let test_dir() =
   let res = run_dir "tests" in

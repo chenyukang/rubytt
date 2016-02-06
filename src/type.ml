@@ -18,8 +18,8 @@ and ty =
   | Instance_ty of type_t
 and
   type_t = {
-  info: ty_info;
-  ty: ty;
+  mutable info: ty_info;
+  mutable ty: ty;
 }
 and
   state_type =
@@ -40,15 +40,15 @@ state = {
 }
 and
   kind =
-  ModuleK
-| ClassK
-| MethodK
-| ClassMethodK
-| AttributeK
-| ParameterK
-| ScopeK
-| VariableK
-| ConstK
+  | ModuleK
+  | ClassK
+  | MethodK
+  | ClassMethodK
+  | AttributeK
+  | ParameterK
+  | ScopeK
+  | VariableK
+  | ConstK
 and
   binding = {
   (* node: Node.node; *)
@@ -66,12 +66,12 @@ let type_stack = TypeStack.empty;;
 
 let is_mutated (t: type_t) = t.info.mutated
 
-let set_mutated t m = t.info.mutated = m
+let set_mutated t m = t.info.mutated <- m
 
-let set_file t f = t.info.file = f
+let set_file t f = t.info.file <- f
 
 let set_table (t: type_t) (table: state) =
-  t.info.table = Some table
+  t.info.table <- Some table
 
 let is_undecided_bool t =
   match t.ty with
@@ -126,12 +126,12 @@ let set_bool_value b v =
 
 let set_bool_s1 b s1 =
   match b.ty with
-  | Bool_ty(v, _, s2) -> {info = b.info; ty = Bool_ty(v, s1, s2)}
+  | Bool_ty(v, _, s2) -> b.ty <- Bool_ty(v, s1, s2)
   | _ -> failwith "set_bool_s1"
 
 let set_bool_s2 b s2 =
   match b.ty with
-  | Bool_ty(v, s1, _) -> {info = b.info; ty = Bool_ty(v, s1, s2)}
+  | Bool_ty(v, s1, _) -> b.ty <- Bool_ty(v, s1, s2)
   | _ -> failwith "set_bool_s2"
 
 let bool_swap b =
