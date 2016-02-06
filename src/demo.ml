@@ -1,27 +1,20 @@
 open Core.Std
-open Async.Std
-open Async_parallel_deprecated.Std
 
-let deep () =
-  Deferred.List.iter [ 1; 2; 10; 100; 1000 ] ~f:(fun depth ->
-    let rec loop i =
-      if i = 0
-      then return 0
-      else begin
-        Parallel.run (fun () -> loop (i - 1))
-        >>| function
-        | Error e -> failwith e
-        | Ok j -> j + 1
-      end
-    in
-    loop depth
-    >>| fun d ->
-    assert (d = depth))
-;;
+
+type record = {
+  a : int;
+  mutable b : int;
+}
+
+type demo = {
+  c : int;
+  mutable d: record;
+}
 
 let () =
-  Parallel.init ();
-  (deep () >>> fun () -> Shutdown.shutdown 0);
-  never_returns (Scheduler.go ())
-;;
-
+  let x = { a = 1; b = 2} in
+  let m = { c = 3; d = x } in
+  x.b <- 3;
+  Printf.printf "now: %d\n" m.d.b;
+  m.d.b <- 4;
+  Printf.printf "here: %d\n" x.b;

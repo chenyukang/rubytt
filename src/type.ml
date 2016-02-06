@@ -35,7 +35,7 @@ state = {
   mutable supers: state option;
   mutable s_type: state_type;
   mutable t_type: type_t option;
-  s_table: (string, binding list) Hashtbl.t;
+  mutable s_table: (string, binding list) Hashtbl.t;
   mutable path: string;
 }
 and
@@ -136,7 +136,8 @@ let set_bool_s2 b s2 =
 
 let bool_swap b =
   match b.ty with
-  | Bool_ty(v, s1, s2) -> { info = b.info; ty = Bool_ty(v, s2, s1) }
+  | Bool_ty(v, s1, s2) ->
+    {b with ty = Bool_ty(v, s2, s1)}
   | _ -> failwith "bool_swap"
 
 
@@ -148,3 +149,36 @@ let set_state_stype st stype =
 
 let state_remove st id =
   Hashtbl.remove st.s_table id
+
+let state_copy st =
+  {
+    parent = st.parent;
+    supers = st.supers;
+    s_type = st.s_type;
+    t_type = st.t_type;
+    s_table = Hashtbl.copy st.s_table;
+    path = st.path;
+  }
+
+let state_overwrite st st_v =
+  st.s_table <- st_v.s_table;
+  st.path <- st_v.path;
+  st.parent <- st_v.parent;
+  st.supers <- st_v.supers;
+  st.t_type <- st_v.t_type;
+  st.s_type <- st_v.s_type
+
+let state_merge_with st1 st2 =
+  st1
+
+let state_merge st1 st2 =
+  let ret = state_copy st1 in
+  ignore(state_merge_with ret st2);
+  ret
+
+let state_update st id bindings =
+  Hashtbl.add st.s_table id bindings
+
+let state_update_bind st id binding =
+  state_update st id [binding]
+
