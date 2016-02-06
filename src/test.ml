@@ -115,6 +115,7 @@ let test_bool_type() =
 let test_type() =
   let a = new_bool_type() in
   let b = new_bool_type() in
+  assert_equal (is_num_type a || is_str_type a) false;
   assert_equal (equal_type a b) true;
   assert_equal (is_mutated a) false;
   set_file a "file";
