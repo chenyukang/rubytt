@@ -7,6 +7,7 @@ open Util
 open Parser
 open Typestack
 open Type
+open State
 
 let run_dir dir =
   let files = Array.to_list (Sys.readdir dir) in
@@ -89,17 +90,17 @@ let test_typestack() =
   assert_equal (TypeStack.size a) 0
 
 let test_state() =
-  let a = Type.new_state Type.Class in
+  let a = State.new_state State.Class in
   assert_equal a.parent None
 
 let test_bool_type() =
-  let b = new_bool_type () in(
+  let b = Type.new_bool_type () in(
   match b.ty with
   | Bool_ty(v, s1, s2) ->
     if not (v = Undecided && s1 = None && s2 = None) then assert_failure "default bool value"
   | _ -> assert_failure "default bool type error"
   );
-  let s = new_state Type.Class in
+  let s = State.new_state State.Class in
   set_bool_s1 b s;
   match b.ty with
   | Bool_ty(v, s1, s2) ->
