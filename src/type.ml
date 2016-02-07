@@ -1,5 +1,4 @@
 open Typestack
-open Core
 
 type ty_info = {
   mutable file: string;
@@ -92,7 +91,7 @@ let is_str_type t =
 let is_unknow_type t =
   false (* fixme *)
 
-let equal_type ty1 ty2 =
+let type_equal ty1 ty2 =
   match ty1.ty, ty2.ty with
   | Int_ty, Int_ty
   | Str_ty _, Str_ty _
@@ -126,12 +125,12 @@ let set_bool_value b v =
 
 let set_bool_s1 b s1 =
   match b.ty with
-  | Bool_ty(v, _, s2) -> b.ty <- Bool_ty(v, s1, s2)
+  | Bool_ty(v, _, s2) -> b.ty <- Bool_ty(v, Some(s1), s2)
   | _ -> failwith "set_bool_s1"
 
 let set_bool_s2 b s2 =
   match b.ty with
-  | Bool_ty(v, s1, _) -> b.ty <- Bool_ty(v, s1, s2)
+  | Bool_ty(v, s1, _) -> b.ty <- Bool_ty(v, s1, Some(s2))
   | _ -> failwith "set_bool_s2"
 
 let bool_swap b =
@@ -181,4 +180,8 @@ let state_update st id bindings =
 
 let state_update_bind st id binding =
   state_update st id [binding]
+
+let is_global_name name =
+  let open Core.Std in
+  String.substr_index name "$" = Some(0)
 

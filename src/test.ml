@@ -100,7 +100,7 @@ let test_bool_type() =
   | _ -> assert_failure "default bool type error"
   );
   let s = new_state Type.Class in
-  ignore(set_bool_s1 b (Some s));
+  set_bool_s1 b s;
   match b.ty with
   | Bool_ty(v, s1, s2) ->
     if not(v = Undecided && s1 = Some(s) && s2 = None) then assert_failure "set_bool_s1 failed"
@@ -116,7 +116,7 @@ let test_type() =
   let a = new_bool_type() in
   let b = new_bool_type() in
   assert_equal (is_num_type a || is_str_type a) false;
-  assert_equal (equal_type a b) true;
+  assert_equal (type_equal a b) true;
   assert_equal (is_mutated a) false;
   set_file a "file";
   assert_equal (a.info.file) "file";
