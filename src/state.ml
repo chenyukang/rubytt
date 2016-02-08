@@ -31,6 +31,9 @@ let set_state_parent st parent =
 let set_state_stype st stype =
   st.s_type <- stype
 
+let set_state_ttype st ttype =
+  st.t_type <- ttype
+
 let state_remove st id =
   Hashtbl.remove st.s_table id
 

@@ -22,6 +22,7 @@ and ty =
   | Str_ty of string
   | Float_ty
   | Instance_ty of type_t
+  | ClassType of string * type_t option * type_t option
 and
   type_t = {
   mutable info: ty_info;
@@ -64,6 +65,7 @@ let type_equal ty1 ty2 =
   | Str_ty _, Str_ty _
   | Float_ty, Float_ty
   | Bool_ty _, Bool_ty _ -> true
+  | ClassType _, ClassType _ -> ty1 = ty2
   | _, _ -> false
 
 let new_ty_info() =
@@ -96,3 +98,25 @@ let bool_swap b =
   | _ -> failwith "bool_swap"
 
 
+let new_class_type name parent ?(super = None) =
+  let ret = { info = new_ty_info();
+              ty = ClassType(name, None, None);
+            } in
+  set_table ret (State.new_state ~parent:(Some parent) State.Class);
+  (match ret.info.table with
+  | Some(s) -> State.set_state_ttype s (Some ret);
+  | _ -> failwith "new_class_type error table");
+  ret
+
+let classty_set_name c name =
+  match c.ty with
+  | ClassType(_name, canon, super) -> c.ty <- ClassType(name, canon, super)
+  | _ -> failwith "classty_set_name"
+
+let classty_set_canon c canon =
+  match c.ty with
+  | ClassType(name, _canon, super) -> c.ty <- ClassType(name, canon, super)
+  | _ -> failwith "classty_set_canon"
+
+
+let classty_add_super c super = ()
