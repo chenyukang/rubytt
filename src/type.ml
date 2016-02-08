@@ -1,14 +1,18 @@
 open Typestack
 open State
+open Binding
 
-type state_t = (type_t, binding) state
+type bind_ty = (type_t, Node.node) binding
+and
+  state_t = (type_t, bind_ty) state
 and
   ty_info = {
   mutable file: string;
   mutable mutated: bool;
   mutable table:  state_t option;
 }
-and bool_value =
+and
+  bool_value =
   | True
   | False
   | Undecided
@@ -22,29 +26,6 @@ and
   type_t = {
   mutable info: ty_info;
   mutable ty: ty;
-}
-and
-  kind =
-  | ModuleK
-  | ClassK
-  | MethodK
-  | ClassMethodK
-  | AttributeK
-  | ParameterK
-  | ScopeK
-  | VariableK
-  | ConstK
-and
-  binding = {
-  (* node: Node.node; *)
-  qname: string;
-  bfile: string;
-  bty: type_t;
-  kind: kind;
-  start: int;
-  tail: int;
-  body_start: int;
-  body_end: int;
 }
 
 let type_stack = TypeStack.empty;;
