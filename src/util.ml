@@ -50,3 +50,13 @@ let update_cmp dir =
       Sys.command_exn (Printf.sprintf "cp %s %s" p o );
     ) logs
 
+let main_name tagged_name =
+  let segs = Str.split (Str.regexp "\\^") tagged_name in
+  if List.length segs > 0 then
+    List.nth_exn segs 0
+  else
+    tagged_name
+
+
+let is_synthetic_name name =
+  name = "self" || name = "#this"

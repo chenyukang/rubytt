@@ -101,10 +101,10 @@ let test_bool_type() =
   | _ -> assert_failure "default bool type error"
   );
   let s = State.new_state State.Class in
-  set_bool_s1 b s;
+  bool_set_s1 b s;
   match b.ty with
   | Bool_ty(v, s1, s2) ->
-    if not(v = Undecided && s1 = Some(s) && s2 = None) then assert_failure "set_bool_s1 failed"
+    if not(v = Undecided && s1 = Some(s) && s2 = None) then assert_failure "bool_set_s1 failed"
   | _ -> ()
   ;
   let b = bool_swap b in(

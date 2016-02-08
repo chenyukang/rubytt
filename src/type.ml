@@ -22,6 +22,7 @@ and ty =
   | Str_ty of string
   | Float_ty
   | Instance_ty of type_t
+  (* name * instance_type * superclass *)
   | ClassType of string * type_t option * type_t option
 and
   type_t = {
@@ -76,20 +77,20 @@ let new_bool_type ?(v = Undecided) ?(s1 = None) ?(s2 = None) () =
     ty = Bool_ty(v, s1, s2);
   }
 
-let set_bool_value b v =
+let bool_set_value b v =
   match b.ty with
   | Bool_ty(_, s1, s2) -> {info = b.info; ty = Bool_ty(v, s1, s2)}
-  | _ -> failwith "set_bool_value"
+  | _ -> failwith "bool_set_value"
 
-let set_bool_s1 b s1 =
+let bool_set_s1 b s1 =
   match b.ty with
   | Bool_ty(v, _, s2) -> b.ty <- Bool_ty(v, Some(s1), s2)
-  | _ -> failwith "set_bool_s1"
+  | _ -> failwith "bool_set_s1"
 
-let set_bool_s2 b s2 =
+let bool_set_s2 b s2 =
   match b.ty with
   | Bool_ty(v, s1, _) -> b.ty <- Bool_ty(v, s1, Some(s2))
-  | _ -> failwith "set_bool_s2"
+  | _ -> failwith "bool_set_s2"
 
 let bool_swap b =
   match b.ty with
@@ -97,16 +98,6 @@ let bool_swap b =
     {b with ty = Bool_ty(v, s2, s1)}
   | _ -> failwith "bool_swap"
 
-
-let new_class_type name parent ?(super = None) =
-  let ret = { info = new_ty_info();
-              ty = ClassType(name, None, None);
-            } in
-  set_table ret (State.new_state ~parent:(Some parent) State.Class);
-  (match ret.info.table with
-  | Some(s) -> State.set_state_ttype s (Some ret);
-  | _ -> failwith "new_class_type error table");
-  ret
 
 let classty_set_name c name =
   match c.ty with
@@ -118,5 +109,25 @@ let classty_set_canon c canon =
   | ClassType(name, _canon, super) -> c.ty <- ClassType(name, canon, super)
   | _ -> failwith "classty_set_canon"
 
+let classty_add_super c super =
+  match c.ty with
+  | ClassType(name, canon, _) -> c.ty <- ClassType(name, canon, super)
+  | _ -> failwith "classty_add_super"
 
-let classty_add_super c super = ()
+let new_class_type name parent ?(super = None) =
+  let ret = { info = new_ty_info();
+              ty = ClassType(name, None, None);
+            } in
+  let state = (State.new_state ~parent:parent State.Class) in
+  set_table ret state;
+  State.set_state_ttype state (Some ret);
+  (match parent with
+   | Some(p) -> State.set_path state (State.extend_path p name "::")
+   | _ -> State.set_path state name);
+  (match super with
+   | Some(s) -> (
+       classty_add_super ret super;
+       State.set_supers state s.info.table (* Fixme *)
+     )
+   | _ -> ());
+  ret

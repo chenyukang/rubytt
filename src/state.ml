@@ -34,6 +34,12 @@ let set_state_stype st stype =
 let set_state_ttype st ttype =
   st.t_type <- ttype
 
+let set_path st path =
+  st.path <- path
+
+let set_supers st supers =
+  st.supers <- supers
+
 let state_remove st id =
   Hashtbl.remove st.s_table id
 
@@ -72,5 +78,16 @@ let state_update_bind st id binding =
 let is_global_name name =
   let open Core.Std in
   String.substr_index name "$" = Some(0)
+
+let extend_path st name sep =
+  let name = Util.main_name name in
+  if Util.is_synthetic_name name then
+    st.path
+  else (
+    if st.path == "" then
+      name
+    else
+      st.path ^ sep ^ name
+  )
 
 
