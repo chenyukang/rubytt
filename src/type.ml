@@ -114,6 +114,11 @@ let classty_add_super c super =
   | ClassType(name, canon, _) -> c.ty <- ClassType(name, canon, super)
   | _ -> failwith "classty_add_super"
 
+let cassty_get_canon c =
+  match c.ty with
+  | ClassType(_, canon, _) -> canon
+  | _ -> None
+
 let new_class_type name parent ?(super = None) =
   let ret = { info = new_ty_info();
               ty = ClassType(name, None, None);

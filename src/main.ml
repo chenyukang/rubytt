@@ -6,7 +6,8 @@ open Node
 open Util
 open Type
 open Typestack
-
+open Analyzer
+    
 let () =
   let a = TypeStack.empty in
   let a = TypeStack.push a Nil (Int 2) in (

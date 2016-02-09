@@ -90,4 +90,18 @@ let extend_path st name sep =
       st.path ^ sep ^ name
   )
 
+let get_modulebinding_if_global st name =
+  if is_global_name name then (
+    let _module = Analyzer.global_table() in
+    if _module <> st (
+        (* lookup_local _module name *)
+        None
+      )
+  )
+  None
 
+
+(* let lookup name = *)
+
+(* let update_type id types = *)
+(*   let bs =  *)
