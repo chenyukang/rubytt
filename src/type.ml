@@ -72,7 +72,7 @@ let type_equal ty1 ty2 =
 let new_ty_info() =
   { file = ""; mutated = false; table = None}
 
-let new_bool_type ?(v = Undecided) ?(s1 = None) ?(s2 = None) () =
+let new_bool_type v s1 s2 =
   { info = new_ty_info();
     ty = Bool_ty(v, s1, s2);
   }
@@ -84,12 +84,12 @@ let bool_set_value b v =
 
 let bool_set_s1 b s1 =
   match b.ty with
-  | Bool_ty(v, _, s2) -> b.ty <- Bool_ty(v, Some(s1), s2)
+  | Bool_ty(v, _, s2) -> b.ty <- Bool_ty(v, s1, s2)
   | _ -> failwith "bool_set_s1"
 
 let bool_set_s2 b s2 =
   match b.ty with
-  | Bool_ty(v, s1, _) -> b.ty <- Bool_ty(v, s1, Some(s2))
+  | Bool_ty(v, s1, _) -> b.ty <- Bool_ty(v, s1, s2)
   | _ -> failwith "bool_set_s2"
 
 let bool_swap b =

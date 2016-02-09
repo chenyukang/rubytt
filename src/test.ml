@@ -8,6 +8,7 @@ open Parser
 open Typestack
 open Type
 open State
+open Binding
 
 let run_dir dir =
   let files = Array.to_list (Sys.readdir dir) in
@@ -90,32 +91,32 @@ let test_typestack() =
   assert_equal (TypeStack.size a) 0
 
 let test_state() =
-  let a = State.new_state State.Class in
+  let a = State.new_state ~parent:None State.Class in
   assert_equal a.parent None
 
 let test_bool_type() =
-  let b = Type.new_bool_type () in(
+  let b = Type.new_bool_type Undecided None None in(
   match b.ty with
   | Bool_ty(v, s1, s2) ->
     if not (v = Undecided && s1 = None && s2 = None) then assert_failure "default bool value"
   | _ -> assert_failure "default bool type error"
   );
-  let s = State.new_state State.Class in
-  bool_set_s1 b s;
-  match b.ty with
+  let s = State.new_state ~parent:None State.Class in
+  bool_set_s2 b (Some s);
+  (match b.ty with
   | Bool_ty(v, s1, s2) ->
-    if not(v = Undecided && s1 = Some(s) && s2 = None) then assert_failure "bool_set_s1 failed"
+    if not(v = Undecided && s2 <> None) then assert_failure "bool_set_s1 failed"
   | _ -> ()
-  ;
-  let b = bool_swap b in(
+  );
+  let b = bool_swap b in (
   match b.ty with
   | Bool_ty(_, s1, s2) ->
-    if not(s1 = None && s2 = Some(s)) then assert_failure "bool_swap failed"
+    if not(s1 <> None && s2 = None) then assert_failure "bool_swap failed"
   | _ -> ())
 
 let test_type() =
-  let a = new_bool_type() in
-  let b = new_bool_type() in
+  let a = new_bool_type Undecided None None in
+  let b = new_bool_type Undecided None None in
   assert_equal (is_num_type a || is_str_type a) false;
   assert_equal (type_equal a b) true;
   assert_equal (is_mutated a) false;

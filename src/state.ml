@@ -1,3 +1,5 @@
+open Core.Std;;
+
 type state_type =
   | Class
   | Instance
@@ -21,8 +23,8 @@ let new_state ?(parent = None) state_ty : ('ty, 'binding) state =
     supers = None;
     s_type = state_ty;
     t_type = None;
-    s_table = Hashtbl.create 1;
-    path = ""
+    s_table = Hashtbl.create ~hashable:String.hashable ();
+    path = "";
   }
 
 let set_state_parent st parent =
@@ -75,33 +77,16 @@ let state_update st id bindings =
 let state_update_bind st id binding =
   state_update st id [binding]
 
-let is_global_name name =
-  let open Core.Std in
-  String.substr_index name "$" = Some(0)
 
 let extend_path st name sep =
   let name = Util.main_name name in
   if Util.is_synthetic_name name then
     st.path
   else (
-    if st.path == "" then
-      name
-    else
-      st.path ^ sep ^ name
+    if st.path = "" then name
+    else st.path ^ sep ^ name
   )
 
-let get_modulebinding_if_global st name =
-  if is_global_name name then (
-    let _module = Analyzer.global_table() in
-    if _module <> st (
-        (* lookup_local _module name *)
-        None
-      )
-  )
-  None
+let lookup_local st name =
+  Hashtbl.find st.s_table name
 
-
-(* let lookup name = *)
-
-(* let update_type id types = *)
-(*   let bs =  *)
