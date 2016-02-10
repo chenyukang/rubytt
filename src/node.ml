@@ -387,3 +387,4 @@ let make_call_node func pos star block_arg file s e =
   add_children node pos;
   add_children node [func; star; block_arg];
   node
+

@@ -1,6 +1,5 @@
 open Typestack
 open State
-open Binding
 open Node
 
 type
@@ -181,4 +180,4 @@ let new_binding node ttype kind =
 
 let bind_equal a b =
   (a.start = b.start && a.tail = b.tail && a.bind_file = b.bind_file)
-  
+
