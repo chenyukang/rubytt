@@ -1,0 +1,6 @@
+(Block 
+ (Func a
+  (body: 
+   (Block 
+    (Return 
+     (Nil))))))

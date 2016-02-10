@@ -19,6 +19,7 @@ and ty =
   | Bool_ty of bool_value * state_t option * state_t option
   | Int_ty
   | Str_ty of string
+  | Sym_ty of string
   | Float_ty
   | Instance_ty of type_t
   (* name * instance_type * superclass *)
@@ -126,6 +127,24 @@ let bool_swap b =
   | _ -> failwith "bool_swap"
 
 
+let new_int_type () =
+  {
+    info = new_ty_info();
+    ty = Int_ty;
+  }
+
+let new_str_type ?(value="") () =
+  {
+    info = new_ty_info();
+    ty = Str_ty(value);
+  }
+
+let new_sym_type ?(name="") () =
+  {
+    info = new_ty_info();
+    ty = Sym_ty(name);
+  }
+
 let classty_set_name c name =
   match c.ty with
   | ClassType(_name, canon, super) -> c.ty <- ClassType(name, canon, super)
@@ -164,6 +183,11 @@ let new_class_type name parent ?(super = None) =
    | _ -> ());
   ret
 
+let new_instance_type class_ty =
+  {
+    info = new_ty_info();
+    ty = Instance_ty(class_ty);
+  }
 
 let new_binding node ttype kind =
   {
@@ -181,3 +205,13 @@ let new_binding node ttype kind =
 let bind_equal a b =
   (a.start = b.start && a.tail = b.tail && a.bind_file = b.bind_file)
 
+
+let int_ty =
+  new_int_type()
+
+let str_ty =
+  new_str_type()
+
+let cont_ty =
+  let class_ty = new_class_type "nil" None ~super:None in
+  new_instance_type class_ty
