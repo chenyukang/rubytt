@@ -100,7 +100,7 @@ let rec convert json =
     let reg_end = convert_elem json "regexp_end" in
     make_regexp_node pat reg_end ff ss ee
   | "embexp" ->
-    let value = convert_to_s json "value" in
+    let value = convert_elem json "value" in
     make_strembed_node value ff ss ee
   | "arg" ->
     let id = convert_to_s json "arg" in
@@ -133,7 +133,7 @@ let rec convert json =
   | "subscript" ->
     let value = convert_elem json "value" in
     let slice = convert_list (json |> member "slice") in
-    make_subscript_node value slice ff ss ee 
+    make_subscript_node value slice ff ss ee
   | "class" ->
     let name = convert_elem json "name" in
     let super = convert_elem json "super" in
@@ -237,7 +237,7 @@ and
   | `List(v) ->
     List.map v ~f:(fun e -> convert e)
   | `Null -> []
-  | _ -> failwith "type error in convert_list\n"; []
+  | _ -> failwith "type error in convert_list\n"
 and
   convert_op op =
   let o = convert_to_s op "name" in

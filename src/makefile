@@ -5,7 +5,6 @@ SOURCES = \
 	read_json.ml \
 	main.ml
 
-
 OCAMLBUILD = corebuild -use-ocamlfind -pkg yojson -pkg alcotest -pkg ounit -pkg str
 
 default: byte

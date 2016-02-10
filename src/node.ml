@@ -67,7 +67,7 @@ and
   | For of node * node * node
   | Regexp of node * node
   | Undef of node list
-  | StrEmbed of string
+  | StrEmbed of node
   | Starred of node
   | Array of node list
   | Module of node * node * string

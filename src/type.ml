@@ -133,6 +133,12 @@ let new_int_type () =
     ty = Int_ty;
   }
 
+let new_float_type () =
+  {
+    info = new_ty_info();
+    ty = Float_ty;
+  }
+
 let new_str_type ?(value="") () =
   {
     info = new_ty_info();
@@ -205,13 +211,16 @@ let new_binding node ttype kind =
 let bind_equal a b =
   (a.start = b.start && a.tail = b.tail && a.bind_file = b.bind_file)
 
-
 let int_ty =
   new_int_type()
 
 let str_ty =
   new_str_type()
 
+let float_ty =
+  new_float_type()
+
 let cont_ty =
   let class_ty = new_class_type "nil" None ~super:None in
   new_instance_type class_ty
+
