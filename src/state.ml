@@ -27,6 +27,7 @@ let new_state ?(parent = None) state_ty : ('ty, 'binding) state =
     path = "";
   }
 
+
 let set_state_parent st parent =
   st.parent <- Some(parent)
 
@@ -89,4 +90,5 @@ let extend_path st name sep =
 
 let lookup_local st name =
   Hashtbl.find st.s_table name
+
 

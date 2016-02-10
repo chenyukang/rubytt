@@ -13,14 +13,13 @@ let make_analyzer () =
     sid =  "";
     cwd =  "";
     project_dir = "";
-    global_table = State.new_state ~parent:None State.Global;
+    global_table = State.global_table;
     all_bindings = [];
     loaded_files = Hashtbl.create 1;
     path = [];
   }
 
 let global_Analyzer = make_analyzer();;
-let global_table() = global_Analyzer.global_table;;
 
 let is_global_name name =
   let open Core.Std in
@@ -29,7 +28,7 @@ let is_global_name name =
 let get_modulebinding_if_global st name =
   let res = ref None in
   if is_global_name name then
-    if global_table() <> st then
-        res := State.lookup_local global_table() name;
+    if Type.global_table <> st then
+        res := State.lookup_local Type.global_table name;
   !res
 

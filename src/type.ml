@@ -1,15 +1,15 @@
 open Typestack
 open State
 open Binding
+open Node
 
-type bind_ty = (type_t, Node.node) binding
-and
-  state_t = (type_t, bind_ty) state
+type
+  state_t = (type_t, binding_ty) state
 and
   ty_info = {
   mutable file: string;
   mutable mutated: bool;
-  mutable table:  state_t option;
+  mutable table: state_t;
 }
 and
   bool_value =
@@ -29,6 +29,31 @@ and
   mutable info: ty_info;
   mutable ty: ty;
 }
+and kind =
+  | ModuleK
+  | ClassK
+  | MethodK
+  | ClassMethodK
+  | AttributeK
+  | ParameterK
+  | ScopeK
+  | VariableK
+  | ConstK
+and
+  binding_ty = {
+  node: Node.node;
+  qname: string;
+  bind_file: string;
+  bind_ty: type_t;
+  kind: kind;
+  start: int;
+  tail: int;
+  body_start: int;
+  body_end: int;
+}
+
+let global_table =
+  State.new_state ~parent:None State.Global
 
 let type_stack = TypeStack.empty;;
 
@@ -39,7 +64,7 @@ let set_mutated t m = t.info.mutated <- m
 let set_file t f = t.info.file <- f
 
 let set_table (t: type_t) (table: state_t) =
-  t.info.table <- Some table
+  t.info.table <- table
 
 let is_undecided_bool t =
   match t.ty with
@@ -70,7 +95,10 @@ let type_equal ty1 ty2 =
   | _, _ -> false
 
 let new_ty_info() =
-  { file = ""; mutated = false; table = None}
+  {
+    file = ""; mutated = false;
+    table = (State.new_state ~parent:(Some global_table) State.Global);
+  }
 
 let new_bool_type v s1 s2 =
   { info = new_ty_info();
@@ -132,7 +160,25 @@ let new_class_type name parent ?(super = None) =
   (match super with
    | Some(s) -> (
        classty_add_super ret super;
-       State.set_supers state s.info.table (* Fixme *)
+       State.set_supers state (Some s.info.table) (* Fixme *)
      )
    | _ -> ());
   ret
+
+
+let new_binding node ttype kind =
+  {
+    qname = ttype.info.table.path;
+    kind = kind;
+    node = node;
+    bind_file = node.info.file;
+    bind_ty = ttype;
+    start = 0;
+    tail = 0;
+    body_start = 0;
+    body_end = 0;
+  }
+
+let bind_equal a b =
+  (a.start = b.start && a.tail = b.tail && a.bind_file = b.bind_file)
+  
