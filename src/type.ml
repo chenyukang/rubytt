@@ -1,3 +1,4 @@
+open Core.Std
 open Typestack
 open State
 open Node
@@ -23,7 +24,8 @@ and ty =
   | Float_ty
   | Instance_ty of type_t
   (* name * instance_type * superclass *)
-  | ClassType of string * type_t option * type_t option
+  | Class_ty of string * type_t option * type_t option
+  | Union_ty of (type_t, bool) Hashtbl.t
 and
   type_t = {
   mutable info: ty_info;
@@ -91,7 +93,7 @@ let type_equal ty1 ty2 =
   | Str_ty _, Str_ty _
   | Float_ty, Float_ty
   | Bool_ty _, Bool_ty _ -> true
-  | ClassType _, ClassType _ -> ty1 = ty2
+  | Class_ty _, Class_ty _ -> ty1 = ty2
   | _, _ -> false
 
 let new_ty_info() =
@@ -153,27 +155,27 @@ let new_sym_type ?(name="") () =
 
 let classty_set_name c name =
   match c.ty with
-  | ClassType(_name, canon, super) -> c.ty <- ClassType(name, canon, super)
+  | Class_ty(_name, canon, super) -> c.ty <- Class_ty(name, canon, super)
   | _ -> failwith "classty_set_name"
 
 let classty_set_canon c canon =
   match c.ty with
-  | ClassType(name, _canon, super) -> c.ty <- ClassType(name, canon, super)
+  | Class_ty(name, _canon, super) -> c.ty <- Class_ty(name, canon, super)
   | _ -> failwith "classty_set_canon"
 
 let classty_add_super c super =
   match c.ty with
-  | ClassType(name, canon, _) -> c.ty <- ClassType(name, canon, super)
+  | Class_ty(name, canon, _) -> c.ty <- Class_ty(name, canon, super)
   | _ -> failwith "classty_add_super"
 
 let cassty_get_canon c =
   match c.ty with
-  | ClassType(_, canon, _) -> canon
+  | Class_ty(_, canon, _) -> canon
   | _ -> None
 
 let new_class_type name parent ?(super = None) =
   let ret = { info = new_ty_info();
-              ty = ClassType(name, None, None);
+              ty = Class_ty(name, None, None);
             } in
   let state = (State.new_state ~parent:parent State.Class) in
   set_table ret state;
@@ -188,6 +190,25 @@ let new_class_type name parent ?(super = None) =
      )
    | _ -> ());
   ret
+
+let rec union_ty_add_ty u t =
+  match t.ty with
+  | Union_ty(_t) ->
+    Hashtbl.iter _t ~f:(fun ~key:k ~data:_ -> ignore(union_ty_add_ty u k))
+  | _ -> (
+      match u.ty with
+      | Union_ty(table) ->
+        Hashtbl.add_exn table t true;
+      | _ -> failwith "union_ty_add_ty error ty"
+    )
+
+let new_union_type ?(elems = []) () =
+  let res = {
+    info = new_ty_info();
+    ty = Union_ty(Hashtbl.Poly.create ());
+  } in
+  List.iter elems ~f:(fun e -> union_ty_add_ty res e);
+  res
 
 let new_instance_type class_ty =
   {

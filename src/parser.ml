@@ -23,7 +23,7 @@ let rec convert json =
   let ty = convert_to_s json "type" in
   let ss = convert_to_i json "start" in
   let ee = convert_to_i json "end" in
-  let ff = convert_to_s json "filename" in 
+  let ff = convert_to_s json "filename" in
   (* Printf.printf "now type: %s\n" ty; *)
   match ty with
   | "program" ->
@@ -45,7 +45,7 @@ let rec convert json =
     make_string_node str ff ss ee
   | "name" ->
     let id = convert_to_s json "id" in
-    make_name_node id Node.Local ff ss ee (* FIXME *)
+    make_name_node id Node.Local ff ss ee
   | "attribute" ->
     let value = convert_elem json "value" in
     let attr = convert_elem json "attr" in
@@ -281,4 +281,3 @@ let run() =
   let ast = build_ast_from_file "./ruby.json" in
   let str = node_to_str ast 0 in
   Printf.printf "%s\n" str
-
