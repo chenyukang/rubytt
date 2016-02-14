@@ -13,8 +13,4 @@ let () =
   else
     let filename = Sys.argv.(1) in
     Analyzer.load_file filename
-    (* let json = run_dump_ruby filename in *)
-    (* let ast = build_ast_from_file json in *)
-    (* let ast_str = node_to_str ast 0 in *)
-    (* Printf.printf "%s\n" ast_str *)
 
