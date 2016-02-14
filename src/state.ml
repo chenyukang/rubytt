@@ -46,6 +46,9 @@ let set_supers st supers =
 let state_remove st id =
   Hashtbl.remove st.s_table id
 
+let state_keyset st =
+  Hashtbl.keys st.s_table
+    
 let state_copy st =
   {
     parent = st.parent;

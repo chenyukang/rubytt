@@ -129,6 +129,7 @@ let test_type() =
 let test_union_a() =
   let a = new_bool_type Undecided None None in
   let _union_ty = new_union_type ~elems:([a; a]) () in
+  assert_equal (union_ty_is_empty _union_ty) false;
   match _union_ty.ty with
   | Union_ty(t) -> (
       assert_equal (Hashtbl.length t) 1;
@@ -143,9 +144,38 @@ let test_union_b() =
   | Union_ty(t) -> assert_equal (Hashtbl.length t) 2;
   | _ -> assert_failure "invalid union_ty"
 
+let test_union_c() =
+  let a = new_bool_type Undecided None None in
+  let b = new_bool_type True None None in
+  let _union_ty = new_union_type ~elems:([a; b]) () in
+  let _res = union_ty_remove _union_ty a in
+  let _res = union_ty_remove _res b in
+  match _res.ty with
+  | Union_ty(t) -> assert_equal (Hashtbl.length t) 0;
+  | _ -> assert_failure "invalid union_ty"
+
+let test_union_d() =
+  let a = new_bool_type Undecided None None in
+  let b = new_bool_type True None None in
+  let _union_ty = new_union_type ~elems:([a; b]) () in
+  let _res = union_ty_remove _union_ty a in
+  match _res.ty with
+  | Union_ty(t) -> assert_equal (Hashtbl.length t) 1;
+  | _ -> assert_failure "invalid union_ty"
+
+let test_union_e() =
+  let a = new_bool_type Undecided None None in
+  let b = new_bool_type True None None in
+  assert_equal (type_equal a b) true;
+  let res = union_ty_remove a b in
+  assert_equal (type_equal res unkown_ty) true
+
 let test_union() =
   test_union_a();
-  test_union_b()
+  test_union_b();
+  test_union_c();
+  test_union_d();
+  test_union_e()
 
 let test_dir() =
   let res = run_dir "tests" in
