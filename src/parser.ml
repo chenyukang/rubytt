@@ -24,7 +24,6 @@ let rec convert json =
   let ss = convert_to_i json "start" in
   let ee = convert_to_i json "end" in
   let ff = convert_to_s json "filename" in
-  (* Printf.printf "now type: %s\n" ty; *)
   match ty with
   | "program" ->
     convert_elem json "body"
@@ -165,9 +164,7 @@ let rec convert json =
     let func = convert_elem json "func" in
     let args = json |> member "args" in
     match args with
-      | `Null -> (
-          make_call_node func [] nil_node nil_node ff ss ee
-        )
+      | `Null -> make_call_node func [] nil_node nil_node ff ss ee
       | _ -> (
           let positional = convert_list (args |> member "positional") in
           let star = convert_elem args "star" in

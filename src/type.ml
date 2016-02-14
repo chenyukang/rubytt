@@ -87,13 +87,15 @@ let is_str_type t =
 let is_unknow_type t =
   false (* fixme *)
 
-let type_equal ty1 ty2 =
+let rec type_equal ty1 ty2 =
   match ty1.ty, ty2.ty with
   | Int_ty, Int_ty
   | Str_ty _, Str_ty _
   | Float_ty, Float_ty
   | Bool_ty _, Bool_ty _ -> true
-  | Class_ty _, Class_ty _ -> ty1 = ty2
+  | Class_ty _, Class_ty _ -> phys_equal ty1  ty2
+  | Instance_ty(t1), Instance_ty(t2) ->
+      (type_equal t1 t2)
   | _, _ -> false
 
 let new_ty_info() =
@@ -127,7 +129,6 @@ let bool_swap b =
   | Bool_ty(v, s1, s2) ->
     {b with ty = Bool_ty(v, s2, s1)}
   | _ -> failwith "bool_swap"
-
 
 let new_int_type () =
   {
@@ -198,7 +199,7 @@ let rec union_ty_add_ty u t =
   | _ -> (
       match u.ty with
       | Union_ty(table) ->
-        Hashtbl.add_exn table t true;
+        ignore(Hashtbl.add table t true);
       | _ -> failwith "union_ty_add_ty error ty"
     )
 
@@ -209,6 +210,12 @@ let new_union_type ?(elems = []) () =
   } in
   List.iter elems ~f:(fun e -> union_ty_add_ty res e);
   res
+
+let union_ty_is_empty t =
+  match t.ty with
+  | Union_ty(t) -> Hashtbl.length t = 0
+  | _ -> false
+
 
 let new_instance_type class_ty =
   {
@@ -245,3 +252,21 @@ let cont_ty =
   let class_ty = new_class_type "nil" None ~super:None in
   new_instance_type class_ty
 
+let unkown_ty =
+  let class_ty = new_class_type "?" None ~super:None in
+  new_instance_type class_ty
+
+let union_ty_remove u t =
+  match u.ty with
+  | Union_ty(_t) -> (
+      let new_t = Hashtbl.copy _t in
+      Hashtbl.remove new_t t;
+      {
+        info = new_ty_info();
+        ty = Union_ty(new_t);
+      }
+    )
+  | _ -> (
+      if type_equal u t then unkown_ty
+      else u
+    )
