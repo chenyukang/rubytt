@@ -198,7 +198,7 @@ let rec union_ty_add_ty u t =
   | _ -> (
       match u.ty with
       | Union_ty(table) ->
-        Hashtbl.add_exn table t true;
+        ignore(Hashtbl.add table t true);
       | _ -> failwith "union_ty_add_ty error ty"
     )
 

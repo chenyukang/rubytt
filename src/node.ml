@@ -78,6 +78,7 @@ and
   | Call of node * node list * node * node
   | Func of node * node list * node list * node list * node list * node list *
             node * node * string
+
 and
   node = {
   info: node_info;
@@ -114,7 +115,7 @@ let make_nil_node file s e =
   }
 
 let add_children parent children =
-  List.iter children ~f:(fun a -> set_node_parent a parent) 
+  List.iter children ~f:(fun a -> set_node_parent a parent)
 
 let make_block_node stmts file s e =
   let block = {
@@ -254,7 +255,7 @@ let make_if_node test body _else file s e =
   add_children node [test; body; _else];
   node
 
-let make_for_node target iter body file s e = 
+let make_for_node target iter body file s e =
   let node = {
     info = {path=""; file = file; ss = s; ee = e};
     ty = For(target, iter, body);

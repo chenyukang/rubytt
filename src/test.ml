@@ -126,6 +126,27 @@ let test_type() =
   assert_equal (is_mutated a) true;
   assert_equal (is_undecided_bool a) true
 
+let test_union_a() =
+  let a = new_bool_type Undecided None None in
+  let _union_ty = new_union_type ~elems:([a; a]) () in
+  match _union_ty.ty with
+  | Union_ty(t) -> (
+      assert_equal (Hashtbl.length t) 1;
+    )
+  | _ -> assert_failure "invalid union_ty"
+
+let test_union_b() =
+  let a = new_bool_type Undecided None None in
+  let b = new_bool_type True None None in
+  let _union_ty = new_union_type ~elems:([a; b]) () in
+  match _union_ty.ty with
+  | Union_ty(t) -> assert_equal (Hashtbl.length t) 2;
+  | _ -> assert_failure "invalid union_ty"
+
+let test_union() =
+  test_union_a();
+  test_union_b()
+
 let test_dir() =
   let res = run_dir "tests" in
   assert_equal (List.exists res ~f:(fun x -> x = false)) false
@@ -139,8 +160,10 @@ let test_unit = [
   "State", `Quick, test_state;
   "Bool", `Quick, test_bool_type;
   "Type", `Quick, test_type;
+  "UnionTy", `Quick, test_union;
   "Cases", `Quick, test_dir;
 ]
+
 
 let () =
   Alcotest.run "My Test" [ "test_unit", test_unit;]
