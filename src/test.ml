@@ -98,7 +98,8 @@ let test_bool_type() =
   let b = Type.new_bool_type Undecided None None in(
   match b.ty with
   | Bool_ty(v, s1, s2) ->
-    if not (v = Undecided && s1 = None && s2 = None) then assert_failure "default bool value"
+    if not (v = Undecided && s1 = None && s2 = None) then
+      assert_failure "default bool value"
   | _ -> assert_failure "default bool type error"
   );
   let s = State.new_state ~parent:None State.Class in
@@ -126,6 +127,9 @@ let test_type() =
   assert_equal (is_mutated a) true;
   assert_equal (is_undecided_bool a) true
 
+let test_union_type() =
+  ()
+
 let test_dir() =
   let res = run_dir "tests" in
   assert_equal (List.exists res ~f:(fun x -> x = false)) false
@@ -139,6 +143,7 @@ let test_unit = [
   "State", `Quick, test_state;
   "Bool", `Quick, test_bool_type;
   "Type", `Quick, test_type;
+  "Union", `Quick, test_union_type;
   "Cases", `Quick, test_dir;
 ]
 
