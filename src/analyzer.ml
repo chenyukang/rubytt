@@ -25,9 +25,6 @@ let make_analyzer () =
 
 let global_Analyzer = make_analyzer();;
 
-let is_global_name name =
-  let open Core.Std in
-  String.substr_index name "$" = Some(0)
 
 let get_modulebinding_if_global st name =
   let res = ref None in

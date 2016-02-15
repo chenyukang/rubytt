@@ -48,7 +48,7 @@ let state_remove st id =
 
 let state_keyset st =
   Hashtbl.keys st.s_table
-    
+
 let state_copy st =
   {
     parent = st.parent;

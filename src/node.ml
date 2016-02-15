@@ -201,6 +201,16 @@ let make_name_node id ty file s e =
     parent = None;
   }
 
+let name_node_id n =
+  match n.ty with
+  | Name(s, _) -> s
+  | _ -> failwith "error node type for name_id"
+
+let name_node_is_globalvar n =
+  match n.ty with
+  | Name(_, t) -> t = Global
+  | _ -> false
+
 let make_yield_node value file s e =
   let node = {
     info = {path=""; file = file; ss = s; ee = e};

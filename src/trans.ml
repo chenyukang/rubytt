@@ -1,8 +1,9 @@
 open Core.Std
 open Node
 open Type
+open Binder
 
-let rec transform (node:Node.node) state =
+let rec transform (node:node) state =
   match node.ty with
   | Int(_) -> Type.int_ty
   | Float(_) -> Type.float_ty
@@ -22,6 +23,11 @@ let rec transform (node:Node.node) state =
     )
   | Kwd(_, v) | Return(v) | Starred(v) | Yield(v)
     -> transform v state
+  | Assign(t, rv) -> (
+      let vt = transform rv state in
+      Binder.bind_node state t vt;
+      vt
+    )
   | _ -> Type.int_ty
 
 let transform_expr node state =
