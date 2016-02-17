@@ -28,6 +28,14 @@ let rec transform (node:node) state =
       Binder.bind_node state t vt;
       vt
     )
+  | Block(nodes) -> (
+      let return_ty = ref Type.cont_ty in
+      List.iteri nodes ~f:(fun i n ->
+          let ty = transform n state in
+          if i = (List.length nodes) - 1 then return_ty := ty;
+        );
+      !return_ty
+    )
   | _ -> Type.int_ty
 
 let transform_expr node state =

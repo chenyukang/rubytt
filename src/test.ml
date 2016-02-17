@@ -19,7 +19,8 @@ let run_dir dir =
       let b = Filename.chop_extension p in
       begin
         let j = run_dump_ruby p in
-        let ast = parse_file j in
+        let ast = build_ast_from_file j in
+        ignore(Trans.transform_expr ast Type.global_table);
         let ast_str = node_to_str ast 0 in
         let log = Printf.sprintf "%s.log" b in
         let cmp = Printf.sprintf "%s.cmp" b in (

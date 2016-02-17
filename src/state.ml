@@ -76,7 +76,7 @@ let state_merge st1 st2 =
   ret
 
 let state_update st id bindings =
-  Hashtbl.add st.s_table id bindings
+  ignore(Hashtbl.add st.s_table id bindings)
 
 let state_update_bind st id binding =
   state_update st id [binding]
