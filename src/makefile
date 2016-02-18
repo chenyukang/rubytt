@@ -9,13 +9,13 @@ OCAMLBUILD = corebuild -use-ocamlfind -pkg yojson -pkg alcotest -pkg ounit -pkg 
 
 default: byte
 
-all: byte native test
+all: byte native test dot
 
 byte:
-	$(OCAMLBUILD) $(TARGET).byte
+	$(OCAMLBUILD) $(TARGET).byte; cp $(TARGET).byte ../bin;
 
 native:
-	$(OCAMLBUILD) $(TARGET).native
+	$(OCAMLBUILD) $(TARGET).native; cp $(TARGET).native ../bin;
 
 test:
 	$(OCAMLBUILD) test.native; ./test.native
@@ -23,5 +23,8 @@ test:
 update:
 	$(OCAMLBUILD) update_test.byte; ./update_test.byte
 
+dot:
+	ocamldep *.ml | ../bin/ocamldot > dep.dot
+	dot -Tpng dep.dot > dep.png
 clean:
 	$(OCAMLBUILD) -clean

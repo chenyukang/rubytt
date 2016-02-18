@@ -1,7 +1,6 @@
 open Node
 open Type
 open State
-open Global
 
 let state_insert st id node ty kind =
   let b = new_binding node ty kind in
@@ -25,7 +24,7 @@ and
   if Util.is_global_name id && (name_node_is_globalvar name) then (
     let b = new_binding name rt kind in
     state_update_bind global_table id b;
-    Global.put_ref name b;
+    Analyzer.put_ref name b;
   ) else (
     state_insert state id name rt kind
   )
