@@ -27,7 +27,7 @@ dot:
 	$(OCAMLBUILD) proj.docdir/dep.dot;
   # remove the line of "rotate=90"
 	grep -vwE "(rotate)" _build/proj.docdir/dep.dot > dep.dot;
-	dot dep.dot -Tpng -o dep.png;
+	dot dep.dot -Tpng -o dep.png; open dep.png
 
 clean:
 	$(OCAMLBUILD) -clean
