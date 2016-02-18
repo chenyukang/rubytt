@@ -5,12 +5,11 @@ open Printer
 open Node
 open Util
 open Type
-open Analyzer
 
 let load_file file =
   let json = run_dump_ruby file in
   let ast = build_ast_from_file json in
-  ignore(Trans.transform_expr ast Type.global_table);
+  ignore(Analyzer.trans ast);
   let ast_str = Printer.node_to_str ast 0 in
   Printf.printf "%s\n" ast_str
 

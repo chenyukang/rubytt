@@ -1,0 +1,35 @@
+(Block 
+ (Assign 
+  (Name a)
+  (Int 1))
+ (Assign 
+  (Name arr)
+  (Array 
+   (Int 1)
+   (Int 2)))
+ (Assign 
+  (Subscript 
+   (Name arr)
+   (Int 0))
+  (Int 0))
+ (Assign 
+  (Subscript 
+   (Name arr)
+   (Array 
+    (Int 0)
+    (Int 1)))
+  (Array 
+   (Int 2)
+   (Int 3)))
+ (Call 
+  (Attribute 
+   (Block 
+    (Array 
+     (Int 1)
+     (Int 4)))
+   (Name include?))
+  (args: 
+   (Int 1)))
+ (Call puts
+  (args: 
+   (Name arr))))

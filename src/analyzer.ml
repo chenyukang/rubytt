@@ -7,7 +7,6 @@ type analyzer = {
   global_table: Type.state_t;
   all_bindings: Type.binding_ty list;
   loaded_files: (string, bool) Hashtbl.t;
-  references: (Node.node, Type.binding_ty list) Hashtbl.t;
   path: string list;
 }
 
@@ -19,32 +18,10 @@ let make_analyzer () =
     global_table = Type.global_table;
     all_bindings = [];
     loaded_files = Hashtbl.Poly.create ();
-    references = Hashtbl.Poly.create ();
     path = [];
   }
 
 let global_Analyzer = make_analyzer();;
-let global_table = global_Analyzer.global_table;;
 
-let put_refs node bs =
-  let binded = Hashtbl.find global_Analyzer.references node in
-  match binded with
-  | None ->  (
-      Hashtbl.add_exn global_Analyzer.references ~key:node ~data: bs
-    )
-  | Some(v) -> (
-      List.iter bs ~f:(fun b -> Type.binding_add_ref b node);
-      ignore(Hashtbl.replace global_Analyzer.references ~key:node ~data:(v @ bs));
-    )
-
-let put_ref node bind =
-  let bs = [bind] in
-  put_refs node bs
-
-
-let get_modulebinding_if_global st name =
-  let res = ref None in
-  if Util.is_global_name name then
-    if global_table <> st then
-        res := State.lookup_local global_table name;
-  !res
+let trans ast =
+  Trans.transform_expr ast Type.global_table
