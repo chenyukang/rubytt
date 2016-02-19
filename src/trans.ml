@@ -33,16 +33,19 @@ let get_modulebinding_if_global st name =
   !res
 
 
-let rec bind state (target:node) (rt:type_t) kind =
+let rec bind state (target:node) rt kind =
   match target.ty with
   | Name _ -> bind_name state target rt kind
-  | Array(elems) -> ( failwith "array as target!")
+  | Array(elems) -> (
+      (* a, b = 1, 2 *)
+      bind_array state elems rt kind
+    )
   | Subscript(value, slices) -> (
-      (* let val_ty =  *)
     )
   | _ -> ()
+
 and
-  bind_node state (target:node) (rt:type_t) =
+  bind_node state (target:node) rt =
   let kind = match state.s_type with
     | State.Function -> Type.VariableK
     | State.Class | State.Instance -> Type.AttributeK
@@ -52,7 +55,6 @@ and
 and
   bind_name state name (rt:type_t) kind =
   let id = name_node_id name in
-  Printf.printf "name: %s\n" id;
   if Util.is_global_name id && (name_node_is_globalvar name) then (
     let b = new_binding name rt kind in
     State.state_update_bind global_table id b;
@@ -60,6 +62,11 @@ and
   ) else (
     state_insert state id name rt kind
   )
+
+and
+  bind_array state elems rt kind =
+  Printf.printf "ty: %s\n" (type_to_str rt);
+  ()
 
 and
   transform (node:node) state =
@@ -71,13 +78,20 @@ and
   | Symbol(s) -> Type.new_sym_type ~name:s ()
   | Void -> Type.cont_ty
   | StrEmbed(s) -> (
-      ignore(transform s state);
-      Type.str_ty
+      ignore(transform s state); Type.str_ty
+    )
+  | Array(elems) -> (
+      let list_ty = new_array_type() in
+      List.iter elems ~f:(fun e ->
+          let t = transform e state in
+          array_ty_add list_ty t;
+        );
+      list_ty
     )
   | UnaryOp(_, operand) -> transform operand state
   | Undef(elems) -> (
       List.iter elems ~f:(fun e -> ignore(transform e state));
-      (* fixme *)
+      (* Fixme *)
       Type.cont_ty
     )
   | Kwd(_, v) | Return(v) | Starred(v) | Yield(v)

@@ -1,0 +1,8 @@
+(Block 
+ (Assign 
+  (Array 
+   (Name a)
+   (Name b))
+  (Array 
+   (Int 1)
+   (Int 2))))

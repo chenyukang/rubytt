@@ -26,6 +26,8 @@ and ty =
   (* name * instance_type * superclass *)
   | Class_ty of string * type_t option * type_t option
   | Union_ty of (type_t, bool) Hashtbl.t
+  | Tuple_ty of type_t list
+  | Array_ty of type_t * type_t list * Node.node list
 and
   type_t = {
   mutable info: ty_info;
@@ -224,6 +226,14 @@ let new_instance_type class_ty =
     ty = Instance_ty(class_ty);
   }
 
+let new_tuple_type elem_tys =
+  {
+    info = new_ty_info();
+    ty = Tuple_ty(elem_tys)
+  }
+
+
+
 let new_binding node ttype kind =
   {
     qname = ttype.info.table.path;
@@ -240,7 +250,7 @@ let new_binding node ttype kind =
 
 let binding_add_ref binding node =
   Hashtbl.add_exn binding.refs ~key:node ~data:true
-    
+
 let bind_equal a b =
   (a.start = b.start && a.tail = b.tail && a.bind_file = b.bind_file)
 
@@ -275,3 +285,22 @@ let union_ty_remove u t =
       if type_equal u t then unkown_ty
       else u
     )
+
+let new_array_type ?(ty = unkown_ty) () =
+  {
+    info = new_ty_info();
+    ty = Array_ty(ty, [], [])
+  }
+
+let array_ty_add list_ty elem_ty =
+  match list_ty.ty with
+  | Array_ty(base, ty_list, values) -> (
+      list_ty.ty <- Array_ty(base, ty_list @ [elem_ty], values)
+    )
+  | _ -> failwith "array_ty_add type error"
+
+
+let type_to_str ty =
+  match ty.ty with
+  | Array_ty(_, ty_list, _) -> Printf.sprintf "Array_ty: %d" (List.length ty_list)
+  | _ -> "unkown_type"
