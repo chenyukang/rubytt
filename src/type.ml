@@ -27,7 +27,7 @@ and ty =
   | Class_ty of string * type_t option * type_t option
   | Union_ty of (type_t, bool) Hashtbl.t
   | Tuple_ty of type_t list
-  | Array_ty of type_t * type_t list * Node.node list
+  | List_ty of type_t * type_t list * Node.node list
 and
   type_t = {
   mutable info: ty_info;
@@ -286,23 +286,46 @@ let union_ty_remove u t =
       else u
     )
 
-let new_array_type ?(ty = unkown_ty) () =
+let new_list_type ?(ty = unkown_ty) () =
   {
     info = new_ty_info();
-    ty = Array_ty(ty, [], [])
+    ty = List_ty(ty, [], [])
   }
 
-let array_ty_add list_ty elem_ty =
+let list_ty_add list_ty elem_ty =
   match list_ty.ty with
-  | Array_ty(base, ty_list, values) -> (
-      list_ty.ty <- Array_ty(base, ty_list @ [elem_ty], values)
+  | List_ty(base, ty_list, values) -> (
+      list_ty.ty <- List_ty(base, ty_list @ [elem_ty], values)
     )
-  | _ -> failwith "array_ty_add type error"
+  | _ -> failwith "list_ty_add type error"
+
+let list_ty_elem_ty list_ty =
+  match list_ty.ty with
+  | List_ty(base, _, _) -> base
+  | _ -> failwith "list_ty_elem_ty type error"
+
+let is_list_ty ty =
+  match ty.ty with
+  | List_ty(_) -> true
+  | _ -> false
+
+let get_subscript_ty vt st =
+  if type_equal vt unkown_ty then unkown_ty
+  else (
+    match vt.ty with
+    | List_ty _ -> (
+        if List.length st = 1 && is_num_type (List.nth_exn st 0 ) then
+          list_ty_elem_ty vt
+        else (
+          if List.length st > 1 then vt else unkown_ty
+        )
+      )
+    | _ -> unkown_ty)       (* fixme *)
 
 
 let type_to_str ty =
   match ty.ty with
   | Int_ty -> "Int_ty"
   | Str_ty(_) -> "Str_ty"
-  | Array_ty(_, ty_list, _) -> Printf.sprintf "Array_ty: %d" (List.length ty_list)
+  | List_ty(_, ty_list, _) -> Printf.sprintf "List_ty: %d" (List.length ty_list)
   | _ -> "unkown_type"

@@ -1,0 +1,22 @@
+(Block 
+ (Func div
+  (args: 
+   (Name a)
+   (Name b))
+  (body: 
+   (Block 
+    (If 
+     (BinOp:Equal 
+      (Name b)
+      (Int 0))
+     (Call raise
+      (args: 
+       (String zero div!)))
+     (Nil))
+    (BinOp:Div 
+     (Name a)
+     (Name b)))))
+ (Call div
+  (args: 
+   (Int 1)
+   (Int 0))))

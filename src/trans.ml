@@ -68,7 +68,7 @@ and
   bind_array state elems rt kind =
   let elems_size = List.length elems in
   match rt.ty with
-  | Array_ty(_, tys, _) -> (
+  | List_ty(_, tys, _) -> (
       let ty_size = List.length tys in
       if ty_size <> elems_size then
         Printf.printf "error array assign size mismatch: %d %d\n" elems_size ty_size
@@ -102,10 +102,10 @@ and
       )
     )
   | Array(elems) -> (
-      let list_ty = new_array_type() in
+      let list_ty = new_list_type() in
       List.iter elems ~f:(fun e ->
           let t = transform e state in
-          array_ty_add list_ty t;
+          list_ty_add list_ty t;
         );
       list_ty
     )
@@ -115,12 +115,16 @@ and
       (* Fixme *)
       Type.cont_ty
     )
-  | Kwd(_, v) | Return(v) | Starred(v) | Yield(v)
-    -> transform v state
+
   | Assign(t, rv) -> (
       let vt = transform rv state in
       bind_node state t vt;
       vt
+    )
+  | Subscript(value, slices) -> (
+      let vt = transform value state in
+      let st = List.map slices ~f:(fun i -> transform i state) in
+      Type.get_subscript_ty vt st
     )
   | Block(nodes) -> (
       let return_ty = ref Type.cont_ty in
@@ -130,6 +134,9 @@ and
         );
       !return_ty
     )
+  (* | Raise() *)
+  | Kwd(_, v) | Return(v) | Starred(v) | Yield(v)
+    -> transform v state
   | _ -> Type.int_ty
 
 let transform_expr node state =
