@@ -55,6 +55,7 @@ and
 and
   bind_name state name (rt:type_t) kind =
   let id = name_node_id name in
+  Printf.printf "bind name: %s\n" id;
   if Util.is_global_name id && (name_node_is_globalvar name) then (
     let b = new_binding name rt kind in
     State.state_update_bind global_table id b;
@@ -65,8 +66,19 @@ and
 
 and
   bind_array state elems rt kind =
-  Printf.printf "ty: %s\n" (type_to_str rt);
-  ()
+  let elems_size = List.length elems in
+  match rt.ty with
+  | Array_ty(_, tys, _) -> (
+      let ty_size = List.length tys in
+      if ty_size <> elems_size then
+        Printf.printf "error array assign size mismatch: %d %d\n" elems_size ty_size
+      else
+        List.iteri elems ~f:(fun i e ->
+            let ty = List.nth_exn tys i in
+            bind state e ty kind;
+          )
+    )
+  | _ -> (Printf.printf "error array assign size mismtach: %d 0\n" elems_size);
 
 and
   transform (node:node) state =
