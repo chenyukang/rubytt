@@ -76,7 +76,9 @@ let state_merge st1 st2 =
   ret
 
 let state_update st id bindings =
-  ignore(Hashtbl.add st.s_table id bindings)
+  match Hashtbl.add st.s_table ~key:id ~data:bindings with
+  | `Duplicate -> Hashtbl.replace st.s_table ~key:id ~data:bindings
+  | _ -> ()
 
 let state_update_bind st id binding =
   state_update st id [binding]

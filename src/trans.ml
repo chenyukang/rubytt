@@ -55,7 +55,7 @@ and
 and
   bind_name state name (rt:type_t) kind =
   let id = name_node_id name in
-  Printf.printf "bind name: %s\n" id;
+  Printf.printf "bind name: %s ty: %s\n" id (Type.type_to_str rt);
   if Util.is_global_name id && (name_node_is_globalvar name) then (
     let b = new_binding name rt kind in
     State.state_update_bind global_table id b;
@@ -91,6 +91,15 @@ and
   | Void -> Type.cont_ty
   | StrEmbed(s) -> (
       ignore(transform s state); Type.str_ty
+    )
+  | BinOp(_, ln, rn) -> (
+      let lt = transform ln state in
+      let rt = transform rn state in
+      if not (type_equal lt Type.unkown_ty) then lt
+      else (
+        if not (type_equal rt Type.unkown_ty) then rt
+        else Type.unkown_ty
+      )
     )
   | Array(elems) -> (
       let list_ty = new_array_type() in

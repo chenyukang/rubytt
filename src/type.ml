@@ -302,5 +302,7 @@ let array_ty_add list_ty elem_ty =
 
 let type_to_str ty =
   match ty.ty with
+  | Int_ty -> "Int_ty"
+  | Str_ty(_) -> "Str_ty"
   | Array_ty(_, ty_list, _) -> Printf.sprintf "Array_ty: %d" (List.length ty_list)
   | _ -> "unkown_type"

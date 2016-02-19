@@ -1,5 +1,7 @@
+open Core.Std;;
 open Node
-open Core.Std
+open State
+
 
 let op_to_str op =
   match op with
@@ -195,4 +197,11 @@ and
   "\n" ^ k_space n
 
 
-
+let table_to_str (state:Type.state_t) =
+  let table = state.s_table in
+  Hashtbl.iter table ~f:(fun ~key:k ~data:bindings ->
+      List.iter bindings ~f:(fun b ->
+          Printf.printf "bind: %s ty: %s\n" k (Type.type_to_str b.bind_ty)
+        )
+    );
+  ""

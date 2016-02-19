@@ -1,4 +1,6 @@
 open Core.Std;;
+open Type
+open State
 
 type analyzer = {
   sid: string;
@@ -24,4 +26,5 @@ let make_analyzer () =
 let global_Analyzer = make_analyzer();;
 
 let trans ast =
-  Trans.transform_expr ast Type.global_table
+  ignore(Trans.transform_expr ast Type.global_table);
+  Printf.printf "%s\n" (Printer.table_to_str Type.global_table)
