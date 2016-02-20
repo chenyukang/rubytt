@@ -1,0 +1,6 @@
+(Block 
+ (Assign 
+  (Name a)
+  (Array 
+   (Int 1)
+   (String a))))

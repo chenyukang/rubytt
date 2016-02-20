@@ -100,7 +100,7 @@ let rec type_equal ty1 ty2 =
   | Class_ty _, Class_ty _ -> phys_equal ty1  ty2
   | Instance_ty(t1), Instance_ty(t2) ->
       (type_equal t1 t2)
-  | _, _ -> false
+  | _, _ -> phys_equal ty1 ty2
 
 let new_ty_info() =
   {
@@ -290,8 +290,8 @@ let union_ty_remove u t =
 let union_ty u v =
   match (type_equal u v) with
   | true -> u
-  | _ when (type_equal u unkown_ty) -> unkown_ty
-  | _ when (type_equal v unkown_ty) -> unkown_ty
+  | _ when (type_equal u unkown_ty) -> v
+  | _ when (type_equal v unkown_ty) -> u
   | _ when (type_equal u cont_ty) -> v
   | _ when (type_equal v cont_ty) -> u
   | _ -> new_union_type ~elems:[u; v] ()
@@ -302,18 +302,21 @@ let new_list_type ?(ty = unkown_ty) () =
     ty = List_ty(ty, [], [])
   }
 
+let list_ty_elem_ty list_ty =
+  match list_ty.ty with
+  | List_ty(base, _, _) -> base
+  | _ -> failwith "list_ty_elem_ty type error"
+
 let list_ty_add list_ty elem_ty =
   match list_ty.ty with
   | List_ty(base, ty_list, values) -> (
+      (* Printf.printf "add_ty base: %s new: %s\n" *)
+      (*   (type_to_str base) (type_to_str elem_ty); *)
       let new_base = union_ty base elem_ty in
       list_ty.ty <- List_ty(new_base, ty_list @ [elem_ty], values)
     )
   | _ -> failwith "list_ty_add type error"
 
-let list_ty_elem_ty list_ty =
-  match list_ty.ty with
-  | List_ty(base, _, _) -> base
-  | _ -> failwith "list_ty_elem_ty type error"
 
 let is_list_ty ty =
   match ty.ty with
@@ -334,9 +337,20 @@ let get_subscript_ty vt st =
       )
     | _ -> unkown_ty)       (* fixme *)
 
-let type_to_str ty =
+let rec type_to_str ty =
   match ty.ty with
   | Int_ty -> "Int_ty"
   | Str_ty(_) -> "Str_ty"
-  | List_ty(_, ty_list, _) -> Printf.sprintf "List_ty: %d" (List.length ty_list)
+  | List_ty(elem_ty, ty_list, _) ->
+    Printf.sprintf "List_ty: %s" (type_to_str elem_ty)
+  | Union_ty(tys_table)  -> (
+      let res = ref "[" in
+      Hashtbl.iter tys_table ~f:(fun ~key:k ~data:_ ->
+          res := !res ^ "|(" ^ (type_to_str k) ^ ")"
+        );
+      res := !res ^ "]";
+      !res
+    )
   | _ -> "unkown_type"
+
+

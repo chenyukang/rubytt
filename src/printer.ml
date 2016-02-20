@@ -2,7 +2,6 @@ open Core.Std;;
 open Node
 open State
 
-
 let op_to_str op =
   match op with
   | Add -> "Add"
