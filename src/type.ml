@@ -27,6 +27,7 @@ and ty =
   | Class_ty of string * type_t option * type_t option
   | Union_ty of (type_t, bool) Hashtbl.t
   | Tuple_ty of type_t list
+  (* elem_ty * positional * values *)
   | List_ty of type_t * type_t list * Node.node list
 and
   type_t = {
@@ -195,6 +196,30 @@ let new_class_type name parent ?(super = None) =
    | _ -> ());
   ret
 
+let new_instance_type class_ty =
+  {
+    info = new_ty_info();
+    ty = Instance_ty(class_ty);
+  }
+
+let int_ty =
+  new_int_type()
+
+let str_ty =
+  new_str_type()
+
+let float_ty =
+  new_float_type()
+
+let cont_ty =
+  let class_ty = new_class_type "nil" None ~super:None in
+  new_instance_type class_ty
+
+let unkown_ty =
+  let class_ty = new_class_type "?" None ~super:None in
+  new_instance_type class_ty
+
+
 let rec union_ty_add_ty u t =
   match t.ty with
   | Union_ty(_t) ->
@@ -220,19 +245,11 @@ let union_ty_is_empty t =
   | _ -> false
 
 
-let new_instance_type class_ty =
-  {
-    info = new_ty_info();
-    ty = Instance_ty(class_ty);
-  }
-
 let new_tuple_type elem_tys =
   {
     info = new_ty_info();
     ty = Tuple_ty(elem_tys)
   }
-
-
 
 let new_binding node ttype kind =
   {
@@ -254,22 +271,6 @@ let binding_add_ref binding node =
 let bind_equal a b =
   (a.start = b.start && a.tail = b.tail && a.bind_file = b.bind_file)
 
-let int_ty =
-  new_int_type()
-
-let str_ty =
-  new_str_type()
-
-let float_ty =
-  new_float_type()
-
-let cont_ty =
-  let class_ty = new_class_type "nil" None ~super:None in
-  new_instance_type class_ty
-
-let unkown_ty =
-  let class_ty = new_class_type "?" None ~super:None in
-  new_instance_type class_ty
 
 let union_ty_remove u t =
   match u.ty with
@@ -286,6 +287,15 @@ let union_ty_remove u t =
       else u
     )
 
+let union_ty u v =
+  match (type_equal u v) with
+  | true -> u
+  | _ when (type_equal u unkown_ty) -> unkown_ty
+  | _ when (type_equal v unkown_ty) -> unkown_ty
+  | _ when (type_equal u cont_ty) -> v
+  | _ when (type_equal v cont_ty) -> u
+  | _ -> new_union_type ~elems:[u; v] ()
+
 let new_list_type ?(ty = unkown_ty) () =
   {
     info = new_ty_info();
@@ -295,7 +305,8 @@ let new_list_type ?(ty = unkown_ty) () =
 let list_ty_add list_ty elem_ty =
   match list_ty.ty with
   | List_ty(base, ty_list, values) -> (
-      list_ty.ty <- List_ty(base, ty_list @ [elem_ty], values)
+      let new_base = union_ty base elem_ty in
+      list_ty.ty <- List_ty(new_base, ty_list @ [elem_ty], values)
     )
   | _ -> failwith "list_ty_add type error"
 
@@ -314,14 +325,14 @@ let get_subscript_ty vt st =
   else (
     match vt.ty with
     | List_ty _ -> (
-        if List.length st = 1 && is_num_type (List.nth_exn st 0 ) then
+        if List.length st = 1 && is_num_type (List.nth_exn st 0) then
           list_ty_elem_ty vt
         else (
+          (* dot2 or dot3 *)
           if List.length st > 1 then vt else unkown_ty
         )
       )
     | _ -> unkown_ty)       (* fixme *)
-
 
 let type_to_str ty =
   match ty.ty with
