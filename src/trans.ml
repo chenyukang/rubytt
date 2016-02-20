@@ -32,6 +32,18 @@ let get_modulebinding_if_global st name =
         res := State.lookup_local global_table name;
   !res
 
+let rec state_lookup st name =
+  match get_modulebinding_if_global st name with
+  | None -> (
+      match lookup_local st name with
+      | Some(b) -> Some(b)
+      | None -> (
+          match st.parent with
+          | Some(p) -> state_lookup p name
+          | None -> None
+        )
+    )
+  | Some(b) -> Some(b)
 
 let rec bind state (target:node) rt kind =
   match target.ty with
@@ -91,6 +103,13 @@ and
   | Void -> Type.cont_ty
   | StrEmbed(s) -> (
       ignore(transform s state); Type.str_ty
+    )
+  | Name(id, _) -> (
+      match state_lookup state id with
+      | Some(bs) -> (
+          Type.unkown_ty
+        )
+      | _ -> Type.unkown_ty
     )
   | BinOp(_, ln, rn) -> (
       let lt = transform ln state in
