@@ -1,4 +1,5 @@
 (Block 
  (Assign 
   (Name a)
-  (Name false)))
+  (Name false))
+ (Call x))

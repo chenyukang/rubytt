@@ -3,7 +3,9 @@ open Node
 open Type
 open State
 
-let global_refs: (Node.node, Type.binding_ty list) Hashtbl.t = Hashtbl.Poly.create()
+let global_refs: (Node.node, Type.binding_ty list) Hashtbl.t = Hashtbl.Poly.create();;
+let global_resolved: (Node.node, bool) Hashtbl.t = Hashtbl.Poly.create();;
+let global_unresolved: (Node.node, bool) Hashtbl.t = Hashtbl.Poly.create();;
 
 let state_insert st id node ty kind =
   let b = new_binding node ty kind in
@@ -23,6 +25,13 @@ let put_refs node bs =
 let put_ref node bind =
   let bs = [bind] in
   put_refs node bs
+
+let set_resolve node =
+  Hashtbl.add_exn global_resolved ~key:node ~data:true;
+  Hashtbl.remove global_unresolved node
+
+let set_unresolve node =
+  Hashtbl.add_exn global_unresolved ~key:node ~data:true
 
 
 let get_modulebinding_if_global st name =
@@ -105,15 +114,18 @@ and
       ignore(transform s state); Type.str_ty
     )
   | Name(id, _) -> (
+      (* Printf.printf "lookup name: %s\n" id; *)
       match state_lookup state id with
       | Some(bs) -> (
           put_refs node bs;
+          set_resolve node;
           make_unions bs
         )
       | _ when id = "true" || id = "false" -> (
           Type.bool_ty
         )
       | _ -> ( Printf.printf "error: unbound variable for %s\n" id;
+               set_unresolve node;
                Type.unkown_ty)
     )
   | BinOp(_, ln, rn) -> (
@@ -161,7 +173,7 @@ and
   (* | Raise() *)
   | Kwd(_, v) | Return(v) | Starred(v) | Yield(v)
     -> transform v state
-  | _ -> Type.int_ty
+  | _ -> Type.unkown_ty
 
 let transform_expr node state =
   transform node state
