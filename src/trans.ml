@@ -107,9 +107,14 @@ and
   | Name(id, _) -> (
       match state_lookup state id with
       | Some(bs) -> (
-          Type.unkown_ty
+          put_refs node bs;
+          make_unions bs
         )
-      | _ -> Type.unkown_ty
+      | _ when id = "true" || id = "false" -> (
+          Type.bool_ty
+        )
+      | _ -> ( Printf.printf "error: unbound variable for %s\n" id;
+               Type.unkown_ty)
     )
   | BinOp(_, ln, rn) -> (
       let lt = transform ln state in

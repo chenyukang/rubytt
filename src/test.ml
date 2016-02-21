@@ -96,7 +96,7 @@ let test_state() =
   assert_equal a.parent None
 
 let test_bool_type() =
-  let b = Type.new_bool_type Undecided None None in(
+  let b = Type.new_bool_type ~v:Undecided ~s1:None ~s2:None () in(
   match b.ty with
   | Bool_ty(v, s1, s2) ->
     if not (v = Undecided && s1 = None && s2 = None) then
@@ -106,7 +106,7 @@ let test_bool_type() =
   let s = State.new_state ~parent:None State.Class in
   bool_set_s2 b (Some s);
   (match b.ty with
-  | Bool_ty(v, s1, s2) ->
+  | Bool_ty(v, _, s2) ->
     if not(v = Undecided && s2 <> None) then assert_failure "bool_set_s1 failed"
   | _ -> ()
   );
@@ -117,8 +117,8 @@ let test_bool_type() =
   | _ -> ())
 
 let test_type() =
-  let a = new_bool_type Undecided None None in
-  let b = new_bool_type Undecided None None in
+  let a = new_bool_type ~v:Undecided ~s1:None ~s2:None () in
+  let b = new_bool_type ~v:Undecided ~s1:None ~s2:None () in
   assert_equal (is_num_type a || is_str_type a) false;
   assert_equal (type_equal a b) true;
   assert_equal (is_mutated a) false;
@@ -129,7 +129,7 @@ let test_type() =
   assert_equal (is_undecided_bool a) true
 
 let test_union_a() =
-  let a = new_bool_type Undecided None None in
+  let a = new_bool_type ~v:Undecided ~s1:None ~s2:None () in
   let _union_ty = new_union_type ~elems:([a; a]) () in
   assert_equal (union_ty_is_empty _union_ty) false;
   match _union_ty.ty with
@@ -139,16 +139,16 @@ let test_union_a() =
   | _ -> assert_failure "invalid union_ty"
 
 let test_union_b() =
-  let a = new_bool_type Undecided None None in
-  let b = new_bool_type True None None in
+  let a = new_bool_type ~v:Undecided ~s1:None ~s2:None () in
+  let b = new_bool_type ~v:True ~s1:None ~s2:None () in
   let _union_ty = new_union_type ~elems:([a; b]) () in
   match _union_ty.ty with
   | Union_ty(t) -> assert_equal (Hashtbl.length t) 2;
   | _ -> assert_failure "invalid union_ty"
 
 let test_union_c() =
-  let a = new_bool_type Undecided None None in
-  let b = new_bool_type True None None in
+  let a = new_bool_type ~v:Undecided ~s1:None ~s2:None () in
+  let b = new_bool_type ~v:True ~s1:None ~s2:None () in
   let _union_ty = new_union_type ~elems:([a; b]) () in
   let _res = union_ty_remove _union_ty a in
   let _res = union_ty_remove _res b in
@@ -157,8 +157,8 @@ let test_union_c() =
   | _ -> assert_failure "invalid union_ty"
 
 let test_union_d() =
-  let a = new_bool_type Undecided None None in
-  let b = new_bool_type True None None in
+  let a = new_bool_type ~v:Undecided ~s1:None ~s2:None () in
+  let b = new_bool_type ~v:True ~s1:None ~s2:None () in
   let _union_ty = new_union_type ~elems:([a; b]) () in
   let _res = union_ty_remove _union_ty a in
   match _res.ty with
@@ -166,8 +166,8 @@ let test_union_d() =
   | _ -> assert_failure "invalid union_ty"
 
 let test_union_e() =
-  let a = new_bool_type Undecided None None in
-  let b = new_bool_type True None None in
+  let a = new_bool_type ~v:Undecided ~s1:None ~s2:None () in
+  let b = new_bool_type ~v:True ~s1:None ~s2:None () in
   assert_equal (type_equal a b) true;
   let res = union_ty_remove a b in
   assert_equal (type_equal res unkown_ty) true

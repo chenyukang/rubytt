@@ -88,9 +88,6 @@ let is_str_type t =
   | Str_ty _ -> true
   | _ -> false
 
-let is_unknow_type t =
-  false (* fixme *)
-
 let rec type_equal ty1 ty2 =
   match ty1.ty, ty2.ty with
   | Int_ty, Int_ty
@@ -108,7 +105,7 @@ let new_ty_info() =
     table = (State.new_state ~parent:(Some global_table) State.Global);
   }
 
-let new_bool_type v s1 s2 =
+let new_bool_type ?(v=Undecided) ?(s1=None) ?(s2=None) () =
   { info = new_ty_info();
     ty = Bool_ty(v, s1, s2);
   }
@@ -211,6 +208,9 @@ let str_ty =
 let float_ty =
   new_float_type()
 
+let bool_ty =
+  new_bool_type()
+
 let cont_ty =
   let class_ty = new_class_type "nil" None ~super:None in
   new_instance_type class_ty
@@ -296,6 +296,11 @@ let union_ty u v =
   | _ when (type_equal v cont_ty) -> u
   | _ -> new_union_type ~elems:[u; v] ()
 
+let make_unions bs =
+  let res = ref unkown_ty in
+  List.iter bs ~f:(fun b -> res := union_ty !res b.bind_ty );
+  !res
+
 let new_list_type ?(ty = unkown_ty) () =
   {
     info = new_ty_info();
@@ -310,8 +315,6 @@ let list_ty_elem_ty list_ty =
 let list_ty_add list_ty elem_ty =
   match list_ty.ty with
   | List_ty(base, ty_list, values) -> (
-      (* Printf.printf "add_ty base: %s new: %s\n" *)
-      (*   (type_to_str base) (type_to_str elem_ty); *)
       let new_base = union_ty base elem_ty in
       list_ty.ty <- List_ty(new_base, ty_list @ [elem_ty], values)
     )
@@ -340,8 +343,9 @@ let get_subscript_ty vt st =
 let rec type_to_str ty =
   match ty.ty with
   | Int_ty -> "Int_ty"
-  | Str_ty(_) -> "Str_ty"
-  | List_ty(elem_ty, ty_list, _) ->
+  | Str_ty _  -> "Str_ty"
+  | Bool_ty _ -> "Bool_ty"
+  | List_ty(elem_ty, _, _) ->
     Printf.sprintf "List_ty: %s" (type_to_str elem_ty)
   | Union_ty(tys_table)  -> (
       let res = ref "[" in
