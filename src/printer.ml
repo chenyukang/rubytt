@@ -196,7 +196,6 @@ and
   nw n =
   "\n" ^ k_space n
 
-
 open Type
 let rec type_to_str ty depth =
   let str =
@@ -212,8 +211,7 @@ let rec type_to_str ty depth =
     | Union_ty(tys_table)  -> (
         let res = ref "[" in
         Hashtbl.iter tys_table ~f:(fun ~key:k ~data:_ ->
-            res := !res ^ "|(" ^ (type_to_str k 0) ^ ")"
-          );
+            res := !res ^ "|(" ^ (type_to_str k 0) ^ ")");
         res := !res ^ "]";
         !res
       )
@@ -227,13 +225,12 @@ and
       List.iter bindings ~f:(fun b ->
           if name <> "self" then (
             let ty_str = type_to_str b.bind_ty depth in
-            let str =
-              match depth with
-              | 0 -> Printf.sprintf "bind: %s ty: %s\n" name ty_str
-              | _ -> "\n" ^ (k_space depth) ^ Printf.sprintf "bind: %s ty: %s" name ty_str in
-            res := !res ^ str;
+            res := !res ^
+                   (match depth with
+                   | 0 -> Printf.sprintf "bind: %s ty: %s\n" name ty_str
+                   | _ -> "\n" ^ (k_space depth) ^ Printf.sprintf "bind: %s ty: %s" name ty_str);
           )
-        );
+        )
     );
   !res
 

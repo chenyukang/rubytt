@@ -7,7 +7,6 @@ open Util
 open Parser
 open Typestack
 open Type
-open State
 
 let run_dir dir =
   let files = Array.to_list (Sys.readdir dir) in
@@ -94,7 +93,7 @@ let test_typestack() =
 
 let test_state() =
   let a = State.new_state ~parent:None State.Class in
-  assert_equal a.parent None
+  assert_equal (State.parent a) None
 
 let test_bool_type() =
   let b = Type.new_bool_type ~v:Undecided ~s1:None ~s2:None () in(

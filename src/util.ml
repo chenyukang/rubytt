@@ -62,6 +62,5 @@ let is_synthetic_name name =
   name = "self" || name = "#this"
 
 let is_global_name name =
-  let open Core.Std in
   String.substr_index name "$" = Some(0)
 

@@ -183,7 +183,7 @@ let new_class_type name parent ?(super = None) () =
             } in
   let state = (State.new_state ~parent:parent State.Class) in
   set_table ret state;
-  State.set_state_ttype state (Some ret);
+  State.set_ttype state (Some ret);
   (match parent with
    | Some(p) -> State.set_path state (State.extend_path p name "::")
    | _ -> State.set_path state name);

@@ -1,7 +1,6 @@
 open Core.Std
 open Node
 open Type
-open State
 
 let global_refs: (Node.node, Type.binding_ty list) Hashtbl.t = Hashtbl.Poly.create();;
 let global_resolved: (Node.node, bool) Hashtbl.t = Hashtbl.Poly.create();;
@@ -33,7 +32,6 @@ let set_resolve node =
 let set_unresolve node =
   Hashtbl.add_exn global_unresolved ~key:node ~data:true
 
-
 let get_modulebinding_if_global st name =
   let res = ref None in
   if Util.is_global_name name then
@@ -44,10 +42,10 @@ let get_modulebinding_if_global st name =
 let rec state_lookup st name =
   match get_modulebinding_if_global st name with
   | None -> (
-      match lookup_local st name with
+      match State.lookup_local st name with
       | Some(b) -> Some(b)
       | None -> (
-          match st.parent with
+          match State.parent st with
           | Some(p) -> state_lookup p name
           | None -> None
         )
@@ -61,13 +59,13 @@ let rec bind state (target:node) rt kind =
       (* a, b = 1, 2 *)
       bind_array state elems rt kind
     )
-  | Subscript(value, slices) -> (
+  | Subscript(_, _) -> (
     )
   | _ -> ()
 
 and
   bind_node state (target:node) rt =
-  let kind = match state.s_type with
+  let kind = match State.s_type state with
     | State.Function -> Type.VariableK
     | State.Class | State.Instance -> Type.AttributeK
     | _ -> Type.ScopeK in
@@ -118,7 +116,7 @@ and
       List.iter nodes ~f:(fun n ->
           ignore(transform n state);
           match n.ty with
-          | Name(id, _) -> (state_remove state id)
+          | Name(id, _) -> (State.remove state id)
           | _ -> ()
         );
         Type.cont_ty
@@ -196,7 +194,7 @@ and
       let final_ty = transform final state in
       make_unions [body_ty; orelse_ty; rescue_ty; final_ty]
     )
-  | Class(name, super, body, _, static) -> (
+  | Class(name, _, body, _, static) -> (
       if (is_nil name) = false && static then (
 
       );

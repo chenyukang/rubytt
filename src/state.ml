@@ -28,22 +28,15 @@ let new_state ?(parent = None) state_ty : ('ty, 'binding) state =
   }
 
 
-let set_state_parent st parent =
-  st.parent <- Some(parent)
+let set_parent st parent = st.parent <- Some(parent)
+let set_stype st stype = st.s_type <- stype
+let set_ttype st ttype = st.t_type <- ttype
+let set_path st path = st.path <- path
+let set_supers st supers = st.supers <- supers
+let parent st = st.parent
+let s_type st = st.s_type
 
-let set_state_stype st stype =
-  st.s_type <- stype
-
-let set_state_ttype st ttype =
-  st.t_type <- ttype
-
-let set_path st path =
-  st.path <- path
-
-let set_supers st supers =
-  st.supers <- supers
-
-let state_remove st id =
+let remove st id =
   Hashtbl.remove st.s_table id
 
 let state_keyset st =
