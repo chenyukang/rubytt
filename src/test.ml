@@ -12,8 +12,8 @@ open State
 let run_dir dir =
   let files = Array.to_list (Sys.readdir dir) in
   let rb = List.filter files ~f:(fun x -> extension x = "rb") in
-  List.map ~f:(fun f ->
-      Printf.printf "\nnow: %s\n" f;
+  let failed = ref [] in
+  List.iter ~f:(fun f ->
       let p = Filename.concat dir f in
       let b = Filename.chop_extension p in
       begin
@@ -25,14 +25,11 @@ let run_dir dir =
         let cmp = Printf.sprintf "%s.cmp" b in (
           Out_channel.write_all log ~data: ast_str;
           (* Sys.command_exn (Printf.sprintf "rm %s" j); *)
-          if cmp_file cmp log then (
-            (* Printf.printf "pass: %s\n" p; *)
-            true)
-          else (
-            Printf.printf "fail: %s\n\n" p;
-            false)
+          if not (cmp_file cmp log) then
+            failed := !failed @ [p]
         )
-      end) rb
+      end) rb;
+  !failed
 
 let test_node() =
   let nil = nil_node in
@@ -180,7 +177,12 @@ let test_union() =
 
 let test_dir() =
   let res = run_dir "tests" in
-  assert_equal (List.exists res ~f:(fun x -> x = false)) false
+  if (List.length res <> 0) then
+    Printf.printf "\n\n\n";
+    List.iter res ~f:(fun p -> Printf.printf "fail case: %s\n" p);
+
+  assert_equal (List.length res) 0
+
 
 let test_unit = [
   "Node", `Quick, test_node;
@@ -192,7 +194,7 @@ let test_unit = [
   "Bool", `Quick, test_bool_type;
   "Type", `Quick, test_type;
   "UnionTy", `Quick, test_union;
-  "Cases", `Quick, test_dir;
+  "Cases", `Slow, test_dir;
 ]
 
 

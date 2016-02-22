@@ -18,7 +18,7 @@ native:
 	$(OCAMLBUILD) $(TARGET).native; cp $(TARGET).native ../bin;
 
 test:
-	$(OCAMLBUILD) test.native; ./test.native
+	$(OCAMLBUILD) test.native; ./test.native -e
 
 update:
 	$(OCAMLBUILD) update_test.byte; ./update_test.byte
