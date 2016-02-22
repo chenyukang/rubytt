@@ -1,0 +1,12 @@
+(Block 
+ (Assign 
+  (Name a)
+  (If 
+   (Name true)
+   (Block 
+    (Int 1))
+   (Block 
+    (Int 2))))
+ (Call puts
+  (args: 
+   (Name a))))

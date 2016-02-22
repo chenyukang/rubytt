@@ -1,0 +1,22 @@
+(Block 
+ (Assign 
+  (Name a)
+  (Try 
+   (Block 
+    (Assign 
+     (Name index)
+     (Int 0))
+    (While 
+     (BinOp:Lt 
+      (Name index)
+      (Int 10))
+     (Block 
+      (Assign 
+       (Name index)
+       (BinOp:Add 
+        (Name index)
+        (Int 1)))
+      (String hello))))
+   (Nil)
+   (Nil)
+   (Nil))))

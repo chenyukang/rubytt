@@ -174,6 +174,12 @@ and
         );
       !return_ty
     )
+  | Handler(_, _, handler, orelse) -> (
+      (* Fixme *)
+      let handle_ty = transform handler state in
+      let orelse_ty = transform orelse state in
+      make_unions [handle_ty; orelse_ty]
+    )
   (* | Raise() *)
   | Control(_) -> Type.cont_ty
   | For(_, _, body) -> (
@@ -190,7 +196,7 @@ and
       let final_ty = transform final state in
       make_unions [body_ty; orelse_ty; rescue_ty; final_ty]
     )
-  | Kwd(_, v) | Return(v) | Starred(v) | Yield(v) 
+  | Kwd(_, v) | Return(v) | Starred(v) | Yield(v)
     -> transform v state
   | _ -> Type.unkown_ty
 

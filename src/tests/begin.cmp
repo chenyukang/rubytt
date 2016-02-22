@@ -1,0 +1,23 @@
+(Block 
+ (Assign 
+  (Name a)
+  (Int 1))
+ (Assign 
+  (Name res)
+  (Try 
+   (Block 
+    (Assign 
+     (Name div)
+     (BinOp:Div 
+      (Name a)
+      (Int 0))))
+   (Handler 
+     (Nil)
+     (Block 
+      (String div error))
+     (Nil)
+   (Nil)
+   (Nil)))
+ (Call puts
+  (args: 
+   (Name res))))
