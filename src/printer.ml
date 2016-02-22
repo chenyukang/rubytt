@@ -223,14 +223,14 @@ and
   table_to_str (state:Type.state_t) depth =
   let table = state.s_table in
   let res = ref "" in
-  Hashtbl.iter table ~f:(fun ~key:k ~data:bindings ->
+  Hashtbl.iter table ~f:(fun ~key:name ~data:bindings ->
       List.iter bindings ~f:(fun b ->
-          if k <> "self" then (
+          if name <> "self" then (
             let ty_str = type_to_str b.bind_ty depth in
             let str =
               match depth with
-              | 0 -> Printf.sprintf "bind: %s ty: %s" k ty_str
-              | _ -> "\n" ^ (k_space depth) ^ Printf.sprintf "bind: %s ty: %s" k ty_str in
+              | 0 -> Printf.sprintf "bind: %s ty: %s" name ty_str
+              | _ -> "\n" ^ (k_space depth) ^ Printf.sprintf "bind: %s ty: %s" name ty_str in
             res := !res ^ str;
           )
         );
