@@ -182,9 +182,8 @@ let test_union() =
 let test_dir() =
   let res = run_dir "tests" in
   if (List.length res <> 0) then
-    Printf.printf "\n\n\n";
+    Printf.printf "\n\n";
     List.iter res ~f:(fun p -> Printf.printf "fail case: %s\n" p);
-
   assert_equal (List.length res) 0
 
 
@@ -201,6 +200,10 @@ let test_unit = [
   "Cases", `Slow, test_dir;
 ]
 
-
 let () =
-  Alcotest.run "My Test" [ "test_unit", test_unit;]
+  if Array.length Sys.argv = 2 then
+    let arg = Array.nget Sys.argv 1 in
+    if arg = "-update" || arg = "-u" then
+      ignore(update_cmp "./tests")
+  else
+    Alcotest.run "My Test" [ "test_unit", test_unit;]

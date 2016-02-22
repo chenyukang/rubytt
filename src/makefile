@@ -5,7 +5,7 @@ SOURCES = \
 	read_json.ml \
 	main.ml
 
-OCAMLBUILD = corebuild -use-ocamlfind -pkg yojson -pkg alcotest -pkg ounit -pkg str -cflags -w,-45,-w,-11 
+OCAMLBUILD = corebuild -use-ocamlfind -pkg yojson -pkg alcotest -pkg ounit -pkg str -cflags -w,-45,-w,-11
 
 default: byte
 
@@ -21,7 +21,7 @@ test:
 	$(OCAMLBUILD) test.native; ./test.native -e
 
 update:
-	$(OCAMLBUILD) update_test.byte; ./update_test.byte
+	$(OCAMLBUILD) test.native; ./test.native -u
 
 dot:
 	$(OCAMLBUILD) proj.docdir/dep.dot;
