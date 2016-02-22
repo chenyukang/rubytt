@@ -104,6 +104,7 @@ and
 and
   transform (node:node) state =
   match node.ty with
+  | Nil -> Type.unkown_ty
   | Int(_) -> Type.int_ty
   | Float(_) -> Type.float_ty
   | Regexp(_, _) -> Type.str_ty
@@ -113,13 +114,22 @@ and
   | StrEmbed(s) -> (
       ignore(transform s state); Type.str_ty
     )
+  | Undef(nodes) -> (
+      List.iter nodes ~f:(fun n ->
+          ignore(transform n state);
+          match n.ty with
+          | Name(id, _) -> (state_remove state id)
+          | _ -> ()
+        );
+        Type.cont_ty
+    )
   | Name(id, _) -> (
       (* Printf.printf "lookup name: %s\n" id; *)
       match state_lookup state id with
       | Some(bs) -> (
           put_refs node bs;
           set_resolve node;
-          make_unions bs
+          make_unions_from_bs bs
         )
       | _ when id = "true" || id = "false" -> (
           Type.bool_ty
@@ -146,12 +156,6 @@ and
       list_ty
     )
   | UnaryOp(_, operand) -> transform operand state
-  | Undef(elems) -> (
-      List.iter elems ~f:(fun e -> ignore(transform e state));
-      (* Fixme *)
-      Type.cont_ty
-    )
-
   | Assign(t, rv) -> (
       let vt = transform rv state in
       bind_node state t vt;
@@ -171,7 +175,22 @@ and
       !return_ty
     )
   (* | Raise() *)
-  | Kwd(_, v) | Return(v) | Starred(v) | Yield(v)
+  | Control(_) -> Type.cont_ty
+  | For(_, _, body) -> (
+      transform body state
+    )
+  | While(test, body) -> (
+      ignore(transform test state);
+      transform body state
+    )
+  | Try(body, rescue, orelse, final) -> (
+      let rescue_ty = transform rescue state in
+      let body_ty = transform body state in
+      let orelse_ty = transform orelse state in
+      let final_ty = transform final state in
+      make_unions [body_ty; orelse_ty; rescue_ty; final_ty]
+    )
+  | Kwd(_, v) | Return(v) | Starred(v) | Yield(v) 
     -> transform v state
   | _ -> Type.unkown_ty
 

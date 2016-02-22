@@ -90,10 +90,10 @@ let rec convert json =
     make_assign_node _var _val ff ss ee
   | "begin" ->
     let body = convert_elem json "body" in
-    let _rescue = convert_elem json "rescue" in
+    let rescue = convert_elem json "rescue" in
     let orelse = convert_elem json "else" in
     let final = convert_elem json "ensure" in
-    make_try_node body _rescue orelse final ff ss ee
+    make_try_node body rescue orelse final ff ss ee
   | "regexp" ->
     let pat = convert_elem json "pattern" in
     let reg_end = convert_elem json "regexp_end" in

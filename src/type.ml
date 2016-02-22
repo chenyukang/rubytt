@@ -298,9 +298,14 @@ let union_ty u v =
   | _ when (type_equal v cont_ty) -> u
   | _ -> new_union_type ~elems:[u; v] ()
 
-let make_unions bs =
+let make_unions_from_bs bs =
   let res = ref unkown_ty in
   List.iter bs ~f:(fun b -> res := union_ty !res b.bind_ty );
+  !res
+
+let make_unions types =
+  let res = ref unkown_ty in
+  List.iter types ~f:(fun t -> res := union_ty !res t);
   !res
 
 let new_list_type ?(ty = unkown_ty) () =
