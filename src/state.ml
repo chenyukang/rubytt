@@ -67,13 +67,13 @@ let state_overwrite st st_v =
   st.t_type <- st_v.t_type;
   st.s_type <- st_v.s_type
 
-let state_merge_with st1 st2 =
-  st1
+(* let state_merge_with st1 st2 = *)
+(*   st1 *)
 
-let state_merge st1 st2 =
-  let ret = state_copy st1 in
-  ignore(state_merge_with ret st2);
-  ret
+(* let state_merge st1 st2 = *)
+(*   let ret = state_copy st1 in *)
+(*   ignore(state_merge_with ret st2); *)
+(*   ret *)
 
 let state_update st id bindings =
   match Hashtbl.add st.s_table ~key:id ~data:bindings with

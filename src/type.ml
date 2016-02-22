@@ -75,7 +75,9 @@ let set_table (t: type_t) (table: state_t) =
 let is_undecided_bool t =
   match t.ty with
   | Bool_ty(bv, _, _) ->
-    (match bv with Undecided -> true | _ -> false)
+    (match bv with
+     | Undecided -> true
+     | _ -> false)
   | _ -> false
 
 let is_num_type t =
@@ -175,7 +177,7 @@ let cassty_get_canon c =
   | Class_ty(_, canon, _) -> canon
   | _ -> None
 
-let new_class_type name parent ?(super = None) =
+let new_class_type name parent ?(super = None) () =
   let ret = { info = new_ty_info();
               ty = Class_ty(name, None, None);
             } in
@@ -212,11 +214,11 @@ let bool_ty =
   new_bool_type()
 
 let cont_ty =
-  let class_ty = new_class_type "nil" None ~super:None in
+  let class_ty = new_class_type "nil" None ~super:None () in
   new_instance_type class_ty
 
 let unkown_ty =
-  let class_ty = new_class_type "?" None ~super:None in
+  let class_ty = new_class_type "?" None ~super:None () in
   new_instance_type class_ty
 
 
@@ -227,7 +229,7 @@ let rec union_ty_add_ty u t =
   | _ -> (
       match u.ty with
       | Union_ty(table) ->
-        ignore(Hashtbl.add table t true);
+        ignore(Hashtbl.add table ~key:t ~data:true);
       | _ -> failwith "union_ty_add_ty error ty"
     )
 

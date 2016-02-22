@@ -8,7 +8,6 @@ open Parser
 open Typestack
 open Type
 open State
-open Binding
 
 let run_dir dir =
   let files = Array.to_list (Sys.readdir dir) in
