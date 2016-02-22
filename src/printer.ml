@@ -229,7 +229,7 @@ and
             let ty_str = type_to_str b.bind_ty depth in
             let str =
               match depth with
-              | 0 -> Printf.sprintf "bind: %s ty: %s" name ty_str
+              | 0 -> Printf.sprintf "bind: %s ty: %s\n" name ty_str
               | _ -> "\n" ^ (k_space depth) ^ Printf.sprintf "bind: %s ty: %s" name ty_str in
             res := !res ^ str;
           )

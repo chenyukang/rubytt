@@ -1,0 +1,2 @@
+bind: a ty: Str_ty
+bind: b ty: Int_ty

@@ -1,0 +1,3 @@
+bind: Demo ty: Class_ty: Demo
+ bind: a ty: Int_ty
+ bind: foos ty: Int_ty

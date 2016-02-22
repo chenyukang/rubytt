@@ -1,0 +1,3 @@
+bind: a ty: Int_ty
+bind: b ty: Str_ty
+bind: x ty: Bool_ty

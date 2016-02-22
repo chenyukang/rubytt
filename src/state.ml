@@ -49,6 +49,13 @@ let state_remove st id =
 let state_keyset st =
   Hashtbl.keys st.s_table
 
+let state_clear st =
+  Hashtbl.clear st.s_table;
+  st.supers <- None;
+  st.parent <- None;
+  st.t_type <- None;
+  st.path <- ""
+
 let state_copy st =
   {
     parent = st.parent;

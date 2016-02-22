@@ -47,7 +47,7 @@ let update_cmp dir =
       let p = Filename.concat dir f in
       let b = Filename.chop_extension p in
       let o = Printf.sprintf "%s.cmp" b in
-      Sys.command_exn (Printf.sprintf "cp %s %s" p o );
+      Sys.command_exn (Printf.sprintf "cp %s %s" p o);
     ) logs
 
 let main_name tagged_name =

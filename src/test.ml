@@ -19,13 +19,18 @@ let run_dir dir =
       begin
         let j = run_dump_ruby p in
         let ast = build_ast_from_file j in
+        State.state_clear Type.global_table;
         ignore(Trans.transform_expr ast Type.global_table);
         let ast_str = node_to_str ast 0 in
+        let table_str = table_to_str Type.global_table 0 in
         let log = Printf.sprintf "%s.log" b in
-        let cmp = Printf.sprintf "%s.cmp" b in (
+        let cmp = Printf.sprintf "%s.cmp" b in
+        let ty_log = Printf.sprintf "%s.ty.log" b in
+        let ty_cmp = Printf.sprintf "%s.ty.cmp" b in (
           Out_channel.write_all log ~data: ast_str;
+          Out_channel.write_all ty_log ~data: table_str;
           (* Sys.command_exn (Printf.sprintf "rm %s" j); *)
-          if not (cmp_file cmp log) then
+          if not (cmp_file cmp log && cmp_file ty_cmp ty_log) then
             failed := !failed @ [p]
         )
       end) rb;

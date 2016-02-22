@@ -1,0 +1,2 @@
+bind: AstSimplifier ty: Class_ty: AstSimplifier
+bind: $options ty: unkown_type
