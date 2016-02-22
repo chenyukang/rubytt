@@ -1,6 +1,5 @@
 open Core.Std;;
 open Type
-open State
 
 type analyzer = {
   sid: string;
