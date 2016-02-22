@@ -4,8 +4,6 @@ open Yojson.Basic.Util
 open Yojson.Basic
 open UnixLabels
 open Node
-open Printer
-
 
 let convert_to_s json mem =
   let r = json |> member mem in
@@ -271,10 +269,4 @@ let build_ast_from_file file =
   let json = Yojson.Basic.from_file file in
   convert json
 
-let parse_file file =
-  build_ast_from_file file
 
-let run() =
-  let ast = build_ast_from_file "./ruby.json" in
-  let str = node_to_str ast 0 in
-  Printf.printf "%s\n" str
