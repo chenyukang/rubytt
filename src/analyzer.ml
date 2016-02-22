@@ -25,5 +25,5 @@ let make_analyzer () =
 let global_Analyzer = make_analyzer();;
 
 let trans ast =
-  ignore(Trans.transform_expr ast Type.global_table);
-  Printf.printf "\n%s\n\n" (Printer.table_to_str Type.global_table 0)
+  Trans.transform_expr ast Type.global_table
+
