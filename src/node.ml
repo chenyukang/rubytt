@@ -107,6 +107,10 @@ let nil_node =
     parent = None;
   }
 
+let is_nil node =
+  match node.ty with
+  | Nil -> true  | _ -> false
+
 let make_nil_node file s e =
   {
     info = {path = ""; file = file; ss = s; ee = e};

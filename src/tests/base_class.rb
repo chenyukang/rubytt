@@ -1,6 +1,4 @@
 class Demo
-  class << self
-
-  end
   @@foos = 0
+  a = 1
 end

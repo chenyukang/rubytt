@@ -1,0 +1,11 @@
+(Block 
+ (Class static: false
+  (Name Demo)
+  (Nil)
+   (Block 
+    (Assign 
+     (Name foos)
+     (Int 0))
+    (Assign 
+     (Name a)
+     (Int 1)))))

@@ -23,7 +23,7 @@
         (String \033[93m)
         (Nil))
        (String :\033[0m)))))))
- (Class 
+ (Class static: false
   (Name AstSimplifier)
   (Nil)
    (Block 

@@ -132,8 +132,9 @@ let rec node_to_str node depth =
       "(Module " ^
       node_to_str n1 (depth+1) ^
       node_to_str n2 (depth+2) ^ ")"
-    | Class(n1, n2, n3, _, _) ->
-      "(Class " ^
+    | Class(n1, n2, n3, _, static) ->
+      "(Class static: " ^
+      (if static then "true" else "false" ) ^
       node_to_str n1 (depth+1) ^
       node_to_str n2 (depth+1) ^
       node_to_str n3 (depth+2) ^ ")"
@@ -196,11 +197,44 @@ and
   "\n" ^ k_space n
 
 
-let table_to_str (state:Type.state_t) =
+open Type
+let rec type_to_str ty depth =
+  let str =
+    match ty.ty with
+    | Int_ty -> "Int_ty"
+    | Str_ty _  -> "Str_ty"
+    | Bool_ty _ -> "Bool_ty"
+    | List_ty(elem_ty, _, _) ->
+      Printf.sprintf "List_ty: %s" (type_to_str elem_ty 0)
+    | Class_ty(name, _, _) ->
+      Printf.sprintf "Class_ty: %s" name
+      ^ (table_to_str ty.info.table (depth+1))
+    | Union_ty(tys_table)  -> (
+        let res = ref "[" in
+        Hashtbl.iter tys_table ~f:(fun ~key:k ~data:_ ->
+            res := !res ^ "|(" ^ (type_to_str k 0) ^ ")"
+          );
+        res := !res ^ "]";
+        !res
+      )
+    | _ -> "unkown_type" in
+  str
+and
+  table_to_str (state:Type.state_t) depth =
   let table = state.s_table in
+  let res = ref "" in
   Hashtbl.iter table ~f:(fun ~key:k ~data:bindings ->
       List.iter bindings ~f:(fun b ->
-          Printf.printf "bind: %s ty: %s\n" k (Type.type_to_str b.bind_ty)
-        )
+          if k <> "self" then (
+            let ty_str = type_to_str b.bind_ty depth in
+            let str =
+              match depth with
+              | 0 -> Printf.sprintf "bind: %s ty: %s" k ty_str
+              | _ -> "\n" ^ (k_space depth) ^ Printf.sprintf "bind: %s ty: %s" k ty_str in
+            res := !res ^ str;
+          )
+        );
     );
-  ""
+  !res
+
+

@@ -1,6 +1,13 @@
 (Block 
- (Class 
+ (Class static: false
   (Name Demo)
   (Nil)
    (Block 
-    (Void))))
+    (Class static: true
+     (Name self)
+     (Nil)
+      (Block 
+       (Void)))
+    (Assign 
+     (Name foos)
+     (Int 0)))))

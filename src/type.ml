@@ -347,21 +347,23 @@ let get_subscript_ty vt st =
       )
     | _ -> unkown_ty)       (* fixme *)
 
-let rec type_to_str ty =
-  match ty.ty with
-  | Int_ty -> "Int_ty"
-  | Str_ty _  -> "Str_ty"
-  | Bool_ty _ -> "Bool_ty"
-  | List_ty(elem_ty, _, _) ->
-    Printf.sprintf "List_ty: %s" (type_to_str elem_ty)
-  | Union_ty(tys_table)  -> (
-      let res = ref "[" in
-      Hashtbl.iter tys_table ~f:(fun ~key:k ~data:_ ->
-          res := !res ^ "|(" ^ (type_to_str k) ^ ")"
-        );
-      res := !res ^ "]";
-      !res
-    )
-  | _ -> "unkown_type"
+(* let rec type_to_str ty = *)
+(*   match ty.ty with *)
+(*   | Int_ty -> "Int_ty" *)
+(*   | Str_ty _  -> "Str_ty" *)
+(*   | Bool_ty _ -> "Bool_ty" *)
+(*   | List_ty(elem_ty, _, _) -> *)
+(*     Printf.sprintf "List_ty: %s" (type_to_str elem_ty) *)
+(*   | Class_ty(name, _, _) -> *)
+(*     Printf.sprintf "Class_ty: %s" name *)
+(*   | Union_ty(tys_table)  -> ( *)
+(*       let res = ref "[" in *)
+(*       Hashtbl.iter tys_table ~f:(fun ~key:k ~data:_ -> *)
+(*           res := !res ^ "|(" ^ (type_to_str k) ^ ")" *)
+(*         ); *)
+(*       res := !res ^ "]"; *)
+(*       !res *)
+(*     ) *)
+(*   | _ -> "unkown_type" *)
 
 

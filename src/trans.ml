@@ -76,7 +76,7 @@ and
 and
   bind_name state name (rt:type_t) kind =
   let id = name_node_id name in
-  Printf.printf "bind name: %s ty: %s\n" id (Type.type_to_str rt);
+  Printf.printf "bind name: %s ty: %s\n" id (Printer.type_to_str rt 0);
   if Util.is_global_name id && (name_node_is_globalvar name) then (
     let b = new_binding name rt kind in
     State.state_update_bind global_table id b;
@@ -195,6 +195,18 @@ and
       let orelse_ty = transform orelse state in
       let final_ty = transform final state in
       make_unions [body_ty; orelse_ty; rescue_ty; final_ty]
+    )
+  | Class(name, super, body, _, static) -> (
+      if (is_nil name) = false && static then (
+
+      );
+      let id = name_node_id name in
+      let parent = Some(state) in
+      let class_ty = new_class_type id parent ~super:None () in
+      bind state name class_ty Type.ClassK;
+      state_insert class_ty.info.table "self" name class_ty Type.ScopeK;
+      ignore(transform body class_ty.info.table);
+      Type.cont_ty
     )
   | Kwd(_, v) | Return(v) | Starred(v) | Yield(v)
     -> transform v state
