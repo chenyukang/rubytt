@@ -1,4 +1,9 @@
+class Test
+end
 
-module Demo
-  
+module Test::Demo
+
+end
+
+module Now
 end

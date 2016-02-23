@@ -338,16 +338,26 @@ let make_subscript_node name slice file s e =
   add_children node slice;
   node
 
-let make_module_node name body doc file s e =
+let make_module_node locator body doc file s e =
+  let name =
+  match locator.ty with
+  | Attribute(_, attr) -> attr
+  | Name _ -> locator
+  | _ -> failwith "error type make_class_node" in
   let node = {
     info = {path=""; file = file; ss = s; ee = e };
     ty = Module(name, body, doc);
     parent = None;
   } in
-  add_children node [name; body];
+  add_children node [locator; body];
   node
 
-let make_class_node name super body doc static file s e =
+let make_class_node locator super body doc static file s e =
+  let name =
+  match locator.ty with
+  | Attribute(_, attr) -> attr
+  | Name _ -> locator
+  | _ -> failwith "error type make_class_node" in
   let node = {
     info = {path=""; file = file; ss = s; ee = e };
     ty = Class(name, super, body, doc, static);

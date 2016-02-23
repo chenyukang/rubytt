@@ -8,7 +8,7 @@ open Parser
 open Typestack
 open Type
 
-let run_dir dir =
+let rec run_dir dir =
   let files = Array.to_list (Sys.readdir dir) in
   let rb = List.filter files ~f:(fun x -> Filename.check_suffix x ".rb") in
   let failed = ref [] in
