@@ -28,12 +28,6 @@ let cmp_file a b =
     let _b = read_file_to_str b in
     if _a <> _b then false else true
 
-let extension f =
-  match Filename.split_extension f with
-  |(_, Some(b)) -> b
-  | _ -> ""
-
-
 let run_dump_ruby filename =
   let b = Filename.chop_extension filename in
   let j = Printf.sprintf "%s.json" b in
@@ -42,7 +36,7 @@ let run_dump_ruby filename =
 
 let update_cmp dir =
   let files = Array.to_list (Sys.readdir dir) in
-  let logs = List.filter files ~f:(fun x -> extension x = "log") in
+  let logs = List.filter files ~f:(fun x -> Filename.check_suffix x ".log") in
   List.map ~f:(fun f ->
       let p = Filename.concat dir f in
       let b = Filename.chop_extension p in

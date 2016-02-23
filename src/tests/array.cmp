@@ -10,4 +10,16 @@
    (Call 
     (Attribute 
      (Name a)
+     (Name size)))))
+ (Assign 
+  (Name b)
+  (Array 
+   (Int 1)
+   (Int 2)
+   (String hello)))
+ (Call puts
+  (args: 
+   (Call 
+    (Attribute 
+     (Name b)
      (Name size))))))
