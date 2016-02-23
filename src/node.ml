@@ -70,7 +70,7 @@ and
   | StrEmbed of node
   | Starred of node
   | Array of node list
-  | Module of node * node * string
+  | Module of node * node * node * string
   | Subscript of node * node list
   | Class of node * node * node * string * bool
   | Handler of node list * node * node * node
@@ -205,6 +205,9 @@ let make_name_node id ty file s e =
     parent = None;
   }
 
+let is_name node =
+  match node.ty with | Name(_) -> true | _ -> false
+
 let name_node_id n =
   match n.ty with
   | Name(s, _) -> s
@@ -319,6 +322,8 @@ let make_attribute_node value attr file s e =
   add_children node [value; attr];
   node
 
+let is_attr node = match node.ty with | Attribute(_) -> true |_ -> false
+
 let make_undef_node targets file s e =
   let node = {
     info = {path=""; file = file; ss = s; ee = e };
@@ -346,7 +351,7 @@ let make_module_node locator body doc file s e =
   | _ -> failwith "error type make_class_node" in
   let node = {
     info = {path=""; file = file; ss = s; ee = e };
-    ty = Module(name, body, doc);
+    ty = Module(locator, name, body, doc);
     parent = None;
   } in
   add_children node [locator; body];

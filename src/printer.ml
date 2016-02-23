@@ -128,7 +128,7 @@ let rec node_to_str node depth =
         res := !res ^ _k ^ _v
       done;
       !res ^ ")"
-    | Module(n1, n2, _) ->
+    | Module(_, n1, n2, _) ->
       "(Module " ^
       node_to_str n1 (depth+1) ^
       node_to_str n2 (depth+2) ^ ")"

@@ -25,6 +25,7 @@ and ty =
   | Instance_ty of type_t
   (* name * instance_type * superclass *)
   | Class_ty of string * type_t option * type_t option
+  | Module_ty of string * string 
   | Union_ty of (type_t, bool) Hashtbl.t
   | Tuple_ty of type_t list
   (* elem_ty * positional * values *)
@@ -97,6 +98,9 @@ let rec type_equal ty1 ty2 =
   | Float_ty, Float_ty
   | Bool_ty _, Bool_ty _ -> true
   | Class_ty _, Class_ty _ -> phys_equal ty1  ty2
+  | Module_ty(_, f1), Module_ty(_, f2) -> (
+      f1 = f2 && (phys_equal ty1 ty2)
+    )
   | Instance_ty(t1), Instance_ty(t2) ->
       (type_equal t1 t2)
   | _, _ -> phys_equal ty1 ty2
@@ -184,15 +188,28 @@ let new_class_type name parent ?(super = None) () =
   let state = (State.new_state ~parent:parent State.Class) in
   set_table ret state;
   State.set_ttype state (Some ret);
-  (match parent with
-   | Some(p) -> State.set_path state (State.extend_path p name "::")
-   | _ -> State.set_path state name);
+  let path = match parent with
+    | Some(p) -> State.extend_path p name "::"
+    | _ -> name in
+  State.set_path state path;
   (match super with
    | Some(s) -> (
        classty_add_super ret super;
        State.set_supers state (Some s.info.table) (* Fixme *)
      )
    | _ -> ());
+  ret
+
+let new_module_type name file parent =
+  let ret = { info = new_ty_info();
+              ty = Module_ty(name, file); } in
+  let state = (State.new_state ~parent:parent State.Module) in
+  set_table ret state;
+  let path = match parent with
+    |Some(p) ->  (if String.length p.path > 0 then p.path ^ "::" ^ name else name)
+    |_ -> name in
+  State.set_path state path;
+  State.set_ttype state (Some ret);
   ret
 
 let new_instance_type class_ty =

@@ -52,6 +52,9 @@ let rec state_lookup st name =
     )
   | Some(b) -> Some(b)
 
+let rec lookup_attr state id =
+  None
+
 let rec bind state (target:node) rt kind =
   match target.ty with
   | Name _ -> bind_name state target rt kind
@@ -62,6 +65,32 @@ let rec bind state (target:node) rt kind =
   | Subscript(_, _) -> (
     )
   | _ -> ()
+
+and lookup_or_create_module state locator file =
+  let existing = transform locator state in
+  match existing.ty with
+  | Module_ty _ -> existing
+  | _ when is_name locator -> (
+      let id = name_node_id locator in
+      let bindings = lookup_attr state id in
+      let ret = ref Type.cont_ty in
+      (match bindings with
+        | Some(bs) -> (
+            if List.length bs > 0 && (List.nth_exn bs 0).kind = Type.ModuleK then
+              ret := (List.nth_exn bs 0).bind_ty
+          )
+        | None -> ());
+      if (type_equal !ret Type.cont_ty) then (
+        ret := new_module_type id file (Some state);
+      );
+      !ret
+    )
+  | _ when is_attr locator -> (
+      Type.cont_ty
+    )
+  | _ -> (
+      Type.cont_ty
+    )
 
 and
   bind_node state (target:node) rt =
@@ -193,6 +222,9 @@ and
       let orelse_ty = transform orelse state in
       let final_ty = transform final state in
       make_unions [body_ty; orelse_ty; rescue_ty; final_ty]
+    )
+  | Module(locator, name, body, _) -> (
+      lookup_or_create_module state locator node.info.file
     )
   | Class(name, _, body, _, static) -> (
       if (is_nil name) = false && static then (
