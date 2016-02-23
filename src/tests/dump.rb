@@ -913,7 +913,7 @@ end
 
 $options = {}
 OptionParser.new do |opts|
-  opts.banner = "Usage: dump_ruby.rb [options]"
+  opts.banner = "Usage: dump.rb [options]"
 
   opts.on("-d", "--debug", "debug run") do |v|
     $options[:debug] = v
