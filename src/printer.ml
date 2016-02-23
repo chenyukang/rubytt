@@ -208,6 +208,9 @@ let rec type_to_str ty depth =
     | Class_ty(name, _, _) ->
       Printf.sprintf "Class_ty: %s" name
       ^ (table_to_str ty.info.table (depth+1))
+    | Module_ty(id, _) ->
+      Printf.sprintf "Module_ty: %s" id
+        ^ (table_to_str ty.info.table (depth+1))
     | Union_ty(tys_table)  -> (
         let res = ref "[" in
         Hashtbl.iter tys_table ~f:(fun ~key:k ~data:_ ->

@@ -1,1 +1,2 @@
-bind: Test ty: Class_ty: Test
+bind: Test ty: Module_ty: Test
+ bind: a ty: Int_ty

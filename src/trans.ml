@@ -52,8 +52,22 @@ let rec state_lookup st name =
     )
   | Some(b) -> Some(b)
 
+let looked = Hashtbl.Poly.create();;
 let rec lookup_attr state id =
-  None
+  match Hashtbl.find looked state with
+  | Some(_) -> None
+  | _ -> (
+      let bs = State.lookup_local state id in
+      match bs with
+      | Some(_) -> bs
+      | _ -> (
+          Hashtbl.add_exn looked ~key:state ~data:true;
+          let res = match State.parent state with
+          | Some(p) -> lookup_attr p id
+          | _ -> None in
+          Hashtbl.remove looked state;
+          res)
+    )
 
 let rec bind state (target:node) rt kind =
   match target.ty with
@@ -68,10 +82,10 @@ let rec bind state (target:node) rt kind =
 
 and lookup_or_create_module state locator file =
   let existing = transform locator state in
+  let id = name_node_id locator in
   match existing.ty with
   | Module_ty _ -> existing
   | _ when is_name locator -> (
-      let id = name_node_id locator in
       let bindings = lookup_attr state id in
       let ret = ref Type.cont_ty in
       (match bindings with
@@ -89,7 +103,7 @@ and lookup_or_create_module state locator file =
       Type.cont_ty
     )
   | _ -> (
-      Type.cont_ty
+      new_module_type id "" (Some state)
     )
 
 and
@@ -224,7 +238,12 @@ and
       make_unions [body_ty; orelse_ty; rescue_ty; final_ty]
     )
   | Module(locator, name, body, _) -> (
-      lookup_or_create_module state locator node.info.file
+      let module_ty = lookup_or_create_module state locator node.info.file in
+      bind state name module_ty Type.ModuleK;
+      state_insert module_ty.info.table "self" name module_ty Type.ScopeK;
+      ignore(transform body module_ty.info.table);
+      Printf.printf "module name: %s\n" (name_node_id name);
+      module_ty
     )
   | Class(name, _, body, _, static) -> (
       if (is_nil name) = false && static then (

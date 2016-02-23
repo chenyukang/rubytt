@@ -1,9 +1,4 @@
-class Test
+module Test
+  a = 1
 end
 
-module Test::Demo
-
-end
-
-module Now
-end

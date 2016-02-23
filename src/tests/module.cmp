@@ -1,14 +1,8 @@
 (Block 
- (Class static: false
+ (Module 
   (Name Test)
-  (Nil)
    (Block 
-    (Void)))
- (Module 
-  (Name Demo)
-   (Block 
-    (Void)))
- (Module 
-  (Name Now)
-   (Block 
-    (Void))))
+    (Void)
+    (Assign 
+     (Name a)
+     (Int 1)))))
