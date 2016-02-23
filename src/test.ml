@@ -10,15 +10,16 @@ open Type
 
 let rec run_dir dir =
   let files = Array.to_list (Sys.readdir dir) in
-  let rb = List.filter files ~f:(fun x -> Filename.check_suffix x ".rb") in
+  let paths = List.map ~f:(fun x -> Filename.concat dir x) files in
+  let rb = List.filter paths ~f:(fun x -> Filename.check_suffix x ".rb") in
+  let dirs = List.filter paths ~f:(fun x -> Sys.is_directory x = `Yes) in
   let failed = ref [] in
-  List.iter ~f:(fun f ->
-      let p = Filename.concat dir f in
+  List.iter ~f:(fun p ->
       let b = Filename.chop_extension p in
       begin
         let j = run_dump_ruby p in
         let ast = build_ast_from_file j in
-        State.state_clear Type.global_table;
+        Trans.clear();
         ignore(Trans.transform_expr ast Type.global_table);
         let ast_str = node_to_str ast 0 in
         let table_str = table_to_str Type.global_table 0 in
@@ -33,7 +34,20 @@ let rec run_dir dir =
             failed := !failed @ [p]
         )
       end) rb;
+  List.iter dirs ~f:(fun d -> failed := !failed @ (run_dir d));
   !failed
+
+let rec update_cmp dir =
+  let files = Array.to_list (Sys.readdir dir) in
+  let paths = List.map ~f:(fun x -> Filename.concat dir x) files in
+  let logs = List.filter paths ~f:(fun x -> Filename.check_suffix x ".log") in
+  let dirs = List.filter paths ~f:(fun x -> Sys.is_directory x = `Yes) in
+  List.iter ~f:(fun p ->
+      let b = Filename.chop_extension p in
+      let o = Printf.sprintf "%s.cmp" b in
+      Sys.command_exn (Printf.sprintf "cp %s %s" p o);
+    ) logs;
+  List.iter dirs ~f:(fun d -> update_cmp d)
 
 let test_node() =
   let nil = nil_node in

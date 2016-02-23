@@ -34,23 +34,12 @@ let run_dump_ruby filename =
   Sys.command_exn (Printf.sprintf "ruby dump.rb %s %s /tmp/res" filename j);
   j
 
-let update_cmp dir =
-  let files = Array.to_list (Sys.readdir dir) in
-  let logs = List.filter files ~f:(fun x -> Filename.check_suffix x ".log") in
-  List.map ~f:(fun f ->
-      let p = Filename.concat dir f in
-      let b = Filename.chop_extension p in
-      let o = Printf.sprintf "%s.cmp" b in
-      Sys.command_exn (Printf.sprintf "cp %s %s" p o);
-    ) logs
-
 let main_name tagged_name =
   let segs = Str.split (Str.regexp "\\^") tagged_name in
   if List.length segs > 0 then
     List.nth_exn segs 0
   else
     tagged_name
-
 
 let is_synthetic_name name =
   name = "self" || name = "#this"

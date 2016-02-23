@@ -6,6 +6,12 @@ let global_refs: (Node.node, Type.binding_ty list) Hashtbl.t = Hashtbl.Poly.crea
 let global_resolved: (Node.node, bool) Hashtbl.t = Hashtbl.Poly.create();;
 let global_unresolved: (Node.node, bool) Hashtbl.t = Hashtbl.Poly.create();;
 
+let clear()=
+  State.state_clear Type.global_table;
+  Hashtbl.clear global_refs;
+  Hashtbl.clear global_resolved;
+  Hashtbl.clear global_unresolved
+
 let state_insert st id node ty kind =
   let b = new_binding node ty kind in
   State.state_update_bind st id b
