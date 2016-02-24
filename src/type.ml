@@ -373,3 +373,8 @@ let new_fun_ty func env =
     ty = Fun_ty(func, None, None, env, [], false);
   }
 
+let func_ty_set_defaults_ty ty args_ty =
+  match ty.ty with
+  | Fun_ty(func_node, cls_ty, self_ty, env, _, is_class) ->
+    ty.ty <- Fun_ty(func_node, cls_ty, self_ty, env, args_ty, is_class)
+  | _ -> failwith "func_ty_set_defaults_ty error type"

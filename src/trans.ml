@@ -5,6 +5,7 @@ open Type
 let global_refs: (Node.node, Type.binding_ty list) Hashtbl.t = Hashtbl.Poly.create();;
 let global_resolved: (Node.node, bool) Hashtbl.t = Hashtbl.Poly.create();;
 let global_unresolved: (Node.node, bool) Hashtbl.t = Hashtbl.Poly.create();;
+let global_uncalled: (Type.type_t, bool) Hashtbl.t = Hashtbl.Poly.create();;
 
 let clear() =
   State.state_clear Type.global_table;
@@ -38,6 +39,9 @@ let set_resolve node =
 
 let set_unresolve node =
   Hashtbl.add_exn global_unresolved ~key:node ~data:true
+
+let set_uncalled ty =
+  Hashtbl.add_exn global_uncalled ~key:ty ~data: true
 
 let get_modulebinding_if_global st name =
   let res = ref None in
@@ -233,11 +237,15 @@ and
   | For(_, _, body) -> (
       transform body state
     )
-  | Func(_, name, _, _, _, _, _, _, _, _, _) -> (
+  | Func(_, name, _, defaults, _, _, _, _, _, _, _) -> (
       let func_ty = new_fun_ty node (Some state) in
       let id = name_node_id name in
       bind_name state name func_ty Type.MethodK;
+      State.set_parent func_ty.info.table state;
+      let args_ty = List.map defaults ~f:(fun arg -> transform arg state) in
+      func_ty_set_defaults_ty func_ty args_ty;
       State.set_path func_ty.info.table (State.extend_path state id "#");
+      set_uncalled func_ty;
       func_ty
     )
   | While(test, body) -> (
