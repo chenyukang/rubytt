@@ -20,7 +20,7 @@ let rec run_dir dir =
         let j = run_dump_ruby p in
         let ast = build_ast_from_file j in
         Trans.clear();
-        ignore(Trans.transform_expr ast Type.global_table);
+        let _ = Trans.transform_expr ast Type.global_table in
         let ast_str = node_to_str ast 0 in
         let table_str = table_to_str Type.global_table 0 in
         let log = Printf.sprintf "%s.log" b in
@@ -218,6 +218,6 @@ let () =
   if Array.length Sys.argv = 2 then
     let arg = Array.nget Sys.argv 1 in
     if arg = "-update" || arg = "-u" then
-      ignore(update_cmp "./tests")
+      update_cmp "./tests"
   else
     Alcotest.run "My Test" [ "test_unit", test_unit;]

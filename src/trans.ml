@@ -168,7 +168,7 @@ and
     )
   | Undef(nodes) -> (
       List.iter nodes ~f:(fun n ->
-          ignore(transform n state);
+          let _ = transform n state in
           match n.ty with
           | Name(id, _) -> (State.remove state id)
           | _ -> ()
@@ -249,7 +249,7 @@ and
       func_ty
     )
   | While(test, body) -> (
-      ignore(transform test state);
+      let _ = transform test state in 
       transform body state
     )
   | Try(body, rescue, orelse, final) -> (
