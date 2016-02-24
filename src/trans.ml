@@ -6,11 +6,12 @@ let global_refs: (Node.node, Type.binding_ty list) Hashtbl.t = Hashtbl.Poly.crea
 let global_resolved: (Node.node, bool) Hashtbl.t = Hashtbl.Poly.create();;
 let global_unresolved: (Node.node, bool) Hashtbl.t = Hashtbl.Poly.create();;
 
-let clear()=
+let clear() =
   State.state_clear Type.global_table;
   Hashtbl.clear global_refs;
   Hashtbl.clear global_resolved;
-  Hashtbl.clear global_unresolved
+  Hashtbl.clear global_unresolved;
+  Node.lambda_coutner := 0
 
 let state_insert st id node ty kind =
   let b = new_binding node ty kind in
@@ -232,12 +233,12 @@ and
   | For(_, _, body) -> (
       transform body state
     )
-  | Func(locator, name, _, _, _, _, _, _, _, _, _) -> (
+  | Func(_, name, _, _, _, _, _, _, _, _, _) -> (
       let func_ty = new_fun_ty node (Some state) in
       let id = name_node_id name in
       bind_name state name func_ty Type.MethodK;
       State.set_path func_ty.info.table (State.extend_path state id "#");
-      Type.cont_ty
+      func_ty
     )
   | While(test, body) -> (
       ignore(transform test state);

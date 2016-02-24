@@ -391,13 +391,23 @@ let make_dict_node keys vals file s e =
   add_children node vals;
   node
 
+let lambda_coutner = ref 0;;
+let gen_lambda_name() =
+  incr lambda_coutner;
+  Printf.sprintf "lambda%%%d" !lambda_coutner
+
 let make_func_node locator positional defaults kw_ks kw_vs
     after_rest block_arg body doc file s e =
   let is_lambda = is_nil locator in
-  let name = try_attr_to_name locator in
+  let loc = if is_nil locator then
+      let gen_name = gen_lambda_name() in
+      make_name_node gen_name Local file 0 0
+    else
+      locator in
+  let name = try_attr_to_name loc in
   let node = {
     info = {path=""; file = file; ss = s; ee = e };
-    ty = Func(locator, name, positional, defaults, kw_ks, kw_vs,
+    ty = Func(loc, name, positional, defaults, kw_ks, kw_vs,
               after_rest, block_arg, body, doc, is_lambda);
     parent = None;
   } in
