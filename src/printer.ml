@@ -235,7 +235,7 @@ and
             res := !res ^
                    (match depth with
                    | 0 -> Printf.sprintf "bind: %s ty: %s\n" name ty_str
-                   | _ -> "\n" ^ (k_space depth) ^ Printf.sprintf "bind: %s ty: %s" name ty_str);
+                   | _ -> "\n" ^ (k_space (2 * depth)) ^ Printf.sprintf "bind: %s ty: %s" name ty_str);
           )
         )
     );
