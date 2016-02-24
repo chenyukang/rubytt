@@ -1,0 +1,11 @@
+(Block 
+ (Func demo
+  (args: 
+   (Name a)
+   (Name b)
+   (Name c))
+  (body: 
+   (Block 
+    (Call puts
+     (args: 
+      (Name a)))))))

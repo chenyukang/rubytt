@@ -1,2 +1,2 @@
 bind: a ty: List_ty: Int_ty
-bind: func ty: Func_ty: func
+bind: func ty: Func_ty: []

@@ -218,9 +218,12 @@ let rec type_to_str ty depth =
         res := !res ^ "]";
         !res
       )
-    | Fun_ty(node, _, _, _, _, _) -> (
-        let id = func_node_name node in
-        Printf.sprintf "Func_ty: %s" id
+    | Fun_ty(node, _, _, _, def_ty, _) -> (
+        let defaults = ref "[" in
+        List.iteri def_ty ~f:(fun i x ->
+            let s = if i > 0 then " " else "" in
+            defaults := !defaults ^ s ^ type_to_str x 0);
+        Printf.sprintf "Func_ty: %s" !defaults ^ "]"
       )
     | _ -> "unkown_type" in
   str
