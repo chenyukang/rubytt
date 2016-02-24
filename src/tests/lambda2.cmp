@@ -1,0 +1,17 @@
+(Block 
+ (Assign 
+  (Name twice)
+  (Func lambda%1
+   (args: 
+    (Name x))
+   (body: 
+    (Block 
+     (BinOp:Mul 
+      (Int 2)
+      (Name x))))))
+ (Call 
+  (Attribute 
+   (Name twice)
+   (Name call))
+  (args: 
+   (Int 5))))

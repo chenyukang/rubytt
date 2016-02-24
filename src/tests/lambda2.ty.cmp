@@ -1,0 +1,2 @@
+bind: twice ty: Func_ty: lambda%1
+bind: lambda%1 ty: Func_ty: lambda%1

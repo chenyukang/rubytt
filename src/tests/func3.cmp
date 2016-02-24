@@ -1,0 +1,29 @@
+(Block 
+ (Func add
+  (args: 
+   (Name a)
+   (Name b)
+   (Name c)
+   (Name d))
+  (body: 
+   (Block 
+    (If 
+     (BinOp:Gt 
+      (Name a)
+      (Int 0))
+     (Block 
+      (Name b))
+     (Block 
+      (Name c)))
+    (Assign 
+     (Name x)
+     (Int 1))
+    (Call puts
+     (args: 
+      (Name x))))))
+ (Call add
+  (args: 
+   (Int 1)
+   (Int 2)
+   (Int 3)
+   (Int 4))))
