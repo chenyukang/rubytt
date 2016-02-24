@@ -76,8 +76,9 @@ and
   | Handler of node list * node * node * node
   | Dict of node list * node list
   | Call of node * node list * node * node
-  | Func of node * node list * node list * node list * node list * node list *
-            node * node * string
+  (* binder * name * positional * defaults * kw_ks * kw_vs * after_rest * block_arg * body * doc * file * bool *)
+  | Func of node * node * node list * node list * node list * node list * node list *
+            node * node * string * bool
 
 and
   node = {
@@ -322,6 +323,12 @@ let make_attribute_node value attr file s e =
   add_children node [value; attr];
   node
 
+let try_attr_to_name attr =
+    match attr.ty with
+    | Attribute(_, attr) -> attr
+    | Name _ | Nil -> attr
+    | _ -> failwith "error type try_attr_to_name other"
+
 let is_attr node = match node.ty with | Attribute(_) -> true |_ -> false
 
 let make_undef_node targets file s e =
@@ -344,11 +351,7 @@ let make_subscript_node name slice file s e =
   node
 
 let make_module_node locator body doc file s e =
-  let name =
-  match locator.ty with
-  | Attribute(_, attr) -> attr
-  | Name _ -> locator
-  | _ -> failwith "error type make_class_node" in
+  let name = try_attr_to_name locator in
   let node = {
     info = {path=""; file = file; ss = s; ee = e };
     ty = Module(locator, name, body, doc);
@@ -358,11 +361,7 @@ let make_module_node locator body doc file s e =
   node
 
 let make_class_node locator super body doc static file s e =
-  let name =
-  match locator.ty with
-  | Attribute(_, attr) -> attr
-  | Name _ -> locator
-  | _ -> failwith "error type make_class_node" in
+  let name = try_attr_to_name locator in
   let node = {
     info = {path=""; file = file; ss = s; ee = e };
     ty = Class(name, super, body, doc, static);
@@ -392,12 +391,14 @@ let make_dict_node keys vals file s e =
   add_children node vals;
   node
 
-let make_func_node binder positional defaults kw_ks kw_vs
+let make_func_node locator positional defaults kw_ks kw_vs
     after_rest block_arg body doc file s e =
+  let is_lambda = is_nil locator in
+  let name = try_attr_to_name locator in
   let node = {
     info = {path=""; file = file; ss = s; ee = e };
-    ty = Func(binder, positional, defaults, kw_ks, kw_vs,
-              after_rest, block_arg, body, doc);
+    ty = Func(locator, name, positional, defaults, kw_ks, kw_vs,
+              after_rest, block_arg, body, doc, is_lambda);
     parent = None;
   } in
   add_children node positional;
@@ -405,7 +406,7 @@ let make_func_node binder positional defaults kw_ks kw_vs
   add_children node after_rest;
   add_children node kw_ks;
   add_children node kw_vs;
-  add_children node [binder; body; block_arg];
+  add_children node [locator; body; block_arg];
   node
 
 let make_call_node func pos star block_arg file s e =

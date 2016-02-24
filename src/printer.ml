@@ -152,7 +152,7 @@ let rec node_to_str node depth =
         res := !res ^ ")";
       );
       !res ^ ")"
-    | Func(name, args, _, kw_ks, kw_vs, after_rest, _, body, _) ->
+    | Func(_, name, args, _, kw_ks, kw_vs, after_rest, _, body, _, _) ->
       let n = match name.ty with
         | Name(s, _) -> s
         | _ -> "__" in

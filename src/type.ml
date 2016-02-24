@@ -25,11 +25,13 @@ and ty =
   | Instance_ty of type_t
   (* name * instance_type * superclass *)
   | Class_ty of string * type_t option * type_t option
-  | Module_ty of string * string 
+  | Module_ty of string * string
   | Union_ty of (type_t, bool) Hashtbl.t
   | Tuple_ty of type_t list
   (* elem_ty * positional * values *)
   | List_ty of type_t * type_t list * Node.node list
+  (* func_node * cls_ty * self_ty * env * default_tys * is_class_method *)
+  | Fun_ty of node * type_t option * type_t option * state_t option *  type_t list * bool
 and
   type_t = {
   mutable info: ty_info;
@@ -364,3 +366,10 @@ let get_subscript_ty vt st =
       )
     | _ -> unkown_ty)       (* fixme *)
 
+
+let new_fun_ty func env =
+  {
+    info = new_ty_info();
+    ty = Fun_ty(func, None, None, env, [], false)
+  }
+  
