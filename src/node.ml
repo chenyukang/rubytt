@@ -409,6 +409,13 @@ let make_func_node locator positional defaults kw_ks kw_vs
   add_children node [locator; body; block_arg];
   node
 
+let func_node_name node =
+  match node.ty with
+  | Func(_, name, _, _, _, _, _, _, _, _, _) -> (
+      name_node_id name
+    )
+  | _ -> "unknown_name"
+
 let make_call_node func pos star block_arg file s e =
   let node = {
     info = {path=""; file = file; ss = s; ee = e };

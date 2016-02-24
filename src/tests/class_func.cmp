@@ -1,0 +1,21 @@
+(Block 
+ (Class static: false
+  (Name Demo)
+  (Nil)
+   (Block 
+    (Func test
+     (body: 
+      (Block 
+       (Call puts
+        (args: 
+         (String hello))))))))
+ (Assign 
+  (Name demo)
+  (Call 
+   (Attribute 
+    (Name Demo)
+    (Name new))))
+ (Call 
+  (Attribute 
+   (Name demo)
+   (Name test))))

@@ -232,6 +232,13 @@ and
   | For(_, _, body) -> (
       transform body state
     )
+  | Func(locator, name, _, _, _, _, _, _, _, _, _) -> (
+      let func_ty = new_fun_ty node (Some state) in
+      let id = name_node_id name in
+      bind_name state name func_ty Type.MethodK;
+      State.set_path func_ty.info.table (State.extend_path state id "#");
+      Type.cont_ty
+    )
   | While(test, body) -> (
       ignore(transform test state);
       transform body state

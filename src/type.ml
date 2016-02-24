@@ -370,6 +370,6 @@ let get_subscript_ty vt st =
 let new_fun_ty func env =
   {
     info = new_ty_info();
-    ty = Fun_ty(func, None, None, env, [], false)
+    ty = Fun_ty(func, None, None, env, [], false);
   }
-  
+

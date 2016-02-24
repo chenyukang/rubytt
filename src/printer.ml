@@ -218,6 +218,10 @@ let rec type_to_str ty depth =
         res := !res ^ "]";
         !res
       )
+    | Fun_ty(node, _, _, _, _, _) -> (
+        let id = func_node_name node in
+        Printf.sprintf "Func_ty: %s" id
+      )
     | _ -> "unkown_type" in
   str
 and
