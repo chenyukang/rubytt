@@ -1,9 +1,8 @@
 open Core.Std
 open Sys
-open Util
 
 let load_file file =
-  let json = run_dump_ruby file in
+  let json = Parser.run_dump_ruby file in
   let ast = Parser.build_ast_from_file json in
   ignore(Analyzer.trans ast);
   let ast_str = Printer.node_to_str ast 0 in

@@ -28,11 +28,6 @@ let cmp_file a b =
     let _b = read_file_to_str b in
     if _a <> _b then false else true
 
-let run_dump_ruby filename =
-  let b = Filename.chop_extension filename in
-  let j = Printf.sprintf "%s.json" b in
-  Sys.command_exn (Printf.sprintf "ruby dump.rb %s %s /tmp/res" filename j);
-  j
 
 let main_name tagged_name =
   let segs = Str.split (Str.regexp "\\^") tagged_name in
