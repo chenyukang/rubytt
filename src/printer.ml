@@ -214,9 +214,9 @@ let rec type_to_str ty depth =
     | Union_ty(tys_table)  -> (
         let res = ref "[" in
         Hashtbl.iter tys_table ~f:(fun ~key:k ~data:_ ->
-            res := !res ^ "|(" ^ (type_to_str k 0) ^ ")");
-        res := !res ^ "]";
-        !res
+            let sep = if !res = "[" then "(" else "|(" in
+            res := !res ^ sep ^ (type_to_str k 0) ^ ")");
+        !res ^ "]"
       )
     | Fun_ty(node, _, _, _, def_ty, _) -> (
         let defaults = ref "[" in
