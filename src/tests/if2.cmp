@@ -1,0 +1,38 @@
+(Block 
+ (If 
+  (BinOp:Lt 
+   (Int 1)
+   (Int 0))
+  (Block 
+   (Assign 
+    (Name a)
+    (Int 1))
+   (Try 
+    (Block 
+     (Assign 
+      (Name c)
+      (Int 1)))
+    (Nil)
+    (Nil)
+    (Nil)))
+  (Block 
+   (Assign 
+    (Name a)
+    (String 2))
+   (Assign 
+    (Name c)
+    (Name false))))
+ (Assign 
+  (Name c)
+  (String c))
+ (Call puts
+  (args: 
+   (Name a)))
+ (Call puts
+  (args: 
+   (Name c))))
+
+----------------------------------------
+
+bind: a ty: [(Int_ty)|(Str_ty)]
+bind: c ty: Str_ty

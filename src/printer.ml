@@ -23,19 +23,16 @@ let rec node_to_str node depth =
     match node.ty with
     | Nil -> "(Nil)"
     | Void -> "(Void)"
-    | Kwd(kwd, node) ->
-      "(Kwd " ^ kwd ^ (node_to_str node (depth + 1)) ^ ")"
     | Int(v) -> "(Int " ^ Int.to_string v ^ ")"
     | Float(v) -> "(Float " ^ Float.to_string v ^ ")"
     | String(s) -> "(String " ^ s ^ ")"
     | Symbol(s) -> "(Symbol " ^ s ^ ")"
     | Control(s) -> "(Control " ^ s ^ ")"
     | Name(s, _) -> "(Name " ^ s ^ ")"
+    | Kwd(kwd, node) -> "(Kwd " ^ kwd ^ (node_to_str node (depth + 1)) ^ ")"
     | Block(stmts) ->
       let s = ref "(Block " in
-      List.iter stmts ~f:(fun x ->
-          s := !s ^ node_to_str x (depth+1)
-        );
+      List.iter stmts ~f:(fun x -> s := !s ^ node_to_str x (depth+1));
       !s ^ ")"
     | Assign(n1, n2) ->
       "(Assign " ^
@@ -167,51 +164,45 @@ let rec node_to_str node depth =
           );
         res := !res ^ ")";
       );
-      res := !res ^ nw (depth+1) ^
-             "(body: " ^ node_to_str body (depth+2) ^ ")";
+      res := !res ^ nw (depth+1) ^ "(body: " ^ node_to_str body (depth+2) ^ ")";
       !res ^ ")"
     | _ -> "other" in
   match depth with
-  | 0 -> str
-  | _ -> "\n" ^ (k_space depth) ^ str
+  | 0 -> str | _ -> "\n" ^ (k_space depth) ^ str
 and
-  k_space n =
-  String.init n ~f:(fun _ -> ' ')
+  k_space n = String.init n ~f:(fun _ -> ' ')
 and
-  nw n =
-  "\n" ^ k_space n
+  nw n = "\n" ^ k_space n
 
 open Type
 let rec type_to_str ty depth =
-  let str =
-    match ty.ty with
-    | Int_ty -> "Int_ty"
-    | Str_ty _  -> "Str_ty"
-    | Bool_ty _ -> "Bool_ty"
-    | List_ty(elem_ty, _, _) ->
-      Printf.sprintf "List_ty: %s" (type_to_str elem_ty 0)
-    | Class_ty(name, _, _) ->
-      Printf.sprintf "Class_ty: %s" name
-      ^ (table_to_str ty.info.table (depth+1))
-    | Module_ty(id, _) ->
-      Printf.sprintf "Module_ty: %s" id
-        ^ (table_to_str ty.info.table (depth+1))
-    | Union_ty(tys_table)  -> (
-        let res = ref "[" in
-        Hashtbl.iter tys_table ~f:(fun ~key:k ~data:_ ->
-            let sep = if !res = "[" then "(" else "|(" in
-            res := !res ^ sep ^ (type_to_str k 0) ^ ")");
-        !res ^ "]"
-      )
-    | Fun_ty(info) -> (
-        let defaults = ref "[" in
-        List.iteri info.def_tys ~f:(fun i x ->
-            let s = if i > 0 then " " else "" in
-            defaults := !defaults ^ s ^ type_to_str x 0);
-        Printf.sprintf "Func_ty: %s" !defaults ^ "]"
-      )
-    | _ -> "unkown_type" in
-  str
+  match ty.ty with
+  | Int_ty -> "Int_ty"
+  | Str_ty _  -> "Str_ty"
+  | Bool_ty _ -> "Bool_ty"
+  | List_ty(elem_ty, _, _) ->
+    Printf.sprintf "List_ty: %s" (type_to_str elem_ty 0)
+  | Class_ty(name, _, _) ->
+    Printf.sprintf "Class_ty: %s" name
+    ^ (table_to_str ty.info.table (depth+1))
+  | Module_ty(id, _) ->
+    Printf.sprintf "Module_ty: %s" id
+    ^ (table_to_str ty.info.table (depth+1))
+  | Union_ty(tys_table)  -> (
+      let res = ref "[" in
+      Hashtbl.iter tys_table ~f:(fun ~key:k ~data:_ ->
+          let sep = if !res = "[" then "(" else "|(" in
+          res := !res ^ sep ^ (type_to_str k 0) ^ ")");
+      !res ^ "]"
+    )
+  | Fun_ty(info) -> (
+      let defaults = ref "[" in
+      List.iteri info.def_tys ~f:(fun i x ->
+          let s = if i > 0 then " " else "" in
+          defaults := !defaults ^ s ^ type_to_str x 0);
+      Printf.sprintf "Func_ty: %s" !defaults ^ "]"
+    )
+  | _ -> "unkown_type"
 
 and
   table_to_str (state:Type.state_t) depth =
