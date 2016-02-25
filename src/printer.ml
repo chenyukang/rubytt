@@ -218,9 +218,9 @@ let rec type_to_str ty depth =
             res := !res ^ sep ^ (type_to_str k 0) ^ ")");
         !res ^ "]"
       )
-    | Fun_ty(node, _, _, _, def_ty, _) -> (
+    | Fun_ty(info) -> (
         let defaults = ref "[" in
-        List.iteri def_ty ~f:(fun i x ->
+        List.iteri info.def_tys ~f:(fun i x ->
             let s = if i > 0 then " " else "" in
             defaults := !defaults ^ s ^ type_to_str x 0);
         Printf.sprintf "Func_ty: %s" !defaults ^ "]"

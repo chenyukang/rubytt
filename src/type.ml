@@ -12,6 +12,15 @@ and
   mutable table: state_t;
 }
 and
+  fun_info = {
+  fun_node: node;
+  cls_ty: type_t option;
+  self_ty: type_t option;
+  env: state_t option;
+  def_tys: type_t list;
+  is_class: bool
+}
+and
   bool_value =
   | True
   | False
@@ -30,8 +39,7 @@ and ty =
   | Tuple_ty of type_t list
   (* elem_ty * positional * values *)
   | List_ty of type_t * type_t list * Node.node list
-  (* func_node * cls_ty * self_ty * env * default_tys * is_class_method *)
-  | Fun_ty of node * type_t option * type_t option * state_t option *  type_t list * bool
+  | Fun_ty of fun_info
 and
   type_t = {
   mutable info: ty_info;
@@ -49,7 +57,7 @@ and kind =
   | ConstK
 and
   binding_ty = {
-  node: Node.node;
+  node: node;
   refs: (Node.node, bool) Hashtbl.t;
   qname: string;
   bind_file: string;
@@ -370,11 +378,12 @@ let get_subscript_ty vt st =
 let new_fun_ty func env =
   {
     info = new_ty_info();
-    ty = Fun_ty(func, None, None, env, [], false);
+    ty = Fun_ty({fun_node = func; cls_ty = None; self_ty = None;
+                 env = env;  def_tys = []; is_class = false});
   }
 
-let func_ty_set_defaults_ty ty args_ty =
+let func_ty_set_def_tys ty args_ty =
   match ty.ty with
-  | Fun_ty(func_node, cls_ty, self_ty, env, _, is_class) ->
-    ty.ty <- Fun_ty(func_node, cls_ty, self_ty, env, args_ty, is_class)
+  | Fun_ty(info) ->
+      ty.ty <- Fun_ty({info with def_tys = args_ty})
   | _ -> failwith "func_ty_set_defaults_ty error type"
