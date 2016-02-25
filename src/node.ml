@@ -429,7 +429,12 @@ let make_func_node locator positional defaults kw_ks kw_vs
 let func_node_name node =
   match node.ty with
   | Func(info) -> name_node_id info.name
-  | _ -> "unknown_name"
+  | _ -> "unknown"
+
+let func_node_info node =
+  match node.ty with
+  | Func(info) -> info
+  | _ -> failwith "func_node_info error type"
 
 let make_call_node func pos star block_arg file s e =
   let node = {

@@ -1,0 +1,29 @@
+(Block 
+ (Func max
+  (args: 
+   (Name a)
+   (Name b))
+  (body: 
+   (Block 
+    (If 
+     (BinOp:Gt 
+      (Name a)
+      (Name b))
+     (Block 
+      (Name a))
+     (Block 
+      (Name b))))))
+ (Assign 
+  (Name res)
+  (Call max
+   (args: 
+    (Int 1)
+    (Int 2))))
+ (Call puts
+  (args: 
+   (Name res))))
+
+----------------------------------------
+
+bind: max ty: Func_ty: []
+bind: res ty: Int_ty

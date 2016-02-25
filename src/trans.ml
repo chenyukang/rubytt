@@ -291,10 +291,10 @@ and
     )
   | Call(func, pos, star, block_arg) -> (
       let fun_ty = transform func state in
-      let pos = List.map pos ~f:(fun x -> transform x state) in
+      let args_ty = List.map pos ~f:(fun x -> transform x state) in
       let star_ty = transform star state in
       let block_arg_ty = transform block_arg state in
-      resolve_call fun_ty pos star_ty block_arg_ty node state
+      resolve_call fun_ty args_ty star_ty block_arg_ty node state
     )
   | Module(locator, name, body, _) -> (
       let module_ty = lookup_or_create_module state locator node.info.file in
@@ -320,16 +320,24 @@ and
     -> transform v state
   | _ -> Type.unkown_ty
 
-and resolve_call fun_ty pos star_ty block_arg_ty node state =
+and resolve_call fun_ty args_ty star_ty block_arg_ty node state =
   match fun_ty.ty with
-  | Fun_ty(_) -> apply_func fun_ty pos star_ty block_arg_ty node
+  | Fun_ty(_) -> apply_func fun_ty args_ty star_ty block_arg_ty node
   | _ -> Type.unkown_ty
 
-and apply_func fun_ty pos star_ty block_arg_ty node =
+and bind_param_tys env_table args args_types =
+  List.iteri args ~f:(fun i arg ->
+      let arg_ty = List.nth_exn args_types i in
+      bind env_table arg arg_ty Type.ParameterK
+    )
+
+and apply_func fun_ty args_ty star_ty block_arg_ty node =
   set_called fun_ty;
   let info = Type.fun_ty_info fun_ty in
+  let node_info = func_node_info info.fun_node in
   let env_table = State.new_state ~parent:info.env State.Function in
-  Type.unkown_ty
+  let _ = bind_param_tys env_table node_info.args args_ty in
+  transform node_info.body env_table
 
 let transform_expr node state =
   transform node state
