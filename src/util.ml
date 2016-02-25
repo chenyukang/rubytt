@@ -17,9 +17,6 @@ let read_process command =
   ignore (Unix.close_process_in in_channel);
   Buffer.contents buffer
 
-let do_command command =
-  Sys.command command
-
 let cmp_file a b =
   if (Sys.file_exists_exn a = false || Sys.file_exists_exn b = false) then
     false
@@ -27,7 +24,6 @@ let cmp_file a b =
     let _a = read_file_to_str a in
     let _b = read_file_to_str b in
     if _a <> _b then false else true
-
 
 let main_name tagged_name =
   let segs = Str.split (Str.regexp "\\^") tagged_name in
