@@ -234,14 +234,13 @@ and
   let res = ref "" in
   Hashtbl.iter table ~f:(fun ~key:name ~data:bindings ->
       if name <> "self" then (
-      List.iter bindings ~f:(fun b ->
-            let ty_str = type_to_str b.bind_ty depth in
-            let str = Printf.sprintf "bind: %s ty: %s" name ty_str in
-            res := !res ^
-                   (match depth with
-                   | 0 -> str ^ "\n"
-                   | _ -> "\n" ^ (k_space (2 * depth)) ^ str);
-          )
+        let final_ty = make_unions_from_bs bindings in
+        let ty_str = type_to_str final_ty depth in
+        let str = Printf.sprintf "bind: %s ty: %s" name ty_str in
+        res := !res ^
+               (match depth with
+                | 0 -> str ^ "\n"
+                | _ -> "\n" ^ (k_space (2 * depth)) ^ str);
       )
     );
   !res
