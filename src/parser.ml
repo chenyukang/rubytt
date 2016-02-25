@@ -164,10 +164,10 @@ let rec convert json =
     match args with
       | `Null -> make_call_node func [] nil_node nil_node ff ss ee
       | _ -> (
-          let positional = convert_list (args |> member "positional") in
+          let pos = convert_list (args |> member "positional") in
           let star = convert_elem args "star" in
           let block_arg = convert_elem args "blockarg" in
-          make_call_node func positional star block_arg ff ss ee
+          make_call_node func pos star block_arg ff ss ee
         )
     )
   | "args" -> (

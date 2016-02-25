@@ -1,0 +1,47 @@
+(Block 
+ (Class static: false
+  (Name Demo)
+  (Nil)
+   (Block 
+    (Assign 
+     (Name b)
+     (Int 1))
+    (Func initialize
+     (body: 
+      (Block 
+       (Assign 
+        (Name attr)
+        (Int 1)))))
+    (Func test
+     (args: 
+      (Name a)
+      (Name b))
+     (body: 
+      (Block 
+       (Call puts
+        (args: 
+         (Name a))))))))
+ (Assign 
+  (Name a)
+  (Call 
+   (Attribute 
+    (Name Demo)
+    (Name new))))
+ (Call 
+  (Attribute 
+   (Name a)
+   (Name test))
+  (args: 
+   (Int 1)
+   (Int 2)))
+ (Call puts
+  (args: 
+   (Name a))))
+
+----------------------------------------
+
+bind: a ty: unkown_type
+bind: Demo ty: Class_ty: Demo
+  bind: test ty: Func_ty: [Int_ty]
+  bind: b ty: Int_ty
+  bind: initialize ty: Func_ty: []

@@ -229,7 +229,8 @@ and
         match bs with
         | Some(_bs) -> make_unions_from_bs _bs
         | _ -> (
-            Printf.printf "error: '%s' attribute not found for : %s\n" id (Printer.type_to_str target_ty 0);
+            Printf.printf "error: '%s' attribute not found for : %s\n"
+              id (Printer.type_to_str target_ty 0);
             Type.unkown_ty
           )
       )
