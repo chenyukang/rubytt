@@ -15,3 +15,8 @@
    (Name call))
   (args: 
    (Int 5))))
+
+----------------------------------------
+
+bind: twice ty: Func_ty: []
+bind: lambda%1 ty: Func_ty: []

@@ -376,8 +376,7 @@ let make_handler_node exceps binder handler orelse file s e =
     ty = Handler(exceps, binder, handler, orelse);
     parent = None;
   } in
-  add_children node [binder; handler; orelse];
-  add_children node exceps;
+  add_children node ([binder; handler; orelse] @ exceps);
   node
 
 
@@ -387,8 +386,7 @@ let make_dict_node keys vals file s e =
     ty = Dict(keys, vals);
     parent = None;
   } in
-  add_children node keys;
-  add_children node vals;
+  add_children node (keys @ vals);
   node
 
 let lambda_coutner = ref 0;;
@@ -411,11 +409,7 @@ let make_func_node locator positional defaults kw_ks kw_vs
               after_rest, block_arg, body, doc, is_lambda);
     parent = None;
   } in
-  add_children node positional;
-  add_children node defaults;
-  add_children node after_rest;
-  add_children node kw_ks;
-  add_children node kw_vs;
+  add_children node (positional @ defaults @ after_rest @ kw_ks @ kw_vs);
   add_children node [locator; body; block_arg];
   node
 
@@ -432,7 +426,6 @@ let make_call_node func pos star block_arg file s e =
     ty = Call(func, pos, star, block_arg);
     parent = None;
   } in
-  add_children node pos;
-  add_children node [func; star; block_arg];
+  add_children node ([func; star; block_arg] @ pos);
   node
 

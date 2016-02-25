@@ -14,3 +14,7 @@
       (Call puts
        (args: 
         (String no)))))))))
+
+----------------------------------------
+
+bind: test ty: Func_ty: []

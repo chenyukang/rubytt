@@ -3,3 +3,7 @@
   (Name a)
   (Name false))
  (Call x))
+
+----------------------------------------
+
+bind: a ty: Bool_ty

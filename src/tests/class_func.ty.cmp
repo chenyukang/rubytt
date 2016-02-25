@@ -1,3 +1,0 @@
-bind: demo ty: unkown_type
-bind: Demo ty: Class_ty: Demo
-  bind: test ty: Func_ty: []

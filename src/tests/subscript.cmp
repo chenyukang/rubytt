@@ -33,3 +33,7 @@
        (Int 0)
        (Int 1)))
      (Name inspect))))))
+
+----------------------------------------
+
+bind: a ty: List_ty: Int_ty

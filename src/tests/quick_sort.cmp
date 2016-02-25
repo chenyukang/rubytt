@@ -35,3 +35,7 @@
        (Call qsort
         (args: 
          (Name more))))))))))
+
+----------------------------------------
+
+bind: qsort ty: Func_ty: []

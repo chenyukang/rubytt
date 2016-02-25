@@ -31,3 +31,8 @@
  (Subscript 
   (Name b)
   (String hello)))
+
+----------------------------------------
+
+bind: a ty: List_ty: Int_ty
+bind: b ty: unkown_type

@@ -10,3 +10,7 @@
     (Call puts
      (args: 
       (Name s)))))))
+
+----------------------------------------
+
+bind: print ty: Func_ty: [Int_ty Int_ty]

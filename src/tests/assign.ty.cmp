@@ -1,2 +1,0 @@
-bind: a ty: Int_ty
-bind: arr ty: List_ty: Int_ty

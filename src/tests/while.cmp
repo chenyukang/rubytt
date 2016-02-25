@@ -20,3 +20,8 @@
    (Nil)
    (Nil)
    (Nil))))
+
+----------------------------------------
+
+bind: a ty: Str_ty
+bind: index ty: Int_ty

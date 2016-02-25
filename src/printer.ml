@@ -4,33 +4,18 @@ open State
 
 let op_to_str op =
   match op with
-  | Add -> "Add"
-  | Sub -> "Sub"
-  | Mul -> "Mul"
-  | Div -> "Div"
-  | Pow -> "Pow"
-  | Cmp -> "Cmp"
-  | Match -> "Match"
-  | NotMatch -> "NotMatch"
-  | Equal -> "Equal"
-  | Eq -> "Eq"
-  | Lt -> "Lt"
-  | Gt -> "Gt"
-  | BitAnd -> "BitAnd"
-  | BitOr -> "BitOr"
-  | BitXor -> "BitXor"
-  | In -> "In"
-  | LShift -> "LShift"
-  | RShift -> "RShift"
-  | Mod -> "Mod"
-  | Invert -> "Invert"
-  | And -> "And"
-  | Or -> "Or"
-  | Not -> "Not"
-  | LtE -> "LtE"
-  | GtE -> "GtE"
-  | NotEqual -> "NotEqual"
-  | Defined -> "Defined"
+  | Add -> "Add" | Sub -> "Sub"
+  | Mul -> "Mul" | Div -> "Div"
+  | Pow -> "Pow" | Cmp -> "Cmp"
+  | Match -> "Match" | NotMatch -> "NotMatch"
+  | Equal -> "Equal" | Eq -> "Eq"
+  | Lt -> "Lt" | Gt -> "Gt"
+  | BitAnd -> "BitAnd" | BitOr -> "BitOr" | BitXor -> "BitXor"
+  | In -> "In" | LShift -> "LShift" | RShift -> "RShift"
+  | Mod -> "Mod" | Invert -> "Invert"
+  | And -> "And" | Or -> "Or" | Not -> "Not"
+  | LtE -> "LtE" | GtE -> "GtE"
+  | NotEqual -> "NotEqual" | Defined -> "Defined"
   | Unknown -> "Unknown"
 
 let rec node_to_str node depth =
@@ -233,6 +218,7 @@ and
   let table = state.s_table in
   let res = ref "" in
   Hashtbl.iter table ~f:(fun ~key:name ~data:bindings ->
+      (* avoid loop *)
       if name <> "self" then (
         let final_ty = make_unions_from_bs bindings in
         let ty_str = type_to_str final_ty depth in

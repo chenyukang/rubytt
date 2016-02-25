@@ -13,3 +13,7 @@
         (Name each))))
      (Nil))
     (String delicious!)))))
+
+----------------------------------------
+
+bind: eat ty: Func_ty: []

@@ -1,1 +1,0 @@
-bind: a ty: List_ty: [(List_ty: Int_ty)|(Int_ty)|(Str_ty)]

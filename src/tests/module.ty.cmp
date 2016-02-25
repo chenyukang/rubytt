@@ -1,2 +1,0 @@
-bind: Test ty: Module_ty: Test
-  bind: a ty: Int_ty

@@ -11,3 +11,7 @@
      (Name a)
      (Int 1))
     (Int 2)))))
+
+----------------------------------------
+
+bind: a ty: List_ty: [(List_ty: unkown_type)]

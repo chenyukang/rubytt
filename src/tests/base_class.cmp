@@ -22,3 +22,11 @@
       (Array 
        (Int 1)
        (Int 2)))))))
+
+----------------------------------------
+
+bind: Demo ty: Class_ty: Demo
+  bind: hello ty: Str_ty
+  bind: a ty: Int_ty
+  bind: foos ty: Int_ty
+  bind: arr ty: List_ty: [(List_ty: Int_ty)|(Int_ty)|(Str_ty)]

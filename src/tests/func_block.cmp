@@ -16,3 +16,7 @@
  (Call contrived
   (args: 
    (Int 25))))
+
+----------------------------------------
+
+bind: contrived ty: Func_ty: []

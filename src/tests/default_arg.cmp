@@ -9,3 +9,7 @@
     (Call puts
      (args: 
       (Name a)))))))
+
+----------------------------------------
+
+bind: demo ty: Func_ty: [Int_ty Str_ty Int_ty]

@@ -9,3 +9,7 @@
  (Subscript 
   (Call demo)
   (Int 1)))
+
+----------------------------------------
+
+bind: demo ty: Func_ty: []

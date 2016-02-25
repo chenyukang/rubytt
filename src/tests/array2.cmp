@@ -16,3 +16,8 @@
     (Attribute 
      (Name b)
      (Name size))))))
+
+----------------------------------------
+
+bind: a ty: unkown_type
+bind: b ty: List_ty: Int_ty

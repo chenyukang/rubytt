@@ -10,3 +10,7 @@
     (Attribute 
      (Name a)
      (Name class))))))
+
+----------------------------------------
+
+bind: a ty: Str_ty

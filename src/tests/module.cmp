@@ -6,3 +6,8 @@
     (Assign 
      (Name a)
      (Int 1)))))
+
+----------------------------------------
+
+bind: Test ty: Module_ty: Test
+  bind: a ty: Int_ty

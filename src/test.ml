@@ -22,15 +22,13 @@ let rec run_dir dir =
         Trans.clear();
         let _ = Trans.transform_expr ast Type.global_table in
         let ast_str = node_to_str ast 0 in
-        let table_str = table_to_str Type.global_table 0 in
+        let tys_str = table_to_str Type.global_table 0 in
+        let sep_str = "\n\n" ^ (String.init 40 ~f:(fun _ -> '-')) ^ "\n\n" in
         let log = Printf.sprintf "%s.log" b in
-        let cmp = Printf.sprintf "%s.cmp" b in
-        let ty_log = Printf.sprintf "%s.ty.log" b in
-        let ty_cmp = Printf.sprintf "%s.ty.cmp" b in (
-          Out_channel.write_all log ~data: ast_str;
-          Out_channel.write_all ty_log ~data: table_str;
+        let cmp = Printf.sprintf "%s.cmp" b in (
+          Out_channel.write_all log ~data: (ast_str ^ sep_str ^ tys_str);
           (* Sys.command_exn (Printf.sprintf "rm %s" j); *)
-          if not (cmp_file cmp log && cmp_file ty_cmp ty_log) then
+          if not (cmp_file cmp log) then
             failed := !failed @ [p]
         )
       end) rb;
