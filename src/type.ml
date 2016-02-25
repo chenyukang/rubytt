@@ -7,9 +7,9 @@ type
   state_t = (type_t, binding_ty) state
 and
   ty_info = {
-  mutable file: string;
-  mutable mutated: bool;
-  mutable table: state_t;
+  file: string;
+  mutated: bool;
+  table: state_t;
 }
 and
   fun_info = {
@@ -76,30 +76,26 @@ let type_stack = TypeStack.empty;;
 
 let is_mutated (t: type_t) = t.info.mutated
 
-let set_mutated t m = t.info.mutated <- m
+let set_mutated t m = t.info <- {t.info with mutated = m}
 
-let set_file t f = t.info.file <- f
+let set_file t f = t.info <- {t.info with file = f}
 
 let set_table (t: type_t) (table: state_t) =
-  t.info.table <- table
+  t.info <- {t.info with table = table}
 
 let is_undecided_bool t =
   match t.ty with
   | Bool_ty(bv, _, _) ->
-    (match bv with
-     | Undecided -> true
-     | _ -> false)
+    (match bv with | Undecided -> true | _ -> false)
   | _ -> false
 
 let is_num_type t =
   match t.ty with
-  | Int_ty | Float_ty -> true
-  | _ -> false
+  | Int_ty | Float_ty -> true | _ -> false
 
 let is_str_type t =
   match t.ty with
-  | Str_ty _ -> true
-  | _ -> false
+  | Str_ty _ -> true | _ -> false
 
 let rec type_equal ty1 ty2 =
   match ty1.ty, ty2.ty with

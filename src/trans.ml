@@ -14,9 +14,13 @@ let clear() =
   Hashtbl.clear global_unresolved;
   Node.lambda_coutner := 0
 
+let state_add_mode = ref 0;;
 let state_insert st id node ty kind =
   let b = new_binding node ty kind in
-  State.state_update_bind st id b
+  if !state_add_mode = 0 then
+    State.state_update_bind st id b
+  else
+    State.state_add_bind st id b
 
 let put_refs node bs =
   let binded = Hashtbl.find global_refs node in
@@ -248,8 +252,15 @@ and
       set_uncalled func_ty;
       func_ty
     )
+  | If(_, body, _else) -> (
+      let body_ty = transform body state in
+      incr state_add_mode;
+      let else_ty = transform _else state in
+      decr state_add_mode;
+      make_unions [body_ty; else_ty]
+    )
   | While(test, body) -> (
-      let _ = transform test state in 
+      let _ = transform test state in
       transform body state
     )
   | Try(body, rescue, orelse, final) -> (

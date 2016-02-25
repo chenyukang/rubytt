@@ -227,20 +227,22 @@ let rec type_to_str ty depth =
       )
     | _ -> "unkown_type" in
   str
+
 and
   table_to_str (state:Type.state_t) depth =
   let table = state.s_table in
   let res = ref "" in
   Hashtbl.iter table ~f:(fun ~key:name ~data:bindings ->
+      if name <> "self" then (
       List.iter bindings ~f:(fun b ->
-          if name <> "self" then (
             let ty_str = type_to_str b.bind_ty depth in
+            let str = Printf.sprintf "bind: %s ty: %s" name ty_str in
             res := !res ^
                    (match depth with
-                   | 0 -> Printf.sprintf "bind: %s ty: %s\n" name ty_str
-                   | _ -> "\n" ^ (k_space (2 * depth)) ^ Printf.sprintf "bind: %s ty: %s" name ty_str);
+                   | 0 -> str ^ "\n"
+                   | _ -> "\n" ^ (k_space (2 * depth)) ^ str);
           )
-        )
+      )
     );
   !res
 

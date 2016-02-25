@@ -1,0 +1,3 @@
+bind: a ty: Int_ty
+bind: a ty: Str_ty
+bind: res ty: [(Int_ty)|(Str_ty)]

@@ -1,0 +1,21 @@
+(Block 
+ (Assign 
+  (Name res)
+  (If 
+   (BinOp:Lt 
+    (Int 1)
+    (Int 0))
+   (Block 
+    (Assign 
+     (Name a)
+     (Int 1)))
+   (Block 
+    (Assign 
+     (Name a)
+     (String 2)))))
+ (Call puts
+  (args: 
+   (Name a)))
+ (Call puts
+  (args: 
+   (Name res))))
