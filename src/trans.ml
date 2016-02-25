@@ -279,13 +279,12 @@ and
       make_unions [body_ty; orelse_ty; rescue_ty; final_ty]
     )
   | Func(info) -> (
-  (* | Func(_, name, _, defaults, _, _, _, _, _, _, _) -> ( *)
       let func_ty = new_fun_ty node (Some state) in
-      let id = name_node_id info.name in
       let args_ty = List.map info.defaults ~f:(fun arg -> transform arg state) in
       func_ty_set_def_tys func_ty args_ty;
       bind_name state info.name func_ty Type.MethodK;
       State.set_parent func_ty.info.table state;
+      let id = name_node_id info.name in
       State.set_path func_ty.info.table (State.extend_path state id "#");
       set_uncalled func_ty;
       func_ty
