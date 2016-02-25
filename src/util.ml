@@ -39,5 +39,8 @@ let is_global_name name =
   String.substr_index name "$" = Some(0)
 
 
+let make_tag_id id tag =
+  id ^ "^" ^ tag
+
 
 

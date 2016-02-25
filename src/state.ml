@@ -27,7 +27,6 @@ let new_state ?(parent = None) state_ty : ('ty, 'binding) state =
     path = "";
   }
 
-
 let set_parent st parent = st.parent <- Some(parent)
 let set_stype st stype = st.s_type <- stype
 let set_ttype st ttype = st.t_type <- ttype

@@ -84,6 +84,9 @@ let rec lookup_attr state id =
           res)
     )
 
+let lookup_attr_tagged st attr tag =
+  lookup_attr st (Util.make_tag_id attr tag)
+
 let rec bind state (target:node) rt kind =
   match target.ty with
   | Name _ -> bind_name state target rt kind
@@ -216,6 +219,20 @@ and
       let vt = transform rv state in
       bind_node state t vt;
       vt
+    )
+  | Attribute(target, attr) -> (
+      if is_nil target then transform attr state
+      else (
+        let target_ty = transform target state in
+        let id = name_node_id attr in
+        let bs = lookup_attr target_ty.info.table id in
+        match bs with
+        | Some(_bs) -> make_unions_from_bs _bs
+        | _ -> (
+            Printf.printf "error: '%s' attribute not found for : %s\n" id (Printer.type_to_str target_ty 0);
+            Type.unkown_ty
+          )
+      )
     )
   | Subscript(value, slices) -> (
       let vt = transform value state in
