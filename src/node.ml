@@ -42,6 +42,19 @@ type node_info = {
   ss: int;
   ee: int;
 }
+type fun_node_info = {
+  locator: node;
+  name: node;
+  args: node list;
+  defaults: node list;
+  kw_ks: node list;
+  kw_vs: node list;
+  after_rest: node list;
+  block_arg: node;
+  body: node;
+  doc: string;
+  is_lambda: bool
+}
 and
   node_type =
   | Nil
@@ -76,9 +89,7 @@ and
   | Handler of node list * node * node * node
   | Dict of node list * node list
   | Call of node * node list * node * node
-  (* binder * name * positional * defaults * kw_ks * kw_vs * after_rest * block_arg * body * doc * file * bool *)
-  | Func of node * node * node list * node list * node list * node list * node list *
-            node * node * string * bool
+  | Func of fun_node_info
 
 and
   node = {
@@ -405,8 +416,10 @@ let make_func_node locator positional defaults kw_ks kw_vs
   let name = try_attr_to_name loc in
   let node = {
     info = {path=""; file = file; ss = s; ee = e };
-    ty = Func(loc, name, positional, defaults, kw_ks, kw_vs,
-              after_rest, block_arg, body, doc, is_lambda);
+    ty = Func({locator = loc; name = name; args = positional;
+               defaults = defaults; kw_ks = kw_ks;  kw_vs = kw_vs;
+               after_rest = after_rest; block_arg = block_arg;
+               body = body;  doc = doc;  is_lambda = is_lambda});
     parent = None;
   } in
   add_children node (positional @ defaults @ after_rest @ kw_ks @ kw_vs);
@@ -415,9 +428,7 @@ let make_func_node locator positional defaults kw_ks kw_vs
 
 let func_node_name node =
   match node.ty with
-  | Func(_, name, _, _, _, _, _, _, _, _, _) -> (
-      name_node_id name
-    )
+  | Func(info) -> name_node_id info.name
   | _ -> "unknown_name"
 
 let make_call_node func pos star block_arg file s e =

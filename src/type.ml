@@ -383,3 +383,8 @@ let func_ty_set_def_tys ty args_ty =
   | Fun_ty(info) ->
       ty.ty <- Fun_ty({info with def_tys = args_ty})
   | _ -> failwith "func_ty_set_defaults_ty error type"
+
+let fun_ty_info ty =
+  match ty.ty with
+  | Fun_ty(info) -> info
+  | _ -> failwith "fun_ty_info error type"

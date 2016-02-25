@@ -13,3 +13,4 @@
 ----------------------------------------
 
 bind: a ty: List_ty: Int_ty
+bind: lambda%1 ty: Func_ty: []

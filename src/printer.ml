@@ -134,37 +134,37 @@ let rec node_to_str node depth =
         res := !res ^ ")";
       );
       !res ^ ")"
-    | Func(_, name, args, _, kw_ks, kw_vs, after_rest, _, body, _, _) ->
-      let n = match name.ty with
+    | Func(info) ->
+      let n = match info.name.ty with
         | Name(s, _) -> s
         | _ -> "__" in
       let res = ref ("(Func " ^ n) in
-      if (List.length args) <> 0 then (
+      if (List.length info.args) <> 0 then (
         res := !res ^ nw (depth+1) ^ "(args: ";
-        List.iter args ~f:(fun x ->
+        List.iter info.args ~f:(fun x ->
             let a = node_to_str x (depth+2) in
             res := !res ^ a;
           );
         res := !res ^ ")"
       );
-      if (List.length kw_ks) <> 0 then (
+      if (List.length info.kw_ks) <> 0 then (
         res := !res ^ nw (depth+1) ^ "(kw: ";
-        for i = 0 to (List.length kw_ks - 1) do
-          let k = node_to_str (List.nth_exn kw_ks i) (depth+2) in
-          let v = node_to_str (List.nth_exn kw_vs i) (depth+2) in
+        for i = 0 to (List.length info.kw_ks - 1) do
+          let k = node_to_str (List.nth_exn info.kw_ks i) (depth+2) in
+          let v = node_to_str (List.nth_exn info.kw_vs i) (depth+2) in
           res := !res ^ k ^ " --> " ^ v;
         done;
         res := !res ^ ")"
       );
-      if (List.length after_rest) <> 0 then (
+      if (List.length info.after_rest) <> 0 then (
         res := !res ^ nw (depth+1) ^ "(after_rest: ";
-        List.iter after_rest ~f:(fun x ->
+        List.iter info.after_rest ~f:(fun x ->
             let a = node_to_str x (depth+2) in
             res := !res ^ a;
           );
         res := !res ^ ")";
       );
-      res := !res ^ nw (depth+1) ^ "(body: " ^ node_to_str body (depth+2) ^ ")";
+      res := !res ^ nw (depth+1) ^ "(body: " ^ node_to_str info.body (depth+2) ^ ")";
       !res ^ ")"
     | _ -> "other" in
   match depth with

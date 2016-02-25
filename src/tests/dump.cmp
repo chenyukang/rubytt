@@ -3205,4 +3205,5 @@ bind: AstSimplifier ty: Class_ty: AstSimplifier
   bind: initialize ty: Func_ty: []
 bind: $options ty: unkown_type
 bind: parse_dump ty: Func_ty: []
+bind: lambda%12 ty: Func_ty: []
 bind: banner ty: Func_ty: []

@@ -19,4 +19,5 @@
 
 ----------------------------------------
 
+bind: lambda%1 ty: Func_ty: []
 bind: contrived ty: Func_ty: []

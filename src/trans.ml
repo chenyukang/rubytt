@@ -47,6 +47,9 @@ let set_unresolve node =
 let set_uncalled ty =
   Hashtbl.add_exn global_uncalled ~key:ty ~data: true
 
+let set_called ty =
+  Hashtbl.remove global_uncalled ty
+
 let get_modulebinding_if_global st name =
   let res = ref None in
   if Util.is_global_name name then
@@ -256,20 +259,7 @@ and
     )
   (* | Raise() *)
   | Control(_) -> Type.cont_ty
-  | For(_, _, body) -> (
-      transform body state
-    )
-  | Func(_, name, _, defaults, _, _, _, _, _, _, _) -> (
-      let func_ty = new_fun_ty node (Some state) in
-      let id = name_node_id name in
-      let args_ty = List.map defaults ~f:(fun arg -> transform arg state) in
-      func_ty_set_def_tys func_ty args_ty;
-      bind_name state name func_ty Type.MethodK;
-      State.set_parent func_ty.info.table state;
-      State.set_path func_ty.info.table (State.extend_path state id "#");
-      set_uncalled func_ty;
-      func_ty
-    )
+  | For(_, _, body) -> transform body state
   | If(_, body, _else) -> (
       let body_ty = transform body state in
       incr state_add_mode;
@@ -287,6 +277,25 @@ and
       let orelse_ty = transform orelse state in
       let final_ty = transform final state in
       make_unions [body_ty; orelse_ty; rescue_ty; final_ty]
+    )
+  | Func(info) -> (
+  (* | Func(_, name, _, defaults, _, _, _, _, _, _, _) -> ( *)
+      let func_ty = new_fun_ty node (Some state) in
+      let id = name_node_id info.name in
+      let args_ty = List.map info.defaults ~f:(fun arg -> transform arg state) in
+      func_ty_set_def_tys func_ty args_ty;
+      bind_name state info.name func_ty Type.MethodK;
+      State.set_parent func_ty.info.table state;
+      State.set_path func_ty.info.table (State.extend_path state id "#");
+      set_uncalled func_ty;
+      func_ty
+    )
+  | Call(func, pos, star, block_arg) -> (
+      let fun_ty = transform func state in
+      let pos = List.map pos ~f:(fun x -> transform x state) in
+      let star_ty = transform star state in
+      let block_arg_ty = transform block_arg state in
+      resolve_call fun_ty pos star_ty block_arg_ty node state
     )
   | Module(locator, name, body, _) -> (
       let module_ty = lookup_or_create_module state locator node.info.file in
@@ -311,6 +320,17 @@ and
   | Kwd(_, v) | Return(v) | Starred(v) | Yield(v)
     -> transform v state
   | _ -> Type.unkown_ty
+
+and resolve_call fun_ty pos star_ty block_arg_ty node state =
+  match fun_ty.ty with
+  | Fun_ty(_) -> apply_func fun_ty pos star_ty block_arg_ty node
+  | _ -> Type.unkown_ty
+
+and apply_func fun_ty pos star_ty block_arg_ty node =
+  set_called fun_ty;
+  let info = Type.fun_ty_info fun_ty in
+  let env_table = State.new_state ~parent:info.env State.Function in
+  Type.unkown_ty
 
 let transform_expr node state =
   transform node state
