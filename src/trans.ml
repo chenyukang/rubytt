@@ -263,11 +263,11 @@ and
         );
       !return_ty
     )
-  | Handler(_, _, handler, orelse) -> (
+  | Handler(_, _, handler, _else) -> (
       (* Fixme *)
       let handle_ty = transform handler state in
-      let orelse_ty = transform orelse state in
-      make_unions [handle_ty; orelse_ty]
+      let else_ty = transform _else state in
+      make_unions [handle_ty; else_ty]
     )
   (* | Raise() *)
   | Control(_) -> Type.cont_ty
@@ -283,10 +283,10 @@ and
       let _ = transform test state in
       transform body state
     )
-  | Try(body, rescue, orelse, final) -> (
+  | Try(body, rescue, _else, final) -> (
       let rescue_ty = transform rescue state in
       let body_ty = transform body state in
-      let else_ty = transform orelse state in
+      let else_ty = transform _else state in
       let final_ty = transform final state in
       make_unions [body_ty; else_ty; rescue_ty; final_ty]
     )
