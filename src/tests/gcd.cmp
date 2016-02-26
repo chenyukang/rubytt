@@ -1,5 +1,43 @@
 (Block 
- (Void))
+ (Func gcd
+  (args: 
+   (Name x)
+   (Name y))
+  (body: 
+   (Block 
+    (If 
+     (BinOp:Equal 
+      (Name x)
+      (Name y))
+     (Return 
+      (Array 
+       (Name x)))
+     (Nil))
+    (If 
+     (BinOp:And 
+      (BinOp:Or 
+       (BinOp:Gt 
+        (Name x)
+        (Name y))
+       (BinOp:Eq 
+        (Name x)
+        (Name y)))
+      (BinOp:Gt 
+       (Name y)
+       (Int 0)))
+     (Block 
+      (Call gcd
+       (args: 
+        (Name y)
+        (BinOp:Mod 
+         (Name x)
+         (Name y)))))
+     (Block 
+      (Call gcd
+       (args: 
+        (Name y)
+        (Name x)))))))))
 
 ----------------------------------------
 
+bind: gcd ty: Func_ty: [] => unkown_type
