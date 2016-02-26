@@ -376,7 +376,7 @@ let new_fun_ty func env =
   {
     info = new_ty_info();
     ty = Fun_ty({fun_node = func; cls_ty = None; self_ty = None;
-                 env = env;  def_tys = []; ret_ty = unkown_ty ;
+                 env = env;  def_tys = []; ret_ty = unkown_ty;
                  is_class = false});
   }
 

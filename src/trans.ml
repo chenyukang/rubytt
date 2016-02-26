@@ -1,4 +1,5 @@
 open Core.Std
+open Typestack
 open Node
 open Type
 
@@ -6,6 +7,7 @@ let global_refs: (Node.node, Type.binding_ty list) Hashtbl.t = Hashtbl.Poly.crea
 let global_resolved: (Node.node, bool) Hashtbl.t = Hashtbl.Poly.create();;
 let global_unresolved: (Node.node, bool) Hashtbl.t = Hashtbl.Poly.create();;
 let global_uncalled: (Type.type_t, bool) Hashtbl.t = Hashtbl.Poly.create();;
+let global_calltack: (Node.node, bool) Hashtbl.t = Hashtbl.Poly.create();;
 
 let clear() =
   State.state_clear Type.global_table;
@@ -13,6 +15,7 @@ let clear() =
   Hashtbl.clear global_resolved;
   Hashtbl.clear global_unresolved;
   Hashtbl.clear global_uncalled;
+  Hashtbl.clear global_calltack;
   Node.lambda_coutner := 0
 
 let state_add_mode = ref 0;;
@@ -50,6 +53,14 @@ let set_uncalled ty =
 
 let set_called ty =
   Hashtbl.remove global_uncalled ty
+
+let push_call call =
+  Hashtbl.add global_calltack ~key:call ~data:true
+
+let contains_call call =
+  match Hashtbl.find global_calltack call with
+  | Some(_) -> true
+  | _ -> false
 
 let get_modulebinding_if_global st name =
   let res = ref None in
@@ -275,9 +286,9 @@ and
   | Try(body, rescue, orelse, final) -> (
       let rescue_ty = transform rescue state in
       let body_ty = transform body state in
-      let orelse_ty = transform orelse state in
+      let else_ty = transform orelse state in
       let final_ty = transform final state in
-      make_unions [body_ty; orelse_ty; rescue_ty; final_ty]
+      make_unions [body_ty; else_ty; rescue_ty; final_ty]
     )
   | Func(info) -> (
       let func_ty = new_fun_ty node (Some state) in
@@ -334,11 +345,15 @@ and bind_param_tys env args args_types =
 
 and apply_func fun_ty args_ty star_ty block_arg_ty call =
   set_called fun_ty;
-  let info = Type.fun_ty_info fun_ty in
-  let node_info = func_node_info info.fun_node in
-  let env = State.new_state ~parent:info.env State.Function in
-  let _ = bind_param_tys env node_info.args args_ty in
-  transform node_info.body env
+  if not (is_nil call) && (contains_call call) then
+    Type.unkown_ty
+  else (
+    let info = Type.fun_ty_info fun_ty in
+    let node_info = func_node_info info.fun_node in
+    let env = State.new_state ~parent:info.env State.Function in
+    let _ = push_call call in
+    let _ = bind_param_tys env node_info.args args_ty in
+    transform node_info.body env)
 
 let apply_uncalled () =
   Hashtbl.iter global_uncalled ~f:(fun ~key:fun_ty ~data:d ->
@@ -346,7 +361,7 @@ let apply_uncalled () =
       let node_info = func_node_info info.fun_node in
       let id = name_node_id node_info.name in
       let env = State.new_state ~parent:info.env State.Function in
-      let ret_ty =transform node_info.body env in
+      let ret_ty = transform node_info.body env in
       Printf.printf "id: %s\n" id;
       ignore(fun_ty_set_ret_ty fun_ty ret_ty)
     )

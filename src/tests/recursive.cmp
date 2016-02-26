@@ -1,0 +1,26 @@
+(Block 
+ (Func cur
+  (args: 
+   (Name depth))
+  (body: 
+   (Block 
+    (If 
+     (BinOp:Or 
+      (BinOp:Lt 
+       (Name depth)
+       (Int 0))
+      (BinOp:Eq 
+       (Name depth)
+       (Int 0)))
+     (Block 
+      (Int 0))
+     (Block 
+      (Call cur
+       (args: 
+        (BinOp:Sub 
+         (Name depth)
+         (Int 1))))))))))
+
+----------------------------------------
+
+bind: cur ty: Func_ty: [] => Int_ty

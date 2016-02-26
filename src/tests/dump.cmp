@@ -150,24 +150,6 @@
             (Int 1)))
           (Nil)))
         (Nil)))))
-    (Func find_line_starts
-     (body: 
-      (Block 
-       (Assign 
-        (Name lines)
-        (Call 
-         (Attribute 
-          (Name src)
-          (Name split))
-         (args: 
-          other)))
-       (Assign 
-        (Name total)
-        (Int 0))
-       (Call 
-        (Attribute 
-         (Name lines)
-         (Name each))))))
     (Func find_docs
      (body: 
       (Block 
@@ -248,12 +230,13 @@
         (Name start_idx))
        (While 
         (BinOp:And 
-         (BinOp:Lt 
-          (Name idx)
-          (Call 
-           (Attribute 
-            (Name src)
-            (Name length))))
+         (Block 
+          (BinOp:Lt 
+           (Name idx)
+           (Call 
+            (Attribute 
+             (Name src)
+             (Name length)))))
          (Call 
           (Attribute 
            (Subscript 
@@ -320,6 +303,392 @@
            (Name simplified))))
         (Nil))
        (Name simplified))))
+    (Func find_locations
+     (args: 
+      (Name obj))
+     (body: 
+      (Block 
+       (Func find1
+        (args: 
+         (Name obj))
+        (body: 
+         (Block 
+          (If 
+           (Call 
+            (Attribute 
+             (Name obj)
+             (Name is_a?))
+            (args: 
+             (Name Hash)))
+           (Block 
+            (Assign 
+             (Name ret)
+             (Dict  ))
+            (Assign 
+             (Name whole_start)
+             (Name nil))
+            (Assign 
+             (Name whole_end)
+             (Name nil))
+            (Assign 
+             (Name start_line)
+             (Name nil))
+            (Assign 
+             (Name end_line)
+             (Name nil))
+            (Call 
+             (Attribute 
+              (Name obj)
+              (Name each)))
+            (If 
+             (Name whole_start)
+             (Block 
+              (If 
+               (BinOp:And 
+                (Call 
+                 (Attribute 
+                  (Array 
+                   (Symbol module)
+                   (Symbol class)
+                   (Symbol def)
+                   (Symbol lambda)
+                   (Symbol if)
+                   (Symbol begin)
+                   (Symbol while)
+                   (Symbol for))
+                  (Name               .include?))
+                 (args: 
+                  (Subscript 
+                   (Name obj)
+                   (Symbol type))))
+                (UnaryOp:Not 
+                 (Subscript 
+                  (Name obj)
+                  (Symbol mod))))
+               (Block 
+                (Assign 
+                 (Name locator)
+                 (Name whole_end))
+                (While 
+                 (BinOp:And 
+                  (BinOp:Or 
+                   (BinOp:Lt 
+                    (Name locator)
+                    (Call 
+                     (Attribute 
+                      (Name src)
+                      (Name length))))
+                   (BinOp:Eq 
+                    (Name locator)
+                    (Call 
+                     (Attribute 
+                      (Name src)
+                      (Name length)))))
+                  (UnaryOp:Not 
+                   (Call 
+                    (Attribute 
+                     (String end)
+                     (Name eql?))
+                    (args: 
+                     (Subscript 
+                      (Name src)
+                      (Array 
+                       (Name locator)
+                       (BinOp:Sub 
+                        (BinOp:Add 
+                         (Name locator)
+                         (Call 
+                          (Attribute 
+                           (String end)
+                           (Name length))))
+                        (Int 1))))))))
+                 (Block 
+                  (Assign 
+                   (Name locator)
+                   (BinOp:Add 
+                    (Name locator)
+                    (Int 1)))))
+                (If 
+                 (Call 
+                  (Attribute 
+                   (String end)
+                   (Name eql?))
+                  (args: 
+                   (Subscript 
+                    (Name src)
+                    (Array 
+                     (Name locator)
+                     (BinOp:Sub 
+                      (BinOp:Add 
+                       (Name locator)
+                       (Call 
+                        (Attribute 
+                         (String end)
+                         (Name length))))
+                      (Int 1))))))
+                 (Block 
+                  (Assign 
+                   (Name whole_end)
+                   (BinOp:Add 
+                    (Name locator)
+                    (Call 
+                     (Attribute 
+                      (String end)
+                      (Name length))))))
+                 (Nil)))
+               (Nil))
+              (Assign 
+               (Subscript 
+                (Name ret)
+                (Symbol start))
+               (Name whole_start))
+              (Assign 
+               (Subscript 
+                (Name ret)
+                (Symbol end))
+               (Name whole_end))
+              (Assign 
+               (Subscript 
+                (Name ret)
+                (Symbol start_line))
+               (Name start_line))
+              (Assign 
+               (Subscript 
+                (Name ret)
+                (Symbol end_line))
+               (Name end_line))
+              (If 
+               (Call 
+                (Attribute 
+                 (Array 
+                  (Symbol module)
+                  (Symbol class)
+                  (Symbol def))
+                 (Name include?))
+                (args: 
+                 (Subscript 
+                  (Name ret)
+                  (Symbol type))))
+               (Block 
+                (Assign 
+                 (Name doc)
+                 (Subscript 
+                  (Name docs)
+                  (Name start_line)))
+                (If 
+                 (Name doc)
+                 (Block 
+                  (Assign 
+                   (Subscript 
+                    (Name ret)
+                    (Symbol doc))
+                   (Name doc)))
+                 (Nil)))
+               (Nil)))
+             (Nil))
+            (Return 
+             (Array 
+              (Name ret)
+              (Name whole_start)
+              (Name whole_end)
+              (Name start_line)
+              (Name end_line))))
+           (If 
+            (Call 
+             (Attribute 
+              (Name obj)
+              (Name is_a?))
+             (args: 
+              (Name Array)))
+            (Block 
+             (Assign 
+              (Name ret)
+              (Array ))
+             (Assign 
+              (Name whole_start)
+              (Name nil))
+             (Assign 
+              (Name whole_end)
+              (Name nil))
+             (For 
+              (Name v)
+              (Name obj)
+              (Block 
+               (Assign 
+                (Array 
+                 (Name new_node)
+                 (Name start_idx)
+                 (Name end_idx)
+                 (Name line_start)
+                 (Name line_end))
+                (Call find1
+                 (args: 
+                  (Name v))))
+               (Call 
+                (Attribute 
+                 (Name ret)
+                 (Name push))
+                (args: 
+                 (Name new_node)))
+               (If 
+                (BinOp:And 
+                 (Name start_idx)
+                 (Block 
+                  (BinOp:Or 
+                   (UnaryOp:Not 
+                    (Name whole_start))
+                   (BinOp:Gt 
+                    (Name whole_start)
+                    (Name start_idx)))))
+                (Block 
+                 (Assign 
+                  (Name whole_start)
+                  (Name start_idx))
+                 (Assign 
+                  (Name start_line)
+                  (Name line_start)))
+                (Nil))
+               (If 
+                (BinOp:And 
+                 (Name end_idx)
+                 (Block 
+                  (BinOp:Or 
+                   (UnaryOp:Not 
+                    (Name whole_end))
+                   (BinOp:Lt 
+                    (Name whole_end)
+                    (Name end_idx)))))
+                (Block 
+                 (Assign 
+                  (Name whole_end)
+                  (Name end_idx))
+                 (Assign 
+                  (Name end_line)
+                  (Name line_end)))
+                (Nil))))
+             (Return 
+              (Array 
+               (Name ret)
+               (Name whole_start)
+               (Name whole_end)
+               (Name start_line)
+               (Name end_line))))
+            (Block 
+             (Return 
+              (Array 
+               (Name obj)
+               (Name nil)
+               (Name nil)
+               (Name nil)
+               (Name nil)))))))))
+       (Assign 
+        (Array 
+         (Name node)
+         (Name _)
+         (Name _)
+         (Name _)
+         (Name _))
+        (Call find1
+         (args: 
+          (Name obj))))
+       (Name node))))
+    (Func convert_array
+     (args: 
+      (Name arr))
+     (body: 
+      (Block 
+       (Call 
+        (Attribute 
+         (Name arr)
+         (Name map))))))
+    (Func convert_when
+     (args: 
+      (Name exp)
+      (Name value))
+     (body: 
+      (Block 
+       (If 
+        (BinOp:Equal 
+         (Subscript 
+          (Name exp)
+          (Int 0))
+         (Symbol when))
+        (Block 
+         (If 
+          (Name value)
+          (Block 
+           (Assign 
+            (Name test)
+            (Dict  
+             (Symbol type)
+              (Symbol binary)
+             (Symbol op)
+              (Call op
+               (args: 
+                (Symbol in)))
+             (Symbol left)
+              (Name value)
+             (Symbol right)
+              (Call args_to_array
+               (args: 
+                (Call convert
+                 (args: 
+                  (Subscript 
+                   (Name exp)
+                   (Int 1)))))))))
+          (Block 
+           (Assign 
+            (Name test)
+            (Call args_to_array
+             (args: 
+              (Call convert
+               (args: 
+                (Subscript 
+                 (Name exp)
+                 (Int 1)))))))))
+         (Assign 
+          (Name ret)
+          (Dict  
+           (Symbol type)
+            (Symbol if)
+           (Symbol test)
+            (Name test)
+           (Symbol body)
+            (Call convert
+             (args: 
+              (Subscript 
+               (Name exp)
+               (Int 2))))))
+         (If 
+          (Subscript 
+           (Name exp)
+           (Int 3))
+          (Block 
+           (Assign 
+            (Subscript 
+             (Name ret)
+             (Symbol else))
+            (Call convert_when
+             (args: 
+              (Subscript 
+               (Name exp)
+               (Int 3))
+              (Name value)))))
+          (Nil))
+         (Name ret))
+        (If 
+         (BinOp:Equal 
+          (Subscript 
+           (Name exp)
+           (Int 0))
+          (Symbol else))
+         (Block 
+          (Call convert
+           (args: 
+            (Subscript 
+             (Name exp)
+             (Int 1)))))
+         (Nil))))))
     (Func args_to_array
      (args: 
       (Name args))
@@ -392,108 +761,7 @@
           (args: 
            (Symbol not)))
         (Symbol operand)
-         (Name exp)))))))
- (Func parse_dump
-  (args: 
-   (Name input)
-   (Name output)
-   (Name endmark))
-  (body: 
-   (Block 
-    (Try 
-     (Block 
-      (Assign 
-       (Name simplifier)
-       (Call 
-        (Attribute 
-         (Name AstSimplifier)
-         (Name new))
-        (args: 
-         (Name input))))
-      (Assign 
-       (Name hash)
-       (Call 
-        (Attribute 
-         (Name simplifier)
-         (Name simplify))))
-      (Assign 
-       (Name json_string)
-       (Call 
-        (Attribute 
-         (Name JSON)
-         (Name pretty_generate))
-        (args: 
-         (Name hash)
-         (Dict  
-          (Name max_nesting)
-           (Call hash_max_nest
-            (args: 
-             (Name hash)))))))
-      (Assign 
-       (Name out)
-       (Call 
-        (Attribute 
-         (Name File)
-         (Name open))
-        (args: 
-         (Name output)
-         (String wb))))
-      (Call 
-       (Attribute 
-        (Name out)
-        (Name write))
-       (args: 
-        (Name json_string)))
-      (Call 
-       (Attribute 
-        (Name out)
-        (Name close))))
-     (Nil)
-     (Nil)
-     (Block 
-      (Assign 
-       (Name end_file)
-       (Call 
-        (Attribute 
-         (Name File)
-         (Name open))
-        (args: 
-         (Name endmark)
-         (String wb))))
-      (Call 
-       (Attribute 
-        (Name end_file)
-        (Name close))))))))
- (Assign 
-  (Name $options)
-  (Dict  ))
- (Call 
-  (Attribute 
-   (Call 
-    (Attribute 
-     (Name OptionParser)
-     (Name new)))
-   (Name parse!)))
- (If 
-  (BinOp:Gt 
-   (Call 
-    (Attribute 
-     (Name ARGV)
-     (Name length)))
-   (Int 0))
-  (Block 
-   (Call parse_dump
-    (args: 
-     (Subscript 
-      (Name ARGV)
-      (Int 0))
-     (Subscript 
-      (Name ARGV)
-      (Int 1))
-     (Subscript 
-      (Name ARGV)
-      (Int 2)))))
-  (Nil)))
+         (Name exp))))))))
 
 ----------------------------------------
 
@@ -501,15 +769,14 @@ bind: AstSimplifier ty: Class_ty: AstSimplifier
   bind: make_string ty: Func_ty: [unkown_type] => unkown_type
   bind: negate ty: Func_ty: [] => unkown_type
   bind: args_to_array ty: Func_ty: [] => unkown_type
+  bind: convert_array ty: Func_ty: [] => unkown_type
   bind: ident_end ty: Func_ty: [] => Int_ty
+  bind: find_locations ty: Func_ty: [] => unkown_type
   bind: detect_encoding ty: Func_ty: [] => unkown_type
-  bind: find_line_starts ty: Func_ty: [] => unkown_type
   bind: simplify ty: Func_ty: [] => unkown_type
   bind: node_start ty: Func_ty: [] => unkown_type
+  bind: convert_when ty: Func_ty: [] => unkown_type
   bind: find_docs ty: Func_ty: [] => unkown_type
   bind: op ty: Func_ty: [] => unkown_type
   bind: initialize ty: Func_ty: [] => unkown_type
-bind: $options ty: unkown_type
-bind: parse_dump ty: Func_ty: [] => unkown_type
-bind: lambda%4 ty: Func_ty: [] => unkown_type
 bind: banner ty: Func_ty: [] => unkown_type
