@@ -25,5 +25,5 @@
 
 ----------------------------------------
 
-bind: max ty: Func_ty: []
+bind: max ty: Func_ty: [] => unkown_type
 bind: res ty: Int_ty

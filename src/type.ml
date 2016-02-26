@@ -18,6 +18,7 @@ and
   self_ty: type_t option;
   env: state_t option;
   def_tys: type_t list;
+  ret_ty: type_t;
   is_class: bool
 }
 and
@@ -375,14 +376,21 @@ let new_fun_ty func env =
   {
     info = new_ty_info();
     ty = Fun_ty({fun_node = func; cls_ty = None; self_ty = None;
-                 env = env;  def_tys = []; is_class = false});
+                 env = env;  def_tys = []; ret_ty = unkown_ty ;
+                 is_class = false});
   }
 
-let func_ty_set_def_tys ty args_ty =
+let fun_ty_set_def_tys ty args_ty =
   match ty.ty with
   | Fun_ty(info) ->
       ty.ty <- Fun_ty({info with def_tys = args_ty})
-  | _ -> failwith "func_ty_set_defaults_ty error type"
+  | _ -> failwith "fun_ty_set_defaults_ty error type"
+
+let fun_ty_set_ret_ty ty ret_ty =
+  match ty.ty with
+  | Fun_ty(info) ->
+    ty.ty <- Fun_ty({info with ret_ty = ret_ty})
+  | _ -> failwith "fun_ty_set_ret_ty error type"
 
 let fun_ty_info ty =
   match ty.ty with

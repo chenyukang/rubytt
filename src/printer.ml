@@ -200,7 +200,9 @@ let rec type_to_str ty depth =
       List.iteri info.def_tys ~f:(fun i x ->
           let s = if i > 0 then " " else "" in
           defaults := !defaults ^ s ^ type_to_str x 0);
-      Printf.sprintf "Func_ty: %s" !defaults ^ "]"
+      defaults := !defaults ^ "]";
+      let ret_str = type_to_str info.ret_ty 0 in
+      Printf.sprintf "Func_ty: %s => %s" !defaults ret_str
     )
   | _ -> "unkown_type"
 

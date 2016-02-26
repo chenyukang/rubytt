@@ -1,0 +1,56 @@
+(Block 
+ (Func demo
+  (args: 
+   (Name a)
+   (Name b))
+  (body: 
+   (Block 
+    (If 
+     (BinOp:Lt 
+      (Name a)
+      (Name b))
+     (Block 
+      (Int 1))
+     (Block 
+      (Int 2))))))
+ (Func max
+  (args: 
+   (Name a)
+   (Name b))
+  (body: 
+   (Block 
+    (If 
+     (BinOp:Lt 
+      (Name a)
+      (Name b))
+     (Block 
+      (Int 1))
+     (Block 
+      (String 2))))))
+ (Assign 
+  (Name x)
+  (Int 1))
+ (Assign 
+  (Name y)
+  (Int 2))
+ (Func hah
+  (args: 
+   (Name a))
+  (body: 
+   (Block 
+    (If 
+     (BinOp:Lt 
+      (Call x)
+      (Call y))
+     (Block 
+      (Call x))
+     (Block 
+      (Call y)))))))
+
+----------------------------------------
+
+bind: max ty: Func_ty: [Int_ty Int_ty] => [(Int_ty)|(Str_ty)]
+bind: demo ty: Func_ty: [] => Int_ty
+bind: hah ty: Func_ty: [Int_ty] => unkown_type
+bind: y ty: Int_ty
+bind: x ty: Int_ty

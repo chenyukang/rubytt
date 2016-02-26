@@ -12,4 +12,4 @@
 
 ----------------------------------------
 
-bind: demo ty: Func_ty: []
+bind: demo ty: Func_ty: [] => unkown_type

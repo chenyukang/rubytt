@@ -12,6 +12,7 @@ let clear() =
   Hashtbl.clear global_refs;
   Hashtbl.clear global_resolved;
   Hashtbl.clear global_unresolved;
+  Hashtbl.clear global_uncalled;
   Node.lambda_coutner := 0
 
 let state_add_mode = ref 0;;
@@ -26,7 +27,7 @@ let put_refs node bs =
   let binded = Hashtbl.find global_refs node in
   match binded with
   | None ->  (
-      Hashtbl.add_exn global_refs ~key:node ~data: bs
+      ignore(Hashtbl.add global_refs ~key:node ~data:bs)
     )
   | Some(v) -> (
       List.iter bs ~f:(fun b -> Type.binding_add_ref b node);
@@ -38,14 +39,14 @@ let put_ref node bind =
   put_refs node bs
 
 let set_resolve node =
-  Hashtbl.add_exn global_resolved ~key:node ~data:true;
+  ignore(Hashtbl.add global_resolved ~key:node ~data:true);
   Hashtbl.remove global_unresolved node
 
 let set_unresolve node =
-  Hashtbl.add_exn global_unresolved ~key:node ~data:true
+  ignore(Hashtbl.add global_unresolved ~key:node ~data:true)
 
 let set_uncalled ty =
-  Hashtbl.add_exn global_uncalled ~key:ty ~data: true
+  ignore(Hashtbl.add global_uncalled ~key:ty ~data: true)
 
 let set_called ty =
   Hashtbl.remove global_uncalled ty
@@ -189,7 +190,7 @@ and
       (* Printf.printf "lookup name: %s\n" id; *)
       match state_lookup state id with
       | Some(bs) -> (
-          put_refs node bs;
+          (* put_refs node bs; *)
           set_resolve node;
           make_unions_from_bs bs
         )
@@ -281,7 +282,7 @@ and
   | Func(info) -> (
       let func_ty = new_fun_ty node (Some state) in
       let args_ty = List.map info.defaults ~f:(fun arg -> transform arg state) in
-      func_ty_set_def_tys func_ty args_ty;
+      fun_ty_set_def_tys func_ty args_ty;
       bind_name state info.name func_ty Type.MethodK;
       State.set_parent func_ty.info.table state;
       let id = name_node_id info.name in
@@ -320,24 +321,37 @@ and
     -> transform v state
   | _ -> Type.unkown_ty
 
-and resolve_call fun_ty args_ty star_ty block_arg_ty node state =
+and resolve_call fun_ty args_ty star_ty block_arg_ty call state =
   match fun_ty.ty with
-  | Fun_ty(_) -> apply_func fun_ty args_ty star_ty block_arg_ty node
-  | _ -> Type.unkown_ty
+  | Fun_ty(_) -> apply_func fun_ty args_ty star_ty block_arg_ty call
+  | _ -> (Printf.printf "try to resolve_call: unkown_ty\n"); Type.unkown_ty
 
-and bind_param_tys env_table args args_types =
+and bind_param_tys env args args_types =
   List.iteri args ~f:(fun i arg ->
       let arg_ty = List.nth_exn args_types i in
-      bind env_table arg arg_ty Type.ParameterK
+      bind env arg arg_ty Type.ParameterK
     )
 
-and apply_func fun_ty args_ty star_ty block_arg_ty node =
+and apply_func fun_ty args_ty star_ty block_arg_ty call =
   set_called fun_ty;
   let info = Type.fun_ty_info fun_ty in
   let node_info = func_node_info info.fun_node in
-  let env_table = State.new_state ~parent:info.env State.Function in
-  let _ = bind_param_tys env_table node_info.args args_ty in
-  transform node_info.body env_table
+  let env = State.new_state ~parent:info.env State.Function in
+  let _ = bind_param_tys env node_info.args args_ty in
+  transform node_info.body env
+
+let apply_uncalled () =
+  Hashtbl.iter global_uncalled ~f:(fun ~key:fun_ty ~data:d ->
+      let info = Type.fun_ty_info fun_ty in
+      let node_info = func_node_info info.fun_node in
+      let id = name_node_id node_info.name in
+      let env = State.new_state ~parent:info.env State.Function in
+      let ret_ty =transform node_info.body env in
+      Printf.printf "id: %s\n" id;
+      ignore(fun_ty_set_ret_ty fun_ty ret_ty)
+    )
+
 
 let transform_expr node state =
-  transform node state
+  ignore(transform node state);
+  apply_uncalled()

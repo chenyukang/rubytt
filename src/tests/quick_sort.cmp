@@ -1,41 +1,5 @@
 (Block 
- (Func qsort
-  (args: 
-   (Name lst))
-  (body: 
-   (Block 
-    (If 
-     (BinOp:Equal 
-      (Call 
-       (Attribute 
-        (Name lst)
-        (Name size)))
-      (Int 0))
-     (Return 
-      (Array 
-       (Array )))
-     (Nil))
-    (Assign 
-     (Array 
-      (Name less)
-      (Name more))
-     (Call 
-      (Attribute 
-       (Call left)
-       (Name partition))))
-    (Return 
-     (Array 
-      (BinOp:Add 
-       (BinOp:Add 
-        (Call qsort
-         (args: 
-          (Name less)))
-        (Array 
-         (Call first)))
-       (Call qsort
-        (args: 
-         (Name more))))))))))
+ (Void))
 
 ----------------------------------------
 
-bind: qsort ty: Func_ty: []

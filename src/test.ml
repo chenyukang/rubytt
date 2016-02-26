@@ -15,6 +15,7 @@ let rec run_dir dir =
   let dirs = List.filter paths ~f:(fun x -> Sys.is_directory x = `Yes) in
   let failed = ref [] in
   List.iter ~f:(fun p ->
+      Printf.printf "now run: %s\n" p;
       let b = Filename.chop_extension p in
       begin
         let j = run_dump_ruby p in
