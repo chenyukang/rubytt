@@ -50,6 +50,7 @@ let set_unresolve node =
 
 let set_uncalled ty =
   try
+    (* Fixme *)
     ignore(Hashtbl.add global_uncalled ~key:ty ~data: true)
   with _ -> ()
 
