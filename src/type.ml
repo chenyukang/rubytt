@@ -104,7 +104,7 @@ let rec type_equal ty1 ty2 =
   | Str_ty _, Str_ty _
   | Float_ty, Float_ty
   | Bool_ty _, Bool_ty _ -> true
-  | Class_ty _, Class_ty _ -> phys_equal ty1  ty2
+  | Class_ty _, Class_ty _ -> phys_equal ty1 ty2
   | Module_ty(_, f1), Module_ty(_, f2) -> (
       f1 = f2 && (phys_equal ty1 ty2)
     )

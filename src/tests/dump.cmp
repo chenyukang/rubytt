@@ -150,6 +150,24 @@
             (Int 1)))
           (Nil)))
         (Nil)))))
+    (Func find_line_starts
+     (body: 
+      (Block 
+       (Assign 
+        (Name lines)
+        (Call 
+         (Attribute 
+          (Name src)
+          (Name split))
+         (args: 
+          other)))
+       (Assign 
+        (Name total)
+        (Int 0))
+       (Call 
+        (Attribute 
+         (Name lines)
+         (Name each))))))
     (Func find_docs
      (body: 
       (Block 
@@ -592,6 +610,2259 @@
          (args: 
           (Name obj))))
        (Name node))))
+    (Func convert
+     (args: 
+      (Name exp))
+     (body: 
+      (Block 
+       (If 
+        (BinOp:Equal 
+         (Name exp)
+         (Name nil))
+        (Block 
+         (Dict  ))
+        (If 
+         (BinOp:Equal 
+          (Name exp)
+          (Name false))
+         (Block 
+          (Dict  
+           (Symbol type)
+            (Symbol name)
+           (Symbol id)
+            (String false)))
+         (If 
+          (BinOp:Equal 
+           (Name exp)
+           (Name true))
+          (Block 
+           (Dict  
+            (Symbol type)
+             (Symbol name)
+            (Symbol id)
+             (String true)))
+          (Block 
+           (If 
+            (BinOp:In 
+             (Subscript 
+              (Name exp)
+              (Int 0))
+             (Array 
+              (Symbol program)))
+            (Block 
+             (Dict  
+              (Symbol type)
+               (Symbol program)
+              (Symbol body)
+               (Call convert
+                (args: 
+                 (Subscript 
+                  (Name exp)
+                  (Int 1))))
+              (Symbol filename)
+               (Name filename)))
+            (If 
+             (BinOp:In 
+              (Subscript 
+               (Name exp)
+               (Int 0))
+              (Array 
+               (Symbol module)))
+             (Block 
+              (Dict  
+               (Symbol type)
+                (Symbol module)
+               (Symbol name)
+                (Call convert
+                 (args: 
+                  (Subscript 
+                   (Name exp)
+                   (Int 1))))
+               (Symbol body)
+                (Call convert
+                 (args: 
+                  (Subscript 
+                   (Name exp)
+                   (Int 2))))
+               (Symbol filename)
+                (Name filename)))
+             (If 
+              (BinOp:In 
+               (Subscript 
+                (Name exp)
+                (Int 0))
+               (Array 
+                (Symbol ident)
+                (Symbol op)))
+              (Block 
+               (Dict  
+                (Symbol type)
+                 (Symbol name)
+                (Symbol id)
+                 (Subscript 
+                  (Name exp)
+                  (Int 1))
+                (Symbol location)
+                 (Subscript 
+                  (Name exp)
+                  (Int 2))))
+              (If 
+               (BinOp:In 
+                (Subscript 
+                 (Name exp)
+                 (Int 0))
+                (Array 
+                 (Symbol gvar)))
+               (Block 
+                (Dict  
+                 (Symbol type)
+                  (Symbol gvar)
+                 (Symbol id)
+                  (Subscript 
+                   (Name exp)
+                   (Int 1))
+                 (Symbol location)
+                  (Subscript 
+                   (Name exp)
+                   (Int 2))))
+               (If 
+                (BinOp:In 
+                 (Subscript 
+                  (Name exp)
+                  (Int 0))
+                 (Array 
+                  (Symbol dyna_symbol)))
+                (Block 
+                 (Dict  
+                  (Symbol type)
+                   (Symbol name)
+                  (Symbol id)
+                   (String #dyna_symbol)))
+                (If 
+                 (BinOp:In 
+                  (Subscript 
+                   (Name exp)
+                   (Int 0))
+                  (Array 
+                   (Symbol symbol)))
+                 (Block 
+                  (Assign 
+                   (Name sym)
+                   (Call convert
+                    (args: 
+                     (Subscript 
+                      (Name exp)
+                      (Int 1)))))
+                  (Assign 
+                   (Subscript 
+                    (Name sym)
+                    (Symbol type))
+                   (Symbol symbol))
+                  (Name sym))
+                 (If 
+                  (BinOp:In 
+                   (Subscript 
+                    (Name exp)
+                    (Int 0))
+                   (Array 
+                    (Symbol cvar)))
+                  (Block 
+                   (Dict  
+                    (Symbol type)
+                     (Symbol cvar)
+                    (Symbol id)
+                     (Subscript 
+                      (Subscript 
+                       (Name exp)
+                       (Int 1))
+                      (Array 
+                       (Int 2)
+                       (UnaryOp:Sub 
+                        (Int 1))))
+                    (Symbol location)
+                     (Subscript 
+                      (Name exp)
+                      (Int 2))))
+                  (If 
+                   (BinOp:In 
+                    (Subscript 
+                     (Name exp)
+                     (Int 0))
+                    (Array 
+                     (Symbol ivar)))
+                   (Block 
+                    (Dict  
+                     (Symbol type)
+                      (Symbol ivar)
+                     (Symbol id)
+                      (Subscript 
+                       (Subscript 
+                        (Name exp)
+                        (Int 1))
+                       (Array 
+                        (Int 1)
+                        (UnaryOp:Sub 
+                         (Int 1))))
+                     (Symbol location)
+                      (Subscript 
+                       (Name exp)
+                       (Int 2))))
+                   (If 
+                    (BinOp:In 
+                     (Subscript 
+                      (Name exp)
+                      (Int 0))
+                     (Array 
+                      (Symbol const)
+                      (Symbol kw)
+                      (Symbol backtick)))
+                    (Block 
+                     (Dict  
+                      (Symbol type)
+                       (Symbol name)
+                      (Symbol id)
+                       (Subscript 
+                        (Name exp)
+                        (Int 1))
+                      (Symbol location)
+                       (Subscript 
+                        (Name exp)
+                        (Int 2))))
+                    (If 
+                     (BinOp:In 
+                      (Subscript 
+                       (Name exp)
+                       (Int 0))
+                      (Array 
+                       (Symbol label)))
+                     (Block 
+                      (Dict  
+                       (Symbol type)
+                        (Symbol name)
+                       (Symbol id)
+                        (Subscript 
+                         (Subscript 
+                          (Name exp)
+                          (Int 1))
+                         (Array 
+                          (Int 0)
+                          (UnaryOp:Sub 
+                           (Int 2))))
+                       (Symbol location)
+                        (Subscript 
+                         (Name exp)
+                         (Int 2))))
+                     (If 
+                      (BinOp:In 
+                       (Subscript 
+                        (Name exp)
+                        (Int 0))
+                       (Array 
+                        (Symbol def)))
+                      (Block 
+                       (Dict  
+                        (Symbol type)
+                         (Symbol def)
+                        (Symbol name)
+                         (Call convert
+                          (args: 
+                           (Subscript 
+                            (Name exp)
+                            (Int 1))))
+                        (Symbol params)
+                         (Call convert
+                          (args: 
+                           (Subscript 
+                            (Name exp)
+                            (Int 2))))
+                        (Symbol body)
+                         (Call convert
+                          (args: 
+                           (Subscript 
+                            (Name exp)
+                            (Int 3))))))
+                      (If 
+                       (BinOp:In 
+                        (Subscript 
+                         (Name exp)
+                         (Int 0))
+                        (Array 
+                         (Symbol defs)))
+                       (Block 
+                        (Assign 
+                         (Name name)
+                         (Dict  
+                          (Symbol type)
+                           (Symbol attribute)
+                          (Symbol value)
+                           (Call convert
+                            (args: 
+                             (Subscript 
+                              (Name exp)
+                              (Int 1))))
+                          (Symbol attr)
+                           (Call convert
+                            (args: 
+                             (Subscript 
+                              (Name exp)
+                              (Int 3))))))
+                        (Dict  
+                         (Symbol type)
+                          (Symbol def)
+                         (Symbol name)
+                          (Name name)
+                         (Symbol params)
+                          (Call convert
+                           (args: 
+                            (Subscript 
+                             (Name exp)
+                             (Int 4))))
+                         (Symbol body)
+                          (Call convert
+                           (args: 
+                            (Subscript 
+                             (Name exp)
+                             (Int 5))))))
+                       (If 
+                        (BinOp:In 
+                         (Subscript 
+                          (Name exp)
+                          (Int 0))
+                         (Array 
+                          (Symbol do_block)))
+                        (Block 
+                         (Dict  
+                          (Symbol type)
+                           (Symbol lambda)
+                          (Symbol params)
+                           (Call convert
+                            (args: 
+                             (Subscript 
+                              (Name exp)
+                              (Int 1))))
+                          (Symbol body)
+                           (Call convert
+                            (args: 
+                             (Subscript 
+                              (Name exp)
+                              (Int 2))))))
+                        (If 
+                         (BinOp:In 
+                          (Subscript 
+                           (Name exp)
+                           (Int 0))
+                          (Array 
+                           (Symbol lambda)))
+                         (Block 
+                          (Dict  
+                           (Symbol type)
+                            (Symbol lambda)
+                           (Symbol params)
+                            (Call convert
+                             (args: 
+                              (Subscript 
+                               (Name exp)
+                               (Int 1))))
+                           (Symbol body)
+                            (Call convert
+                             (args: 
+                              (Subscript 
+                               (Name exp)
+                               (Int 2))))))
+                         (If 
+                          (BinOp:In 
+                           (Subscript 
+                            (Name exp)
+                            (Int 0))
+                           (Array 
+                            (Symbol brace_block)))
+                          (Block 
+                           (Dict  
+                            (Symbol type)
+                             (Symbol lambda)
+                            (Symbol params)
+                             (Call convert
+                              (args: 
+                               (Subscript 
+                                (Name exp)
+                                (Int 1))))
+                            (Symbol body)
+                             (Call convert
+                              (args: 
+                               (Subscript 
+                                (Name exp)
+                                (Int 2))))))
+                          (If 
+                           (BinOp:In 
+                            (Subscript 
+                             (Name exp)
+                             (Int 0))
+                            (Array 
+                             (Symbol params)))
+                           (Block 
+                            (Assign 
+                             (Name ret)
+                             (Dict  
+                              (Symbol type)
+                               (Symbol params)))
+                            (If 
+                             (Subscript 
+                              (Name exp)
+                              (Int 1))
+                             (Block 
+                              (Assign 
+                               (Subscript 
+                                (Name ret)
+                                (Symbol positional))
+                               (Call convert_array
+                                (args: 
+                                 (Subscript 
+                                  (Name exp)
+                                  (Int 1))))))
+                             (Nil))
+                            (If 
+                             (Subscript 
+                              (Name exp)
+                              (Int 2))
+                             (Block 
+                              (If 
+                               (UnaryOp:Not 
+                                (Subscript 
+                                 (Name ret)
+                                 (Symbol positional)))
+                               (Block 
+                                (Assign 
+                                 (Subscript 
+                                  (Name ret)
+                                  (Symbol positional))
+                                 (Array )))
+                               (Nil))
+                              (Call 
+                               (Attribute 
+                                (Subscript 
+                                 (Name exp)
+                                 (Int 2))
+                                (Name each)))
+                              (Assign 
+                               (Subscript 
+                                (Name ret)
+                                (Symbol defaults))
+                               (Call 
+                                (Attribute 
+                                 (Subscript 
+                                  (Name exp)
+                                  (Int 2))
+                                 (Name map)))))
+                             (Nil))
+                            (If 
+                             (BinOp:And 
+                              (Subscript 
+                               (Name exp)
+                               (Int 3))
+                              (UnaryOp:Not 
+                               (BinOp:Equal 
+                                (Subscript 
+                                 (Name exp)
+                                 (Int 3))
+                                (Int 0))))
+                             (Block 
+                              (Assign 
+                               (Subscript 
+                                (Name ret)
+                                (Symbol rest))
+                               (Call convert
+                                (args: 
+                                 (Subscript 
+                                  (Name exp)
+                                  (Int 3))))))
+                             (Nil))
+                            (If 
+                             (Subscript 
+                              (Name exp)
+                              (Int 4))
+                             (Block 
+                              (Assign 
+                               (Subscript 
+                                (Name ret)
+                                (Symbol after_rest))
+                               (Call convert_array
+                                (args: 
+                                 (Subscript 
+                                  (Name exp)
+                                  (Int 4))))))
+                             (Nil))
+                            (If 
+                             (Subscript 
+                              (Name exp)
+                              (Int 5))
+                             (Block 
+                              (Assign 
+                               (Subscript 
+                                (Name ret)
+                                (Symbol kw_keys))
+                               (Call convert_array
+                                (args: 
+                                 (Call 
+                                  (Attribute 
+                                   (Subscript 
+                                    (Name exp)
+                                    (Int 5))
+                                   (Name map))))))
+                              (Assign 
+                               (Subscript 
+                                (Name ret)
+                                (Symbol kw_values))
+                               (Call convert_array
+                                (args: 
+                                 (Call 
+                                  (Attribute 
+                                   (Subscript 
+                                    (Name exp)
+                                    (Int 5))
+                                   (Name map)))))))
+                             (Nil))
+                            (If 
+                             (Subscript 
+                              (Name exp)
+                              (Int 6))
+                             (Block 
+                              (Assign 
+                               (Subscript 
+                                (Name ret)
+                                (Symbol rest_kw))
+                               (Call convert
+                                (args: 
+                                 (Subscript 
+                                  (Name exp)
+                                  (Int 6))))))
+                             (Nil))
+                            (If 
+                             (Subscript 
+                              (Name exp)
+                              (Int 7))
+                             (Block 
+                              (Assign 
+                               (Subscript 
+                                (Name ret)
+                                (Symbol blockarg))
+                               (Call convert
+                                (args: 
+                                 (Subscript 
+                                  (Name exp)
+                                  (Int 7))))))
+                             (Nil))
+                            (Name ret))
+                           (If 
+                            (BinOp:In 
+                             (Subscript 
+                              (Name exp)
+                              (Int 0))
+                             (Array 
+                              (Symbol block_var)))
+                            (Block 
+                             (Assign 
+                              (Name params)
+                              (Call convert
+                               (args: 
+                                (Subscript 
+                                 (Name exp)
+                                 (Int 1)))))
+                             (If 
+                              (Subscript 
+                               (Name exp)
+                               (Int 2))
+                              (Block 
+                               (Assign 
+                                (Subscript 
+                                 (Name params)
+                                 (Symbol block_var))
+                                (Call convert_array
+                                 (args: 
+                                  (Subscript 
+                                   (Name exp)
+                                   (Int 2))))))
+                              (Nil))
+                             (Name params))
+                            (If 
+                             (BinOp:In 
+                              (Subscript 
+                               (Name exp)
+                               (Int 0))
+                              (Array 
+                               (Symbol class)))
+                             (Block 
+                              (Assign 
+                               (Name ret)
+                               (Dict  
+                                (Symbol type)
+                                 (Symbol class)
+                                (Symbol static)
+                                 (Name false)
+                                (Symbol name)
+                                 (Call convert
+                                  (args: 
+                                   (Subscript 
+                                    (Name exp)
+                                    (Int 1))))
+                                (Symbol body)
+                                 (Call convert
+                                  (args: 
+                                   (Subscript 
+                                    (Name exp)
+                                    (Int 3))))))
+                              (If 
+                               (Subscript 
+                                (Name exp)
+                                (Int 2))
+                               (Block 
+                                (Assign 
+                                 (Subscript 
+                                  (Name ret)
+                                  (Symbol super))
+                                 (Call convert
+                                  (args: 
+                                   (Subscript 
+                                    (Name exp)
+                                    (Int 2))))))
+                               (Nil))
+                              (Name ret))
+                             (If 
+                              (BinOp:In 
+                               (Subscript 
+                                (Name exp)
+                                (Int 0))
+                               (Array 
+                                (Symbol sclass)))
+                              (Block 
+                               (Dict  
+                                (Symbol type)
+                                 (Symbol class)
+                                (Symbol static)
+                                 (Name true)
+                                (Symbol name)
+                                 (Call convert
+                                  (args: 
+                                   (Subscript 
+                                    (Name exp)
+                                    (Int 1))))
+                                (Symbol body)
+                                 (Call convert
+                                  (args: 
+                                   (Subscript 
+                                    (Name exp)
+                                    (Int 2))))))
+                              (If 
+                               (BinOp:In 
+                                (Subscript 
+                                 (Name exp)
+                                 (Int 0))
+                                (Array 
+                                 (Symbol method_add_block)))
+                               (Block 
+                                (Assign 
+                                 (Name call)
+                                 (Call convert
+                                  (args: 
+                                   (Subscript 
+                                    (Name exp)
+                                    (Int 1)))))
+                                (If 
+                                 (Subscript 
+                                  (Name call)
+                                  (Symbol args))
+                                 (Block 
+                                  (Assign 
+                                   (Subscript 
+                                    (Subscript 
+                                     (Name call)
+                                     (Symbol args))
+                                    (Symbol blockarg))
+                                   (Call convert
+                                    (args: 
+                                     (Subscript 
+                                      (Name exp)
+                                      (Int 2))))))
+                                 (Block 
+                                  (Assign 
+                                   (Subscript 
+                                    (Name call)
+                                    (Symbol args))
+                                   (Dict  
+                                    (Symbol blockarg)
+                                     (Call convert
+                                      (args: 
+                                       (Subscript 
+                                        (Name exp)
+                                        (Int 2))))))))
+                                (Name call))
+                               (If 
+                                (BinOp:In 
+                                 (Subscript 
+                                  (Name exp)
+                                  (Int 0))
+                                 (Array 
+                                  (Symbol method_add_arg)))
+                                (Block 
+                                 (Assign 
+                                  (Name call)
+                                  (Call convert
+                                   (args: 
+                                    (Subscript 
+                                     (Name exp)
+                                     (Int 1)))))
+                                 (Assign 
+                                  (Subscript 
+                                   (Name call)
+                                   (Symbol args))
+                                  (Call convert
+                                   (args: 
+                                    (Subscript 
+                                     (Name exp)
+                                     (Int 2)))))
+                                 (Name call))
+                                (If 
+                                 (BinOp:In 
+                                  (Subscript 
+                                   (Name exp)
+                                   (Int 0))
+                                  (Array 
+                                   (Symbol vcall)))
+                                 (Block 
+                                  (Dict  
+                                   (Symbol type)
+                                    (Symbol call)
+                                   (Symbol func)
+                                    (Call convert
+                                     (args: 
+                                      (Subscript 
+                                       (Name exp)
+                                       (Int 1))))))
+                                 (If 
+                                  (BinOp:In 
+                                   (Subscript 
+                                    (Name exp)
+                                    (Int 0))
+                                   (Array 
+                                    (Symbol command)))
+                                  (Block 
+                                   (Dict  
+                                    (Symbol type)
+                                     (Symbol call)
+                                    (Symbol func)
+                                     (Call convert
+                                      (args: 
+                                       (Subscript 
+                                        (Name exp)
+                                        (Int 1))))
+                                    (Symbol args)
+                                     (Call convert
+                                      (args: 
+                                       (Subscript 
+                                        (Name exp)
+                                        (Int 2))))))
+                                  (If 
+                                   (BinOp:In 
+                                    (Subscript 
+                                     (Name exp)
+                                     (Int 0))
+                                    (Array 
+                                     (Symbol command_call)))
+                                   (Block 
+                                    (If 
+                                     (BinOp:Or 
+                                      (BinOp:Equal 
+                                       (Subscript 
+                                        (Name exp)
+                                        (Int 2))
+                                       (Name #dyna_symbol))
+                                      (BinOp:Equal 
+                                       (Subscript 
+                                        (Name exp)
+                                        (Int 2))
+                                       (Name #dyna_symbol)))
+                                     (Block 
+                                      (Assign 
+                                       (Name func)
+                                       (Dict  
+                                        (Symbol type)
+                                         (Symbol attribute)
+                                        (Symbol value)
+                                         (Call convert
+                                          (args: 
+                                           (Subscript 
+                                            (Name exp)
+                                            (Int 1))))
+                                        (Symbol attr)
+                                         (Call convert
+                                          (args: 
+                                           (Subscript 
+                                            (Name exp)
+                                            (Int 3)))))))
+                                     (Block 
+                                      (Assign 
+                                       (Name func)
+                                       (Call convert
+                                        (args: 
+                                         (Subscript 
+                                          (Name exp)
+                                          (Int 1)))))))
+                                    (Dict  
+                                     (Symbol type)
+                                      (Symbol call)
+                                     (Symbol func)
+                                      (Name func)
+                                     (Symbol args)
+                                      (Call convert
+                                       (args: 
+                                        (Subscript 
+                                         (Name exp)
+                                         (Int 4))))))
+                                   (If 
+                                    (BinOp:In 
+                                     (Subscript 
+                                      (Name exp)
+                                      (Int 0))
+                                     (Array 
+                                      (Symbol super)
+                                      (Symbol zsuper)))
+                                    (Block 
+                                     (Dict  
+                                      (Symbol type)
+                                       (Symbol call)
+                                      (Symbol func)
+                                       (Dict  
+                                        (Symbol type)
+                                         (Symbol name)
+                                        (Symbol id)
+                                         (Symbol super))
+                                      (Symbol args)
+                                       (Call convert
+                                        (args: 
+                                         (Subscript 
+                                          (Name exp)
+                                          (Int 1))))))
+                                    (If 
+                                     (BinOp:In 
+                                      (Subscript 
+                                       (Name exp)
+                                       (Int 0))
+                                      (Array 
+                                       (Symbol call)
+                                       (Symbol fcall)))
+                                     (Block 
+                                      (If 
+                                       (BinOp:And 
+                                        (UnaryOp:Not 
+                                         (BinOp:Equal 
+                                          (Subscript 
+                                           (Name exp)
+                                           (Int 3))
+                                          (Symbol call)))
+                                        (Block 
+                                         (BinOp:Or 
+                                          (BinOp:Equal 
+                                           (Subscript 
+                                            (Name exp)
+                                            (Int 2))
+                                           (Name #dyna_symbol))
+                                          (BinOp:Equal 
+                                           (Subscript 
+                                            (Name exp)
+                                            (Int 2))
+                                           (Name #dyna_symbol)))))
+                                       (Block 
+                                        (Assign 
+                                         (Name func)
+                                         (Dict  
+                                          (Symbol type)
+                                           (Symbol attribute)
+                                          (Symbol value)
+                                           (Call convert
+                                            (args: 
+                                             (Subscript 
+                                              (Name exp)
+                                              (Int 1))))
+                                          (Symbol attr)
+                                           (Call convert
+                                            (args: 
+                                             (Subscript 
+                                              (Name exp)
+                                              (Int 3)))))))
+                                       (Block 
+                                        (Assign 
+                                         (Name func)
+                                         (Call convert
+                                          (args: 
+                                           (Subscript 
+                                            (Name exp)
+                                            (Int 1)))))))
+                                      (Dict  
+                                       (Symbol type)
+                                        (Symbol call)
+                                       (Symbol func)
+                                        (Name func)))
+                                     (If 
+                                      (BinOp:In 
+                                       (Subscript 
+                                        (Name exp)
+                                        (Int 0))
+                                       (Array 
+                                        (Symbol args_new)
+                                        (Symbol mlhs_new)
+                                        (Symbol mrhs_new)
+                                        (Symbol words_new)
+                                        (Symbol word_new)
+                                        (Symbol qwords_new)
+                                        (Symbol qsymbols_new)
+                                        (Symbol symbols_new)))
+                                      (Block 
+                                       (Dict  
+                                        (Symbol type)
+                                         (Symbol args)
+                                        (Symbol positional)
+                                         (Array )))
+                                      (If 
+                                       (BinOp:In 
+                                        (Subscript 
+                                         (Name exp)
+                                         (Int 0))
+                                        (Array 
+                                         (Symbol args_add)
+                                         (Symbol mlhs_add)
+                                         (Symbol mrhs_add)
+                                         (Symbol word_add)
+                                         (Symbol words_add)
+                                         (Symbol qwords_add)
+                                         (Symbol qsymbols_add)
+                                         (Symbol symbols_add)))
+                                       (Block 
+                                        (Assign 
+                                         (Name args)
+                                         (Call convert
+                                          (args: 
+                                           (Subscript 
+                                            (Name exp)
+                                            (Int 1)))))
+                                        (Call 
+                                         (Attribute 
+                                          (Subscript 
+                                           (Name args)
+                                           (Symbol positional))
+                                          (Name push))
+                                         (args: 
+                                          (Call convert
+                                           (args: 
+                                            (Subscript 
+                                             (Name exp)
+                                             (Int 2))))))
+                                        (Name args))
+                                       (If 
+                                        (BinOp:In 
+                                         (Subscript 
+                                          (Name exp)
+                                          (Int 0))
+                                         (Array 
+                                          (Symbol args_add_star)
+                                          (Symbol mrhs_add_star)
+                                          (Symbol mlhs_add_star)))
+                                        (Block 
+                                         (Assign 
+                                          (Name args)
+                                          (Call convert
+                                           (args: 
+                                            (Subscript 
+                                             (Name exp)
+                                             (Int 1)))))
+                                         (If 
+                                          (Subscript 
+                                           (Name exp)
+                                           (Int 2))
+                                          (Block 
+                                           (Assign 
+                                            (Subscript 
+                                             (Name args)
+                                             (Symbol star))
+                                            (Call convert
+                                             (args: 
+                                              (Subscript 
+                                               (Name exp)
+                                               (Int 2))))))
+                                          (Nil))
+                                         (Name args))
+                                        (If 
+                                         (BinOp:In 
+                                          (Subscript 
+                                           (Name exp)
+                                           (Int 0))
+                                          (Array 
+                                           (Symbol args_add_block)))
+                                         (Block 
+                                          (Assign 
+                                           (Name args)
+                                           (Call convert
+                                            (args: 
+                                             (Subscript 
+                                              (Name exp)
+                                              (Int 1)))))
+                                          (If 
+                                           (Subscript 
+                                            (Name exp)
+                                            (Int 2))
+                                           (Block 
+                                            (Assign 
+                                             (Subscript 
+                                              (Name args)
+                                              (Symbol blockarg))
+                                             (Call convert
+                                              (args: 
+                                               (Subscript 
+                                                (Name exp)
+                                                (Int 2))))))
+                                           (Nil))
+                                          (Name args))
+                                         (If 
+                                          (BinOp:In 
+                                           (Subscript 
+                                            (Name exp)
+                                            (Int 0))
+                                           (Array 
+                                            (Symbol assign)
+                                            (Symbol massign)))
+                                          (Block 
+                                           (Dict  
+                                            (Symbol type)
+                                             (Symbol assign)
+                                            (Symbol target)
+                                             (Call convert
+                                              (args: 
+                                               (Subscript 
+                                                (Name exp)
+                                                (Int 1))))
+                                            (Symbol value)
+                                             (Call convert
+                                              (args: 
+                                               (Subscript 
+                                                (Name exp)
+                                                (Int 2))))))
+                                          (If 
+                                           (BinOp:In 
+                                            (Subscript 
+                                             (Name exp)
+                                             (Int 0))
+                                            (Array 
+                                             (Symbol opassign)))
+                                           (Block 
+                                            (Assign 
+                                             (Name operation)
+                                             (Call convert
+                                              (args: 
+                                               (Array 
+                                                (Symbol binary)
+                                                (Subscript 
+                                                 (Name exp)
+                                                 (Int 1))
+                                                (Subscript 
+                                                 (Subscript 
+                                                  (Subscript 
+                                                   (Name exp)
+                                                   (Int 2))
+                                                  (Int 1))
+                                                 (Array 
+                                                  (Int 0)
+                                                  (UnaryOp:Sub 
+                                                   (Int 2))))
+                                                (Subscript 
+                                                 (Name exp)
+                                                 (Int 3))))))
+                                            (Dict  
+                                             (Symbol type)
+                                              (Symbol assign)
+                                             (Symbol target)
+                                              (Call convert
+                                               (args: 
+                                                (Subscript 
+                                                 (Name exp)
+                                                 (Int 1))))
+                                             (Symbol value)
+                                              (Name operation)))
+                                           (If 
+                                            (BinOp:In 
+                                             (Subscript 
+                                              (Name exp)
+                                              (Int 0))
+                                             (Array 
+                                              (Symbol dot2)
+                                              (Symbol dot3)))
+                                            (Block 
+                                             (Dict  
+                                              (Symbol type)
+                                               (Subscript 
+                                                (Name exp)
+                                                (Int 0))
+                                              (Symbol from)
+                                               (Call convert
+                                                (args: 
+                                                 (Subscript 
+                                                  (Name exp)
+                                                  (Int 1))))
+                                              (Symbol to)
+                                               (Call convert
+                                                (args: 
+                                                 (Subscript 
+                                                  (Name exp)
+                                                  (Int 2))))))
+                                            (If 
+                                             (BinOp:In 
+                                              (Subscript 
+                                               (Name exp)
+                                               (Int 0))
+                                              (Array 
+                                               (Symbol alias)
+                                               (Symbol var_alias)))
+                                             (Block 
+                                              (Dict  
+                                               (Symbol type)
+                                                (Symbol assign)
+                                               (Symbol target)
+                                                (Call convert
+                                                 (args: 
+                                                  (Subscript 
+                                                   (Name exp)
+                                                   (Int 1))))
+                                               (Symbol value)
+                                                (Call convert
+                                                 (args: 
+                                                  (Subscript 
+                                                   (Name exp)
+                                                   (Int 2))))))
+                                             (If 
+                                              (BinOp:In 
+                                               (Subscript 
+                                                (Name exp)
+                                                (Int 0))
+                                               (Array 
+                                                (Symbol undef)))
+                                              (Block 
+                                               (Dict  
+                                                (Symbol type)
+                                                 (Symbol undef)
+                                                (Symbol names)
+                                                 (Call convert_array
+                                                  (args: 
+                                                   (Subscript 
+                                                    (Name exp)
+                                                    (Int 1))))))
+                                              (If 
+                                               (BinOp:In 
+                                                (Subscript 
+                                                 (Name exp)
+                                                 (Int 0))
+                                                (Array 
+                                                 (Symbol if)
+                                                 (Symbol if_mod)
+                                                 (Symbol elsif)
+                                                 (Symbol ifop)))
+                                               (Block 
+                                                (Assign 
+                                                 (Name ret)
+                                                 (Dict  
+                                                  (Symbol type)
+                                                   (Symbol if)
+                                                  (Symbol test)
+                                                   (Call convert
+                                                    (args: 
+                                                     (Subscript 
+                                                      (Name exp)
+                                                      (Int 1))))
+                                                  (Symbol body)
+                                                   (Call convert
+                                                    (args: 
+                                                     (Subscript 
+                                                      (Name exp)
+                                                      (Int 2))))))
+                                                (If 
+                                                 (Subscript 
+                                                  (Name exp)
+                                                  (Int 3))
+                                                 (Block 
+                                                  (Assign 
+                                                   (Subscript 
+                                                    (Name ret)
+                                                    (Symbol else))
+                                                   (Call convert
+                                                    (args: 
+                                                     (Subscript 
+                                                      (Name exp)
+                                                      (Int 3))))))
+                                                 (Nil))
+                                                (If 
+                                                 (BinOp:Equal 
+                                                  (Subscript 
+                                                   (Name exp)
+                                                   (Int 0))
+                                                  (Symbol if_mod))
+                                                 (Block 
+                                                  (Assign 
+                                                   (Subscript 
+                                                    (Name ret)
+                                                    (Symbol mod))
+                                                   (Name true)))
+                                                 (Nil))
+                                                (Name ret))
+                                               (If 
+                                                (BinOp:In 
+                                                 (Subscript 
+                                                  (Name exp)
+                                                  (Int 0))
+                                                 (Array 
+                                                  (Symbol case)))
+                                                (Block 
+                                                 (If 
+                                                  (Subscript 
+                                                   (Name exp)
+                                                   (Int 1))
+                                                  (Block 
+                                                   (Assign 
+                                                    (Name value)
+                                                    (Call convert
+                                                     (args: 
+                                                      (Subscript 
+                                                       (Name exp)
+                                                       (Int 1))))))
+                                                  (Block 
+                                                   (Assign 
+                                                    (Name value)
+                                                    (Name nil))))
+                                                 (Call convert_when
+                                                  (args: 
+                                                   (Subscript 
+                                                    (Name exp)
+                                                    (Int 2))
+                                                   (Name value))))
+                                                (If 
+                                                 (BinOp:In 
+                                                  (Subscript 
+                                                   (Name exp)
+                                                   (Int 0))
+                                                  (Array 
+                                                   (Symbol while)
+                                                   (Symbol while_mod)))
+                                                 (Block 
+                                                  (If 
+                                                   (BinOp:Equal 
+                                                    (Subscript 
+                                                     (Name exp)
+                                                     (Int 0))
+                                                    (Symbol while_mod))
+                                                   (Block 
+                                                    (Assign 
+                                                     (Name mod)
+                                                     (Name true)))
+                                                   (Block 
+                                                    (Assign 
+                                                     (Name mod)
+                                                     (Name false))))
+                                                  (Dict  
+                                                   (Symbol type)
+                                                    (Symbol while)
+                                                   (Symbol test)
+                                                    (Call convert
+                                                     (args: 
+                                                      (Subscript 
+                                                       (Name exp)
+                                                       (Int 1))))
+                                                   (Symbol body)
+                                                    (Call convert
+                                                     (args: 
+                                                      (Subscript 
+                                                       (Name exp)
+                                                       (Int 2))))
+                                                   (Symbol mod)
+                                                    (Name mod)))
+                                                 (If 
+                                                  (BinOp:In 
+                                                   (Subscript 
+                                                    (Name exp)
+                                                    (Int 0))
+                                                   (Array 
+                                                    (Symbol until)
+                                                    (Symbol until_mod)))
+                                                  (Block 
+                                                   (If 
+                                                    (BinOp:Equal 
+                                                     (Subscript 
+                                                      (Name exp)
+                                                      (Int 0))
+                                                     (Symbol until_mod))
+                                                    (Block 
+                                                     (Assign 
+                                                      (Name mod)
+                                                      (Name true)))
+                                                    (Block 
+                                                     (Assign 
+                                                      (Name mod)
+                                                      (Name false))))
+                                                   (Dict  
+                                                    (Symbol type)
+                                                     (Symbol while)
+                                                    (Symbol test)
+                                                     (Call negate
+                                                      (args: 
+                                                       (Call convert
+                                                        (args: 
+                                                         (Subscript 
+                                                          (Name exp)
+                                                          (Int 1))))))
+                                                    (Symbol body)
+                                                     (Call convert
+                                                      (args: 
+                                                       (Subscript 
+                                                        (Name exp)
+                                                        (Int 2))))
+                                                    (Symbol mod)
+                                                     (Name mod)))
+                                                  (If 
+                                                   (BinOp:In 
+                                                    (Subscript 
+                                                     (Name exp)
+                                                     (Int 0))
+                                                    (Array 
+                                                     (Symbol unless)
+                                                     (Symbol unless_mod)))
+                                                   (Block 
+                                                    (If 
+                                                     (BinOp:Equal 
+                                                      (Subscript 
+                                                       (Name exp)
+                                                       (Int 0))
+                                                      (Symbol unless_mod))
+                                                     (Block 
+                                                      (Assign 
+                                                       (Name mod)
+                                                       (Name true)))
+                                                     (Block 
+                                                      (Assign 
+                                                       (Name mod)
+                                                       (Name false))))
+                                                    (Assign 
+                                                     (Name ret)
+                                                     (Dict  
+                                                      (Symbol type)
+                                                       (Symbol if)
+                                                      (Symbol test)
+                                                       (Call negate
+                                                        (args: 
+                                                         (Call convert
+                                                          (args: 
+                                                           (Subscript 
+                                                            (Name exp)
+                                                            (Int 1))))))
+                                                      (Symbol body)
+                                                       (Call convert
+                                                        (args: 
+                                                         (Subscript 
+                                                          (Name exp)
+                                                          (Int 2))))
+                                                      (Symbol mod)
+                                                       (Name mod)))
+                                                    (If 
+                                                     (Subscript 
+                                                      (Name exp)
+                                                      (Int 3))
+                                                     (Block 
+                                                      (Assign 
+                                                       (Subscript 
+                                                        (Name ret)
+                                                        (Symbol else))
+                                                       (Call convert
+                                                        (args: 
+                                                         (Subscript 
+                                                          (Name exp)
+                                                          (Int 3))))))
+                                                     (Nil))
+                                                    (Name ret))
+                                                   (If 
+                                                    (BinOp:In 
+                                                     (Subscript 
+                                                      (Name exp)
+                                                      (Int 0))
+                                                     (Array 
+                                                      (Symbol for)))
+                                                    (Block 
+                                                     (Dict  
+                                                      (Symbol type)
+                                                       (Symbol for)
+                                                      (Symbol target)
+                                                       (Call convert
+                                                        (args: 
+                                                         (Subscript 
+                                                          (Name exp)
+                                                          (Int 1))))
+                                                      (Symbol iter)
+                                                       (Call convert
+                                                        (args: 
+                                                         (Subscript 
+                                                          (Name exp)
+                                                          (Int 2))))
+                                                      (Symbol body)
+                                                       (Call convert
+                                                        (args: 
+                                                         (Subscript 
+                                                          (Name exp)
+                                                          (Int 3))))))
+                                                    (If 
+                                                     (BinOp:In 
+                                                      (Subscript 
+                                                       (Name exp)
+                                                       (Int 0))
+                                                      (Array 
+                                                       (Symbol begin)))
+                                                     (Block 
+                                                      (Assign 
+                                                       (Name bodystmt)
+                                                       (Subscript 
+                                                        (Name exp)
+                                                        (Int 1)))
+                                                      (Dict  
+                                                       (Symbol type)
+                                                        (Symbol begin)
+                                                       (Symbol body)
+                                                        (Call convert
+                                                         (args: 
+                                                          (Subscript 
+                                                           (Name bodystmt)
+                                                           (Int 1))))
+                                                       (Symbol rescue)
+                                                        (Call convert
+                                                         (args: 
+                                                          (Subscript 
+                                                           (Name bodystmt)
+                                                           (Int 2))))
+                                                       (Symbol else)
+                                                        (Call convert
+                                                         (args: 
+                                                          (Subscript 
+                                                           (Name bodystmt)
+                                                           (Int 3))))
+                                                       (Symbol ensure)
+                                                        (Call convert
+                                                         (args: 
+                                                          (Subscript 
+                                                           (Name bodystmt)
+                                                           (Int 4))))))
+                                                     (If 
+                                                      (BinOp:In 
+                                                       (Subscript 
+                                                        (Name exp)
+                                                        (Int 0))
+                                                       (Array 
+                                                        (Symbol rescue)))
+                                                      (Block 
+                                                       (Assign 
+                                                        (Name ret)
+                                                        (Dict  
+                                                         (Symbol type)
+                                                          (Symbol rescue)))
+                                                       (If 
+                                                        (Subscript 
+                                                         (Name exp)
+                                                         (Int 1))
+                                                        (Block 
+                                                         (If 
+                                                          (Call 
+                                                           (Attribute 
+                                                            (Subscript 
+                                                             (Subscript 
+                                                              (Name exp)
+                                                              (Int 1))
+                                                             (Int 0))
+                                                            (Name is_a?))
+                                                           (args: 
+                                                            (Name Array)))
+                                                          (Block 
+                                                           (Assign 
+                                                            (Subscript 
+                                                             (Name ret)
+                                                             (Symbol exceptions))
+                                                            (Call convert_array
+                                                             (args: 
+                                                              (Subscript 
+                                                               (Name exp)
+                                                               (Int 1))))))
+                                                          (Block 
+                                                           (Assign 
+                                                            (Subscript 
+                                                             (Name ret)
+                                                             (Symbol expections))
+                                                            (Subscript 
+                                                             (Call convert
+                                                              (args: 
+                                                               (Subscript 
+                                                                (Name exp)
+                                                                (Int 1))))
+                                                             (Symbol positional))))))
+                                                        (Nil))
+                                                       (If 
+                                                        (Subscript 
+                                                         (Name exp)
+                                                         (Int 2))
+                                                        (Block 
+                                                         (Assign 
+                                                          (Subscript 
+                                                           (Name ret)
+                                                           (Symbol binder))
+                                                          (Call convert
+                                                           (args: 
+                                                            (Subscript 
+                                                             (Name exp)
+                                                             (Int 2))))))
+                                                        (Nil))
+                                                       (If 
+                                                        (Subscript 
+                                                         (Name exp)
+                                                         (Int 3))
+                                                        (Block 
+                                                         (Assign 
+                                                          (Subscript 
+                                                           (Name ret)
+                                                           (Symbol handler))
+                                                          (Call convert
+                                                           (args: 
+                                                            (Subscript 
+                                                             (Name exp)
+                                                             (Int 3))))))
+                                                        (Nil))
+                                                       (If 
+                                                        (Subscript 
+                                                         (Name exp)
+                                                         (Int 4))
+                                                        (Block 
+                                                         (Assign 
+                                                          (Subscript 
+                                                           (Name ret)
+                                                           (Symbol else))
+                                                          (Call convert
+                                                           (args: 
+                                                            (Subscript 
+                                                             (Name exp)
+                                                             (Int 4))))))
+                                                        (Nil))
+                                                       (Name ret))
+                                                      (If 
+                                                       (BinOp:In 
+                                                        (Subscript 
+                                                         (Name exp)
+                                                         (Int 0))
+                                                        (Array 
+                                                         (Symbol rescue_mod)))
+                                                       (Block 
+                                                        (Dict  
+                                                         (Symbol type)
+                                                          (Symbol begin)
+                                                         (Symbol body)
+                                                          (Call convert
+                                                           (args: 
+                                                            (Subscript 
+                                                             (Name exp)
+                                                             (Int 1))))
+                                                         (Symbol rescue)
+                                                          (Call convert
+                                                           (args: 
+                                                            (Subscript 
+                                                             (Name exp)
+                                                             (Int 2))))
+                                                         (Symbol mod)
+                                                          (Name true)))
+                                                       (If 
+                                                        (BinOp:In 
+                                                         (Subscript 
+                                                          (Name exp)
+                                                          (Int 0))
+                                                         (Array 
+                                                          (Symbol stmts_new)))
+                                                        (Block 
+                                                         (Dict  
+                                                          (Symbol type)
+                                                           (Symbol block)
+                                                          (Symbol stmts)
+                                                           (Array )))
+                                                        (If 
+                                                         (BinOp:In 
+                                                          (Subscript 
+                                                           (Name exp)
+                                                           (Int 0))
+                                                          (Array 
+                                                           (Symbol stmts_add)))
+                                                         (Block 
+                                                          (Assign 
+                                                           (Name block)
+                                                           (Call convert
+                                                            (args: 
+                                                             (Subscript 
+                                                              (Name exp)
+                                                              (Int 1)))))
+                                                          (Assign 
+                                                           (Name stmt)
+                                                           (Call convert
+                                                            (args: 
+                                                             (Subscript 
+                                                              (Name exp)
+                                                              (Int 2)))))
+                                                          (Call 
+                                                           (Attribute 
+                                                            (Subscript 
+                                                             (Name block)
+                                                             (Symbol stmts))
+                                                            (Name push))
+                                                           (args: 
+                                                            (Name stmt)))
+                                                          (Name block))
+                                                         (If 
+                                                          (BinOp:In 
+                                                           (Subscript 
+                                                            (Name exp)
+                                                            (Int 0))
+                                                           (Array 
+                                                            (Symbol bodystmt)))
+                                                          (Block 
+                                                           (Assign 
+                                                            (Name block)
+                                                            (Call convert
+                                                             (args: 
+                                                              (Subscript 
+                                                               (Name exp)
+                                                               (Int 1)))))
+                                                           (If 
+                                                            (Subscript 
+                                                             (Name exp)
+                                                             (Int 2))
+                                                            (Block 
+                                                             (Assign 
+                                                              (Name res)
+                                                              (Call convert
+                                                               (args: 
+                                                                (Subscript 
+                                                                 (Name exp)
+                                                                 (Int 2)))))
+                                                             (Call 
+                                                              (Attribute 
+                                                               (Subscript 
+                                                                (Name block)
+                                                                (Symbol stmts))
+                                                               (Name push))
+                                                              (args: 
+                                                               (Name res))))
+                                                            (Nil))
+                                                           (Name block))
+                                                          (If 
+                                                           (BinOp:In 
+                                                            (Subscript 
+                                                             (Name exp)
+                                                             (Int 0))
+                                                            (Array 
+                                                             (Symbol binary)))
+                                                           (Block 
+                                                            (Dict  
+                                                             (Symbol type)
+                                                              (Symbol binary)
+                                                             (Symbol left)
+                                                              (Call convert
+                                                               (args: 
+                                                                (Subscript 
+                                                                 (Name exp)
+                                                                 (Int 1))))
+                                                             (Symbol op)
+                                                              (Call op
+                                                               (args: 
+                                                                (Subscript 
+                                                                 (Name exp)
+                                                                 (Int 2))))
+                                                             (Symbol right)
+                                                              (Call convert
+                                                               (args: 
+                                                                (Subscript 
+                                                                 (Name exp)
+                                                                 (Int 3))))))
+                                                           (If 
+                                                            (BinOp:In 
+                                                             (Subscript 
+                                                              (Name exp)
+                                                              (Int 0))
+                                                             (Array 
+                                                              (Symbol array)))
+                                                            (Block 
+                                                             (Assign 
+                                                              (Name args)
+                                                              (Call convert
+                                                               (args: 
+                                                                (Subscript 
+                                                                 (Name exp)
+                                                                 (Int 1)))))
+                                                             (Dict  
+                                                              (Symbol type)
+                                                               (Symbol array)
+                                                              (Symbol elts)
+                                                               (Subscript 
+                                                                (Name args)
+                                                                (Symbol positional))))
+                                                            (If 
+                                                             (BinOp:In 
+                                                              (Subscript 
+                                                               (Name exp)
+                                                               (Int 0))
+                                                              (Array 
+                                                               (Symbol aref)
+                                                               (Symbol aref_field)))
+                                                             (Block 
+                                                              (Assign 
+                                                               (Name args)
+                                                               (Call convert
+                                                                (args: 
+                                                                 (Subscript 
+                                                                  (Name exp)
+                                                                  (Int 2)))))
+                                                              (Dict  
+                                                               (Symbol type)
+                                                                (Symbol subscript)
+                                                               (Symbol value)
+                                                                (Call convert
+                                                                 (args: 
+                                                                  (Subscript 
+                                                                   (Name exp)
+                                                                   (Int 1))))
+                                                               (Symbol slice)
+                                                                (Subscript 
+                                                                 (Name args)
+                                                                 (Symbol positional))))
+                                                             (If 
+                                                              (BinOp:In 
+                                                               (Subscript 
+                                                                (Name exp)
+                                                                (Int 0))
+                                                               (Array 
+                                                                (Symbol unary)))
+                                                              (Block 
+                                                               (Dict  
+                                                                (Symbol type)
+                                                                 (Symbol unary)
+                                                                (Symbol op)
+                                                                 (Call op
+                                                                  (args: 
+                                                                   (Subscript 
+                                                                    (Name exp)
+                                                                    (Int 1))))
+                                                                (Symbol operand)
+                                                                 (Call convert
+                                                                  (args: 
+                                                                   (Subscript 
+                                                                    (Name exp)
+                                                                    (Int 2))))))
+                                                              (If 
+                                                               (BinOp:In 
+                                                                (Subscript 
+                                                                 (Name exp)
+                                                                 (Int 0))
+                                                                (Array 
+                                                                 (Symbol int)))
+                                                               (Block 
+                                                                (Dict  
+                                                                 (Symbol type)
+                                                                  (Symbol int)
+                                                                 (Symbol value)
+                                                                  (Subscript 
+                                                                   (Name exp)
+                                                                   (Int 1))
+                                                                 (Symbol location)
+                                                                  (Subscript 
+                                                                   (Name exp)
+                                                                   (Int 2))))
+                                                               (If 
+                                                                (BinOp:In 
+                                                                 (Subscript 
+                                                                  (Name exp)
+                                                                  (Int 0))
+                                                                 (Array 
+                                                                  (Symbol float)))
+                                                                (Block 
+                                                                 (Dict  
+                                                                  (Symbol type)
+                                                                   (Symbol float)
+                                                                  (Symbol value)
+                                                                   (Subscript 
+                                                                    (Name exp)
+                                                                    (Int 1))
+                                                                  (Symbol location)
+                                                                   (Subscript 
+                                                                    (Name exp)
+                                                                    (Int 2))))
+                                                                (If 
+                                                                 (BinOp:In 
+                                                                  (Subscript 
+                                                                   (Name exp)
+                                                                   (Int 0))
+                                                                  (Array 
+                                                                   (Symbol regexp_literal)))
+                                                                 (Block 
+                                                                  (Assign 
+                                                                   (Name regexp)
+                                                                   (Call convert
+                                                                    (args: 
+                                                                     (Subscript 
+                                                                      (Name exp)
+                                                                      (Int 1)))))
+                                                                  (Assign 
+                                                                   (Subscript 
+                                                                    (Name regexp)
+                                                                    (Symbol regexp_end))
+                                                                   (Call convert
+                                                                    (args: 
+                                                                     (Subscript 
+                                                                      (Name exp)
+                                                                      (Int 2)))))
+                                                                  (Name regexp))
+                                                                 (If 
+                                                                  (BinOp:In 
+                                                                   (Subscript 
+                                                                    (Name exp)
+                                                                    (Int 0))
+                                                                   (Array 
+                                                                    (Symbol regexp_new)))
+                                                                  (Block 
+                                                                   (Dict  
+                                                                    (Symbol type)
+                                                                     (Symbol regexp)))
+                                                                  (If 
+                                                                   (BinOp:In 
+                                                                    (Subscript 
+                                                                     (Name exp)
+                                                                     (Int 0))
+                                                                    (Array 
+                                                                     (Symbol regexp_add)))
+                                                                   (Block 
+                                                                    (Dict  
+                                                                     (Symbol type)
+                                                                      (Symbol regexp)
+                                                                     (Symbol pattern)
+                                                                      (Call convert
+                                                                       (args: 
+                                                                        (Subscript 
+                                                                         (Name exp)
+                                                                         (Int 2))))))
+                                                                   (If 
+                                                                    (BinOp:In 
+                                                                     (Subscript 
+                                                                      (Name exp)
+                                                                      (Int 0))
+                                                                     (Array 
+                                                                      (Symbol regexp_end)))
+                                                                    (Block 
+                                                                     (Call make_string
+                                                                      (args: 
+                                                                       (Subscript 
+                                                                        (Name exp)
+                                                                        (Int 1))
+                                                                       (Subscript 
+                                                                        (Name exp)
+                                                                        (Int 2)))))
+                                                                    (If 
+                                                                     (BinOp:In 
+                                                                      (Subscript 
+                                                                       (Name exp)
+                                                                       (Int 0))
+                                                                      (Array 
+                                                                       (Symbol backref)))
+                                                                     (Block 
+                                                                      (Call make_string
+                                                                       (args: 
+                                                                        (Subscript 
+                                                                         (Name exp)
+                                                                         (Int 1))
+                                                                        (Subscript 
+                                                                         (Name exp)
+                                                                         (Int 2)))))
+                                                                     (If 
+                                                                      (BinOp:In 
+                                                                       (Subscript 
+                                                                        (Name exp)
+                                                                        (Int 0))
+                                                                       (Array 
+                                                                        (Symbol tstring_content)
+                                                                        (Symbol CHAR)))
+                                                                      (Block 
+                                                                       (Call make_string
+                                                                        (args: 
+                                                                         (Subscript 
+                                                                          (Name exp)
+                                                                          (Int 1))
+                                                                         (Subscript 
+                                                                          (Name exp)
+                                                                          (Int 2)))))
+                                                                      (If 
+                                                                       (BinOp:In 
+                                                                        (Subscript 
+                                                                         (Name exp)
+                                                                         (Int 0))
+                                                                        (Array 
+                                                                         (Symbol string_content)
+                                                                         (Symbol xstring_new)))
+                                                                       (Block 
+                                                                        (Call make_string
+                                                                         (args: 
+                                                                          (String ))))
+                                                                       (If 
+                                                                        (BinOp:In 
+                                                                         (Subscript 
+                                                                          (Name exp)
+                                                                          (Int 0))
+                                                                         (Array 
+                                                                          (Symbol string_add)
+                                                                          (Symbol xstring_add)
+                                                                          (Symbol qwords_add)))
+                                                                        (Block 
+                                                                         (If 
+                                                                          (BinOp:Or 
+                                                                           (BinOp:Or 
+                                                                            (UnaryOp:Not 
+                                                                             (Subscript 
+                                                                              (Name exp)
+                                                                              (Int 1)))
+                                                                            (BinOp:Equal 
+                                                                             (Subscript 
+                                                                              (Name exp)
+                                                                              (Int 1))
+                                                                             (Array 
+                                                                              (Symbol string_content))))
+                                                                           (BinOp:Equal 
+                                                                            (Subscript 
+                                                                             (Name exp)
+                                                                             (Int 1))
+                                                                            (Array 
+                                                                             (Symbol xstring_new))))
+                                                                          (Block 
+                                                                           (Call convert
+                                                                            (args: 
+                                                                             (Subscript 
+                                                                              (Name exp)
+                                                                              (Int 2)))))
+                                                                          (Block 
+                                                                           (Dict  
+                                                                            (Symbol type)
+                                                                             (Symbol binary)
+                                                                            (Symbol op)
+                                                                             (Call op
+                                                                              (args: 
+                                                                               (Symbol +)))
+                                                                            (Symbol left)
+                                                                             (Call convert
+                                                                              (args: 
+                                                                               (Subscript 
+                                                                                (Name exp)
+                                                                                (Int 1))))
+                                                                            (Symbol right)
+                                                                             (Call convert
+                                                                              (args: 
+                                                                               (Subscript 
+                                                                                (Name exp)
+                                                                                (Int 2))))))))
+                                                                        (If 
+                                                                         (BinOp:In 
+                                                                          (Subscript 
+                                                                           (Name exp)
+                                                                           (Int 0))
+                                                                          (Array 
+                                                                           (Symbol string_concat)
+                                                                           (Symbol xstring_concat)))
+                                                                         (Block 
+                                                                          (Call convert
+                                                                           (args: 
+                                                                            (Array 
+                                                                             (Symbol binary)
+                                                                             (Subscript 
+                                                                              (Name exp)
+                                                                              (Int 1))
+                                                                             (Symbol +)
+                                                                             (Subscript 
+                                                                              (Name exp)
+                                                                              (Int 2))))))
+                                                                         (If 
+                                                                          (BinOp:In 
+                                                                           (Subscript 
+                                                                            (Name exp)
+                                                                            (Int 0))
+                                                                           (Array 
+                                                                            (Symbol hash)))
+                                                                          (Block 
+                                                                           (If 
+                                                                            (Subscript 
+                                                                             (Name exp)
+                                                                             (Int 1))
+                                                                            (Block 
+                                                                             (Call convert
+                                                                              (args: 
+                                                                               (Subscript 
+                                                                                (Name exp)
+                                                                                (Int 1)))))
+                                                                            (Block 
+                                                                             (Dict  
+                                                                              (Symbol type)
+                                                                               (Symbol hash)))))
+                                                                          (If 
+                                                                           (BinOp:In 
+                                                                            (Subscript 
+                                                                             (Name exp)
+                                                                             (Int 0))
+                                                                            (Array 
+                                                                             (Symbol assoclist_from_args)
+                                                                             (Symbol bare_assoc_hash)))
+                                                                           (Block 
+                                                                            (Dict  
+                                                                             (Symbol type)
+                                                                              (Symbol hash)
+                                                                             (Symbol entries)
+                                                                              (Call convert_array
+                                                                               (args: 
+                                                                                (Subscript 
+                                                                                 (Name exp)
+                                                                                 (Int 1))))))
+                                                                           (If 
+                                                                            (BinOp:In 
+                                                                             (Subscript 
+                                                                              (Name exp)
+                                                                              (Int 0))
+                                                                             (Array 
+                                                                              (Symbol assoc_new)))
+                                                                            (Block 
+                                                                             (Dict  
+                                                                              (Symbol type)
+                                                                               (Symbol assoc)
+                                                                              (Symbol key)
+                                                                               (Call convert
+                                                                                (args: 
+                                                                                 (Subscript 
+                                                                                  (Name exp)
+                                                                                  (Int 1))))
+                                                                              (Symbol value)
+                                                                               (Call convert
+                                                                                (args: 
+                                                                                 (Subscript 
+                                                                                  (Name exp)
+                                                                                  (Int 2))))))
+                                                                            (If 
+                                                                             (BinOp:In 
+                                                                              (Subscript 
+                                                                               (Name exp)
+                                                                               (Int 0))
+                                                                              (Array 
+                                                                               (Symbol const_path_ref)
+                                                                               (Symbol const_path_field)))
+                                                                             (Block 
+                                                                              (Dict  
+                                                                               (Symbol type)
+                                                                                (Symbol attribute)
+                                                                               (Symbol value)
+                                                                                (Call convert
+                                                                                 (args: 
+                                                                                  (Subscript 
+                                                                                   (Name exp)
+                                                                                   (Int 1))))
+                                                                               (Symbol attr)
+                                                                                (Call convert
+                                                                                 (args: 
+                                                                                  (Subscript 
+                                                                                   (Name exp)
+                                                                                   (Int 2))))))
+                                                                             (If 
+                                                                              (BinOp:In 
+                                                                               (Subscript 
+                                                                                (Name exp)
+                                                                                (Int 0))
+                                                                               (Array 
+                                                                                (Symbol field)))
+                                                                              (Block 
+                                                                               (Dict  
+                                                                                (Symbol type)
+                                                                                 (Symbol attribute)
+                                                                                (Symbol value)
+                                                                                 (Call convert
+                                                                                  (args: 
+                                                                                   (Subscript 
+                                                                                    (Name exp)
+                                                                                    (Int 1))))
+                                                                                (Symbol attr)
+                                                                                 (Call convert
+                                                                                  (args: 
+                                                                                   (Subscript 
+                                                                                    (Name exp)
+                                                                                    (Int 3))))))
+                                                                              (If 
+                                                                               (BinOp:In 
+                                                                                (Subscript 
+                                                                                 (Name exp)
+                                                                                 (Int 0))
+                                                                                (Array 
+                                                                                 (Symbol void_stmt)))
+                                                                               (Block 
+                                                                                (Dict  
+                                                                                 (Symbol type)
+                                                                                  (Symbol void)))
+                                                                               (If 
+                                                                                (BinOp:In 
+                                                                                 (Subscript 
+                                                                                  (Name exp)
+                                                                                  (Int 0))
+                                                                                 (Array 
+                                                                                  (Symbol yield0)))
+                                                                                (Block 
+                                                                                 (Dict  
+                                                                                  (Symbol type)
+                                                                                   (Symbol yield)))
+                                                                                (If 
+                                                                                 (BinOp:In 
+                                                                                  (Subscript 
+                                                                                   (Name exp)
+                                                                                   (Int 0))
+                                                                                  (Array 
+                                                                                   (Symbol return0)))
+                                                                                 (Block 
+                                                                                  (Dict  
+                                                                                   (Symbol type)
+                                                                                    (Symbol return)))
+                                                                                 (If 
+                                                                                  (BinOp:In 
+                                                                                   (Subscript 
+                                                                                    (Name exp)
+                                                                                    (Int 0))
+                                                                                   (Array 
+                                                                                    (Symbol break)))
+                                                                                  (Block 
+                                                                                   (Dict  
+                                                                                    (Symbol type)
+                                                                                     (Symbol break)))
+                                                                                  (If 
+                                                                                   (BinOp:In 
+                                                                                    (Subscript 
+                                                                                     (Name exp)
+                                                                                     (Int 0))
+                                                                                    (Array 
+                                                                                     (Symbol retry)))
+                                                                                   (Block 
+                                                                                    (Dict  
+                                                                                     (Symbol type)
+                                                                                      (Symbol retry)))
+                                                                                   (If 
+                                                                                    (BinOp:In 
+                                                                                     (Subscript 
+                                                                                      (Name exp)
+                                                                                      (Int 0))
+                                                                                     (Array 
+                                                                                      (Symbol redo)))
+                                                                                    (Block 
+                                                                                     (Dict  
+                                                                                      (Symbol type)
+                                                                                       (Symbol redo)))
+                                                                                    (If 
+                                                                                     (BinOp:In 
+                                                                                      (Subscript 
+                                                                                       (Name exp)
+                                                                                       (Int 0))
+                                                                                      (Array 
+                                                                                       (Symbol defined)))
+                                                                                     (Block 
+                                                                                      (Dict  
+                                                                                       (Symbol type)
+                                                                                        (Symbol unary)
+                                                                                       (Symbol op)
+                                                                                        (Call op
+                                                                                         (args: 
+                                                                                          (Symbol defined)))
+                                                                                       (Symbol operand)
+                                                                                        (Call convert
+                                                                                         (args: 
+                                                                                          (Subscript 
+                                                                                           (Name exp)
+                                                                                           (Int 1))))))
+                                                                                     (If 
+                                                                                      (BinOp:In 
+                                                                                       (Subscript 
+                                                                                        (Name exp)
+                                                                                        (Int 0))
+                                                                                       (Array 
+                                                                                        (Symbol return)
+                                                                                        (Symbol yield)))
+                                                                                      (Block 
+                                                                                       (Dict  
+                                                                                        (Symbol type)
+                                                                                         (Subscript 
+                                                                                          (Name exp)
+                                                                                          (Int 0))
+                                                                                        (Symbol value)
+                                                                                         (Call args_to_array
+                                                                                          (args: 
+                                                                                           (Call convert
+                                                                                            (args: 
+                                                                                             (Subscript 
+                                                                                              (Name exp)
+                                                                                              (Int 1))))))))
+                                                                                      (If 
+                                                                                       (BinOp:In 
+                                                                                        (Subscript 
+                                                                                         (Name exp)
+                                                                                         (Int 0))
+                                                                                        (Array 
+                                                                                         (Symbol string_embexpr)))
+                                                                                       (Block 
+                                                                                        (Dict  
+                                                                                         (Symbol type)
+                                                                                          (Symbol string_embexpr)
+                                                                                         (Symbol value)
+                                                                                          (Call convert
+                                                                                           (args: 
+                                                                                            (Subscript 
+                                                                                             (Name exp)
+                                                                                             (Int 1))))))
+                                                                                       (If 
+                                                                                        (BinOp:In 
+                                                                                         (Subscript 
+                                                                                          (Name exp)
+                                                                                          (Int 0))
+                                                                                         (Array 
+                                                                                          (Symbol var_ref)
+                                                                                          (Symbol var_field)
+                                                                                          (Symbol const_ref)
+                                                                                          (Symbol top_const_ref)
+                                                                                          (Symbol top_const_field)
+                                                                                          (Symbol paren)
+                                                                                          (Symbol else)
+                                                                                          (Symbol ensure)
+                                                                                          (Symbol arg_paren)
+                                                                                          (Symbol mlhs_paren)
+                                                                                          (Symbol rest_param)
+                                                                                          (Symbol blockarg)
+                                                                                          (Symbol symbol_literal)
+                                                                                          (Symbol regexp_literal)
+                                                                                          (Symbol param_error)
+                                                                                          (Symbol string_literal)
+                                                                                          (Symbol xstring_literal)
+                                                                                          (Symbol string_dvar)
+                                                                                          (Symbol mrhs_new_from_args)
+                                                                                          (Symbol assoc_splat)
+                                                                                          (Symbol next)
+                                                                                          (Symbol END)
+                                                                                          (Symbol BEGIN)))
+                                                                                        (Block 
+                                                                                         (Call convert
+                                                                                          (args: 
+                                                                                           (Subscript 
+                                                                                            (Name exp)
+                                                                                            (Int 1)))))
+                                                                                        (Block 
+                                                                                         (Call banner
+                                                                                          (args: 
+                                                                                           (String unknown)))
+                                                                                         (Call puts
+                                                                                          (args: 
+                                                                                           (Nil)))
+                                                                                         (Name exp))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))
     (Func convert_array
      (args: 
       (Name arr))
@@ -761,22 +3032,179 @@
           (args: 
            (Symbol not)))
         (Symbol operand)
-         (Name exp))))))))
+         (Name exp)))))))
+ (Func hash_max_nest
+  (args: 
+   (Name hash))
+  (body: 
+   (Block 
+    (If 
+     (Call 
+      (Attribute 
+       (Name hash)
+       (Name is_a?))
+      (args: 
+       (Name Array)))
+     (Block 
+      (BinOp:Add 
+       (Call 
+        (Attribute 
+         (Call 
+          (Attribute 
+           (Call 
+            (Attribute 
+             (Name hash)
+             (Name map)))
+           (Name max)))
+         (Name to_i)))
+       (Int 1)))
+     (If 
+      (Call 
+       (Attribute 
+        (Name hash)
+        (Name is_a?))
+       (args: 
+        (Name Hash)))
+      (Block 
+       (BinOp:Add 
+        (Call 
+         (Attribute 
+          (Call 
+           (Attribute 
+            (Call 
+             (Attribute 
+              (Call 
+               (Attribute 
+                (Name hash)
+                (Name values)))
+              (Name map)))
+            (Name max)))
+          (Name to_i)))
+        (Int 1)))
+      (Block 
+       (Int 0)))))))
+ (Func parse_dump
+  (args: 
+   (Name input)
+   (Name output)
+   (Name endmark))
+  (body: 
+   (Block 
+    (Try 
+     (Block 
+      (Assign 
+       (Name simplifier)
+       (Call 
+        (Attribute 
+         (Name AstSimplifier)
+         (Name new))
+        (args: 
+         (Name input))))
+      (Assign 
+       (Name hash)
+       (Call 
+        (Attribute 
+         (Name simplifier)
+         (Name simplify))))
+      (Assign 
+       (Name json_string)
+       (Call 
+        (Attribute 
+         (Name JSON)
+         (Name pretty_generate))
+        (args: 
+         (Name hash)
+         (Dict  
+          (Name max_nesting)
+           (Call hash_max_nest
+            (args: 
+             (Name hash)))))))
+      (Assign 
+       (Name out)
+       (Call 
+        (Attribute 
+         (Name File)
+         (Name open))
+        (args: 
+         (Name output)
+         (String wb))))
+      (Call 
+       (Attribute 
+        (Name out)
+        (Name write))
+       (args: 
+        (Name json_string)))
+      (Call 
+       (Attribute 
+        (Name out)
+        (Name close))))
+     (Nil)
+     (Nil)
+     (Block 
+      (Assign 
+       (Name end_file)
+       (Call 
+        (Attribute 
+         (Name File)
+         (Name open))
+        (args: 
+         (Name endmark)
+         (String wb))))
+      (Call 
+       (Attribute 
+        (Name end_file)
+        (Name close))))))))
+ (Assign 
+  (Name $options)
+  (Dict  ))
+ (Call 
+  (Attribute 
+   (Call 
+    (Attribute 
+     (Name OptionParser)
+     (Name new)))
+   (Name parse!)))
+ (If 
+  (BinOp:Gt 
+   (Call 
+    (Attribute 
+     (Name ARGV)
+     (Name length)))
+   (Int 0))
+  (Block 
+   (Call parse_dump
+    (args: 
+     (Subscript 
+      (Name ARGV)
+      (Int 0))
+     (Subscript 
+      (Name ARGV)
+      (Int 1))
+     (Subscript 
+      (Name ARGV)
+      (Int 2)))))
+  (Nil)))
 
 ----------------------------------------
 
+bind: hash_max_nest ty: Func_ty: [] => Int_ty
 bind: AstSimplifier ty: Class_ty: AstSimplifier
   bind: make_string ty: Func_ty: [unkown_type] => unkown_type
+  bind: convert ty: Func_ty: [] => unkown_type
   bind: negate ty: Func_ty: [] => unkown_type
   bind: args_to_array ty: Func_ty: [] => unkown_type
   bind: convert_array ty: Func_ty: [] => unkown_type
   bind: ident_end ty: Func_ty: [] => Int_ty
   bind: find_locations ty: Func_ty: [] => unkown_type
   bind: detect_encoding ty: Func_ty: [] => unkown_type
+  bind: find_line_starts ty: Func_ty: [] => unkown_type
   bind: simplify ty: Func_ty: [] => unkown_type
   bind: node_start ty: Func_ty: [] => unkown_type
   bind: convert_when ty: Func_ty: [] => unkown_type
   bind: find_docs ty: Func_ty: [] => unkown_type
   bind: op ty: Func_ty: [] => unkown_type
   bind: initialize ty: Func_ty: [] => unkown_type
+bind: $options ty: unkown_type
+bind: parse_dump ty: Func_ty: [] => unkown_type
+bind: lambda%12 ty: Func_ty: [] => unkown_type
 bind: banner ty: Func_ty: [] => unkown_type

@@ -1,7 +1,6 @@
 def qsort lst
   return [] if lst.size() == 0
-  # less, more = left.partition {|x| x < first}
-  less, more = left.partition ## bug now
+  less, more = left.partition {|x| x < first}
   return qsort(less) + [first] + qsort(more)
 end
 

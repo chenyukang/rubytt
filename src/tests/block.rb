@@ -1,4 +1,3 @@
-## a bug for function with lambda
 class AstSimplifier
 
   def initialize(filename)
@@ -6,11 +5,7 @@ class AstSimplifier
   end
 
   def find_line_starts
-    res = ""
-    lines.each { |line|
-      res += line
-    }
+    lines.each { |line|}
   end
 
 end
-

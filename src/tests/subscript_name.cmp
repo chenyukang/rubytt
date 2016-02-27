@@ -12,4 +12,4 @@
 
 ----------------------------------------
 
-bind: demo ty: Func_ty: [] => unkown_type
+bind: demo ty: Func_ty: [] => List_ty: Int_ty

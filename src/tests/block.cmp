@@ -12,9 +12,6 @@
     (Func find_line_starts
      (body: 
       (Block 
-       (Assign 
-        (Name res)
-        (String ))
        (Call 
         (Attribute 
          (Call lines)

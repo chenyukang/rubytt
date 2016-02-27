@@ -49,11 +49,13 @@ let set_unresolve node =
   ignore(Hashtbl.add global_unresolved ~key:node ~data:true)
 
 let set_uncalled ty =
-  ignore(Hashtbl.add global_uncalled ~key:ty ~data: true)
+  try
+    ignore(Hashtbl.add global_uncalled ~key:ty ~data: true)
+  with _ -> ()
 
 let set_called ty =
   Hashtbl.remove global_uncalled ty
-
+  
 let push_call call =
   Hashtbl.add global_calltack ~key:call ~data:true
 
@@ -165,15 +167,16 @@ and
   match rt.ty with
   | List_ty(_, tys, _) -> (
       let ty_size = List.length tys in
-      if ty_size <> elems_size then
+      if ty_size <> elems_size then (
         Printf.printf "error array assign size mismatch: %d %d\n" elems_size ty_size
+      )
       else
         List.iteri elems ~f:(fun i e ->
             let ty = List.nth_exn tys i in
-            bind state e ty kind;
+            bind state e ty kind
           )
     )
-  | _ -> (Printf.printf "error array assign size mismtach: %d 0\n" elems_size);
+  | _ -> (Printf.printf "error array assign size mismtach: %d 0\n" elems_size)
 
 and
   transform (node:node) state =
@@ -292,13 +295,13 @@ and
     )
   | Func(info) -> (
       let func_ty = new_fun_ty node (Some state) in
+      set_uncalled func_ty;
       let args_ty = List.map info.defaults ~f:(fun arg -> transform arg state) in
       fun_ty_set_def_tys func_ty args_ty;
       bind_name state info.name func_ty Type.MethodK;
       State.set_parent func_ty.info.table state;
       let id = name_node_id info.name in
       State.set_path func_ty.info.table (State.extend_path state id "#");
-      set_uncalled func_ty;
       func_ty
     )
   | Call(func, pos, star, block_arg) -> (
@@ -339,8 +342,10 @@ and resolve_call fun_ty args_ty star_ty block_arg_ty call state =
 
 and bind_param_tys env args args_types =
   List.iteri args ~f:(fun i arg ->
-      let arg_ty = List.nth_exn args_types i in
-      bind env arg arg_ty Type.ParameterK
+      if i < List.length args_types then (
+        let arg_ty = List.nth_exn args_types i in
+        bind env arg arg_ty Type.ParameterK
+      )
     )
 
 and apply_func fun_ty args_ty star_ty block_arg_ty call =
