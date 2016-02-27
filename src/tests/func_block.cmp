@@ -20,4 +20,4 @@
 ----------------------------------------
 
 bind: lambda%1 ty: Func_ty: [] => unkown_type
-bind: contrived ty: Func_ty: [] => List_ty: unkown_type
+bind: contrived ty: Func_ty: [] => List_ty: Int_ty

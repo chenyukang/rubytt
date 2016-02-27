@@ -23,4 +23,4 @@
 
 ----------------------------------------
 
-bind: div ty: Func_ty: [] => unkown_type
+bind: div ty: Func_ty: [] => Int_ty
