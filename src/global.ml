@@ -1,0 +1,13 @@
+
+(* module TypeHash : sig *)
+(*     type t = Type.type_t *)
+(*     include Hashable.S with type t := t *)
+(*   end = struct *)
+(*     module T = struct *)
+(*       type t = Type.type_t with sexp, compare *)
+(*       let hash t = *)
+(*         (String.hash t.info.file) *)
+(*     end *)
+(*     include T *)
+(*     include Hashable.Make(T) *)
+(* end *)

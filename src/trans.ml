@@ -3,10 +3,23 @@ open Typestack
 open Node
 open Type
 
+module TypeSet : sig
+  type t = Type.type_t
+  include Comparable.S with type t := t
+end = struct
+  module T = struct
+    type t = Type.type_t with sexp
+    let compare t1 t2 =
+      Type.compare_type_t t1 t2
+  end
+  include T
+  include Comparable.Make(T)
+end
+
 let global_refs: (Node.node, Type.binding_ty list) Hashtbl.t = Hashtbl.Poly.create();;
 let global_resolved: (Node.node, bool) Hashtbl.t = Hashtbl.Poly.create();;
 let global_unresolved: (Node.node, bool) Hashtbl.t = Hashtbl.Poly.create();;
-let global_uncalled: (Type.type_t, bool) Hashtbl.t = Hashtbl.Poly.create();;
+let global_uncalled = ref TypeSet.Set.empty;;
 let global_calltack: (Node.node, bool) Hashtbl.t = Hashtbl.Poly.create();;
 
 let clear() =
@@ -14,7 +27,7 @@ let clear() =
   Hashtbl.clear global_refs;
   Hashtbl.clear global_resolved;
   Hashtbl.clear global_unresolved;
-  Hashtbl.clear global_uncalled;
+  global_uncalled := TypeSet.Set.empty;
   Hashtbl.clear global_calltack;
   Node.lambda_coutner := 0
 
@@ -49,14 +62,11 @@ let set_unresolve node =
   ignore(Hashtbl.add global_unresolved ~key:node ~data:true)
 
 let set_uncalled ty =
-  try
-    (* Fixme *)
-    ignore(Hashtbl.add global_uncalled ~key:ty ~data: true)
-  with _ -> ()
+  global_uncalled := TypeSet.Set.add !global_uncalled ty
 
 let set_called ty =
-  Hashtbl.remove global_uncalled ty
-  
+  global_uncalled := TypeSet.Set.remove !global_uncalled ty
+
 let push_call call =
   Hashtbl.add global_calltack ~key:call ~data:true
 
@@ -296,13 +306,14 @@ and
     )
   | Func(info) -> (
       let func_ty = new_fun_ty node (Some state) in
-      set_uncalled func_ty;
       let args_ty = List.map info.defaults ~f:(fun arg -> transform arg state) in
       fun_ty_set_def_tys func_ty args_ty;
       bind_name state info.name func_ty Type.MethodK;
       State.set_parent func_ty.info.table state;
       let id = name_node_id info.name in
       State.set_path func_ty.info.table (State.extend_path state id "#");
+      set_uncalled func_ty;
+      Printf.printf "set size: %d\n" (TypeSet.Set.length !global_uncalled);
       func_ty
     )
   | Call(func, pos, star, block_arg) -> (
@@ -359,19 +370,21 @@ and apply_func fun_ty args_ty star_ty block_arg_ty call =
     let env = State.new_state ~parent:info.env State.Function in
     let _ = push_call call in
     let _ = bind_param_tys env node_info.args args_ty in
-    transform node_info.body env)
+    let ret_ty = transform node_info.body env in
+    fun_ty_set_ret_ty fun_ty ret_ty;
+    ret_ty)
 
 let apply_uncalled () =
-  Hashtbl.iter global_uncalled ~f:(fun ~key:fun_ty ~data:d ->
+  Printf.printf "set size here: %d\n" (TypeSet.Set.length !global_uncalled);
+  TypeSet.Set.iter !global_uncalled (fun fun_ty ->
+      Printf.printf "hha: \n";
       let info = Type.fun_ty_info fun_ty in
       let node_info = func_node_info info.fun_node in
       let id = name_node_id node_info.name in
       let env = State.new_state ~parent:info.env State.Function in
       let ret_ty = transform node_info.body env in
-      Printf.printf "id: %s\n" id;
-      ignore(fun_ty_set_ret_ty fun_ty ret_ty)
-    )
-
+      Printf.printf "apply id: %s\n" id;
+      ignore(fun_ty_set_ret_ty fun_ty ret_ty))
 
 let transform_expr node state =
   ignore(transform node state);

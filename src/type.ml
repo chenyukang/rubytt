@@ -112,6 +112,7 @@ let rec type_equal ty1 ty2 =
       (type_equal t1 t2)
   | _, _ -> phys_equal ty1 ty2
 
+
 let new_ty_info() =
   {
     file = ""; mutated = false;
@@ -396,3 +397,14 @@ let fun_ty_info ty =
   match ty.ty with
   | Fun_ty(info) -> info
   | _ -> failwith "fun_ty_info error type"
+
+let compare_type_t t1 t2=
+  if type_equal t1 t2 then 0
+  else
+    -1
+
+let type_t_of_sexp s =
+  unkown_ty
+
+let sexp_of_type_t ty =
+  Int.sexp_of_t 1
