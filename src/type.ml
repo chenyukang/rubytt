@@ -13,7 +13,7 @@ and
 }
 and
   fun_info = {
-  fun_node: node;
+  fun_node: node_t;
   cls_ty: type_t option;
   self_ty: type_t option;
   env: state_t option;
@@ -39,7 +39,7 @@ and ty =
   | Union_ty of (type_t, bool) Hashtbl.t
   | Tuple_ty of type_t list
   (* elem_ty * positional * values *)
-  | List_ty of type_t * type_t list * Node.node list
+  | List_ty of type_t * type_t list * node_t list
   | Fun_ty of fun_info
 and
   type_t = {
@@ -58,8 +58,8 @@ and kind =
   | ConstK
 and
   binding_ty = {
-  node: node;
-  refs: (Node.node, bool) Hashtbl.t;
+  node: node_t;
+  refs: (Node.node_t, bool) Hashtbl.t;
   qname: string;
   bind_file: string;
   bind_ty: type_t;

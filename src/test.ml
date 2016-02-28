@@ -20,7 +20,7 @@ let rec run_dir dir =
       begin
         let j = run_dump_ruby p in
         let ast = build_ast_from_file j in
-        Trans.clear();
+        Global.clear();
         let _ = Trans.transform_expr ast Type.global_table in
         let ast_str = node_to_str ast 0 in
         let tys_str = table_to_str Type.global_table 0 in

@@ -1,35 +1,7 @@
 open Core.Std
-open Typestack
 open Node
 open Type
-
-module TypeSet : sig
-  type t = Type.type_t
-  include Comparable.S with type t := t
-end = struct
-  module T = struct
-    type t = Type.type_t with sexp
-    let compare t1 t2 =
-      Type.compare_type_t t1 t2
-  end
-  include T
-  include Comparable.Make(T)
-end
-
-let global_refs: (Node.node, Type.binding_ty list) Hashtbl.t = Hashtbl.Poly.create();;
-let global_resolved: (Node.node, bool) Hashtbl.t = Hashtbl.Poly.create();;
-let global_unresolved: (Node.node, bool) Hashtbl.t = Hashtbl.Poly.create();;
-let global_uncalled = ref TypeSet.Set.empty;;
-let global_calltack: (Node.node, bool) Hashtbl.t = Hashtbl.Poly.create();;
-
-let clear() =
-  State.state_clear Type.global_table;
-  Hashtbl.clear global_refs;
-  Hashtbl.clear global_resolved;
-  Hashtbl.clear global_unresolved;
-  global_uncalled := TypeSet.Set.empty;
-  Hashtbl.clear global_calltack;
-  Node.lambda_coutner := 0
+open Global
 
 let state_add_mode = ref 0;;
 let state_insert st id node ty kind =
@@ -39,41 +11,9 @@ let state_insert st id node ty kind =
   else
     State.state_add_bind st id b
 
-let put_refs node bs =
-  let binded = Hashtbl.find global_refs node in
-  match binded with
-  | None ->  (
-      ignore(Hashtbl.add global_refs ~key:node ~data:bs)
-    )
-  | Some(v) -> (
-      List.iter bs ~f:(fun b -> Type.binding_add_ref b node);
-      ignore(Hashtbl.replace global_refs ~key:node ~data:(v @ bs));
-    )
-
 let put_ref node bind =
   let bs = [bind] in
-  put_refs node bs
-
-let set_resolve node =
-  ignore(Hashtbl.add global_resolved ~key:node ~data:true);
-  Hashtbl.remove global_unresolved node
-
-let set_unresolve node =
-  ignore(Hashtbl.add global_unresolved ~key:node ~data:true)
-
-let set_uncalled ty =
-  global_uncalled := TypeSet.Set.add !global_uncalled ty
-
-let set_called ty =
-  global_uncalled := TypeSet.Set.remove !global_uncalled ty
-
-let push_call call =
-  Hashtbl.add global_calltack ~key:call ~data:true
-
-let contains_call call =
-  match Hashtbl.find global_calltack call with
-  | Some(_) -> true
-  | _ -> false
+  Global.put_refs node bs
 
 let get_modulebinding_if_global st name =
   let res = ref None in
@@ -115,7 +55,7 @@ let rec lookup_attr state id =
 let lookup_attr_tagged st attr tag =
   lookup_attr st (Util.make_tag_id attr tag)
 
-let rec bind state (target:node) rt kind =
+let rec bind state (target:node_t) rt kind =
   match target.ty with
   | Name _ -> bind_name state target rt kind
   | Array(elems) -> (
@@ -153,7 +93,7 @@ and lookup_or_create_module state locator file =
     )
 
 and
-  bind_node state (target:node) rt =
+  bind_node state (target:node_t) rt =
   let kind = match State.s_type state with
     | State.Function -> Type.VariableK
     | State.Class | State.Instance -> Type.AttributeK
@@ -190,7 +130,7 @@ and
   | _ -> (Printf.printf "error array assign size mismtach: %d 0\n" elems_size)
 
 and
-  transform (node:node) state =
+  transform (node:node_t) state =
   match node.ty with
   | Nil -> Type.unkown_ty
   | Int(_) -> Type.int_ty
@@ -216,14 +156,14 @@ and
       match state_lookup state id with
       | Some(bs) -> (
           (* put_refs node bs; *)
-          set_resolve node;
+          Global.set_resolve node;
           make_unions_from_bs bs
         )
       | _ when id = "true" || id = "false" -> (
           Type.bool_ty
         )
       | _ -> ( Printf.printf "error: unbound variable for %s\n" id;
-               set_unresolve node;
+               Global.set_unresolve node;
                Type.unkown_ty)
     )
   | BinOp(_, ln, rn) -> (
@@ -312,8 +252,7 @@ and
       State.set_parent func_ty.info.table state;
       let id = name_node_id info.name in
       State.set_path func_ty.info.table (State.extend_path state id "#");
-      set_uncalled func_ty;
-      Printf.printf "set size: %d\n" (TypeSet.Set.length !global_uncalled);
+      Global.set_uncalled func_ty;
       func_ty
     )
   | Call(func, pos, star, block_arg) -> (
@@ -361,23 +300,22 @@ and bind_param_tys env args args_types =
     )
 
 and apply_func fun_ty args_ty star_ty block_arg_ty call =
-  set_called fun_ty;
-  if not (is_nil call) && (contains_call call) then
+  Global.set_called fun_ty;
+  if not (is_nil call) && (Global.contains_call call) then
     Type.unkown_ty
   else (
     let info = Type.fun_ty_info fun_ty in
     let node_info = func_node_info info.fun_node in
     let env = State.new_state ~parent:info.env State.Function in
-    let _ = push_call call in
+    let _ = Global.push_call call in
     let _ = bind_param_tys env node_info.args args_ty in
     let ret_ty = transform node_info.body env in
     fun_ty_set_ret_ty fun_ty ret_ty;
     ret_ty)
 
 let apply_uncalled () =
-  Printf.printf "set size here: %d\n" (TypeSet.Set.length !global_uncalled);
-  TypeSet.Set.iter !global_uncalled (fun fun_ty ->
-      Printf.printf "hha: \n";
+  Printf.printf "set size here: %d\n" (TypeSet.Set.length !Global.uncalled);
+  TypeSet.Set.iter !Global.uncalled (fun fun_ty ->
       let info = Type.fun_ty_info fun_ty in
       let node_info = func_node_info info.fun_node in
       let id = name_node_id node_info.name in

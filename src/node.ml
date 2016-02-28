@@ -43,23 +43,23 @@ type node_info = {
   ee: int;
 }
 type fun_node_info = {
-  locator: node;
-  name: node;
-  args: node list;
-  defaults: node list;
-  kw_ks: node list;
-  kw_vs: node list;
-  after_rest: node list;
-  block_arg: node;
-  body: node;
+  locator: node_t;
+  name: node_t;
+  args: node_t list;
+  defaults: node_t list;
+  kw_ks: node_t list;
+  kw_vs: node_t list;
+  after_rest: node_t list;
+  block_arg: node_t;
+  body: node_t;
   doc: string;
   is_lambda: bool
 }
 and
   node_type =
   | Nil
-  | Index of node
-  | Kwd of string * node
+  | Index of node_t
+  | Kwd of string * node_t
   | Int of int
   | Float of float
   | String of string
@@ -67,35 +67,35 @@ and
   | Control of string
   | Void
   | Name of string * name_ty
-  | Block of node list
-  | BinOp of op * node * node (* left op * right op *)
-  | UnaryOp of op * node
-  | While of node * node
-  | Assign of node * node
-  | Yield of node
-  | Return of node
-  | Attribute of node * node
-  | Try of node * node * node * node
-  | If of node * node * node
-  | For of node * node * node
-  | Regexp of node * node
-  | Undef of node list
-  | StrEmbed of node
-  | Starred of node
-  | Array of node list
-  | Module of node * node * node * string
-  | Subscript of node * node list
-  | Class of node * node * node * string * bool
-  | Handler of node list * node * node * node
-  | Dict of node list * node list
-  | Call of node * node list * node * node
+  | Block of node_t list
+  | BinOp of op * node_t * node_t (* left op * right op *)
+  | UnaryOp of op * node_t
+  | While of node_t * node_t
+  | Assign of node_t * node_t
+  | Yield of node_t
+  | Return of node_t
+  | Attribute of node_t * node_t
+  | Try of node_t * node_t * node_t * node_t
+  | If of node_t * node_t * node_t
+  | For of node_t * node_t * node_t
+  | Regexp of node_t * node_t
+  | Undef of node_t list
+  | StrEmbed of node_t
+  | Starred of node_t
+  | Array of node_t list
+  | Module of node_t * node_t * node_t * string
+  | Subscript of node_t * node_t list
+  | Class of node_t * node_t * node_t * string * bool
+  | Handler of node_t list * node_t * node_t * node_t
+  | Dict of node_t list * node_t list
+  | Call of node_t * node_t list * node_t * node_t
   | Func of fun_node_info
 
 and
-  node = {
+  node_t = {
   info: node_info;
   ty: node_type;
-  mutable parent: node option;
+  mutable parent: node_t option;
 }
 
 let rec get_ast_root node =
@@ -444,4 +444,21 @@ let make_call_node func pos star block_arg file s e =
   } in
   add_children node ([func; star; block_arg] @ pos);
   node
+
+
+let compare_node_t n1 n2 =
+  let f1 = n1.info in
+  let f2 = n2.info in
+  if f1.file <> f2.file then
+    String.compare f1.file f2.file
+  else (
+    if f1.ss <> f2.ss then Int.compare f1.ss f2.ss
+    else Int.compare f1.ee f2.ee
+  )
+
+let node_t_of_sexp s =
+  nil_node
+
+let sexp_of_node_t ty =
+  Int.sexp_of_t 1
 
