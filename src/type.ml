@@ -6,7 +6,7 @@ open Node
 type
   state_t = (type_t, binding_ty) state
 and
-  ty_info = {
+  ty_info_t = {
   file: string;
   mutated: bool;
   table: state_t;
@@ -43,7 +43,7 @@ and ty =
   | Fun_ty of fun_info
 and
   type_t = {
-  mutable info: ty_info;
+  mutable ty_info: ty_info_t;
   mutable ty: ty;
 }
 and kind =
@@ -75,14 +75,14 @@ let global_table =
 
 let type_stack = TypeStack.empty;;
 
-let is_mutated (t: type_t) = t.info.mutated
+let is_mutated (t: type_t) = t.ty_info.mutated
 
-let set_mutated t m = t.info <- {t.info with mutated = m}
+let set_mutated t m = t.ty_info <- {t.ty_info with mutated = m}
 
-let set_file t f = t.info <- {t.info with file = f}
+let set_file t f = t.ty_info <- {t.ty_info with file = f}
 
 let set_table (t: type_t) (table: state_t) =
-  t.info <- {t.info with table = table}
+  t.ty_info <- {t.ty_info with table = table}
 
 let is_undecided_bool t =
   match t.ty with
@@ -120,13 +120,13 @@ let new_ty_info() =
   }
 
 let new_bool_type ?(v=Undecided) ?(s1=None) ?(s2=None) () =
-  { info = new_ty_info();
+  { ty_info = new_ty_info();
     ty = Bool_ty(v, s1, s2);
   }
 
 let bool_set_value b v =
   match b.ty with
-  | Bool_ty(_, s1, s2) -> {info = b.info; ty = Bool_ty(v, s1, s2)}
+  | Bool_ty(_, s1, s2) -> {ty_info = b.ty_info; ty = Bool_ty(v, s1, s2)}
   | _ -> failwith "bool_set_value"
 
 let bool_set_s1 b s1 =
@@ -147,25 +147,25 @@ let bool_swap b =
 
 let new_int_type () =
   {
-    info = new_ty_info();
+    ty_info = new_ty_info();
     ty = Int_ty;
   }
 
 let new_float_type () =
   {
-    info = new_ty_info();
+    ty_info = new_ty_info();
     ty = Float_ty;
   }
 
 let new_str_type ?(value="") () =
   {
-    info = new_ty_info();
+    ty_info = new_ty_info();
     ty = Str_ty(value);
   }
 
 let new_sym_type ?(name="") () =
   {
-    info = new_ty_info();
+    ty_info = new_ty_info();
     ty = Sym_ty(name);
   }
 
@@ -190,7 +190,7 @@ let cassty_get_canon c =
   | _ -> None
 
 let new_class_type name parent ?(super = None) () =
-  let ret = { info = new_ty_info();
+  let ret = { ty_info = new_ty_info();
               ty = Class_ty(name, None, None);
             } in
   let state = (State.new_state ~parent:parent State.Class) in
@@ -203,13 +203,13 @@ let new_class_type name parent ?(super = None) () =
   (match super with
    | Some(s) -> (
        classty_add_super ret super;
-       State.set_supers state (Some s.info.table) (* Fixme *)
+       State.set_supers state (Some s.ty_info.table) (* Fixme *)
      )
    | _ -> ());
   ret
 
 let new_module_type name file parent =
-  let ret = { info = new_ty_info();
+  let ret = { ty_info = new_ty_info();
               ty = Module_ty(name, file); } in
   let state = (State.new_state ~parent:parent State.Module) in
   set_table ret state;
@@ -222,7 +222,7 @@ let new_module_type name file parent =
 
 let new_instance_type class_ty =
   {
-    info = new_ty_info();
+    ty_info = new_ty_info();
     ty = Instance_ty(class_ty);
   }
 
@@ -260,7 +260,7 @@ let rec union_ty_add_ty u t =
 
 let new_union_type ?(elems = []) () =
   let res = {
-    info = new_ty_info();
+    ty_info = new_ty_info();
     ty = Union_ty(Hashtbl.Poly.create ());
   } in
   List.iter elems ~f:(fun e -> union_ty_add_ty res e);
@@ -274,13 +274,13 @@ let union_ty_is_empty t =
 
 let new_tuple_type elem_tys =
   {
-    info = new_ty_info();
+    ty_info = new_ty_info();
     ty = Tuple_ty(elem_tys)
   }
 
 let new_binding node ttype kind =
   {
-    qname = ttype.info.table.path;
+    qname = ttype.ty_info.table.path;
     kind = kind;
     node = node;
     bind_file = node.info.file;
@@ -305,7 +305,7 @@ let union_ty_remove u t =
       let new_t = Hashtbl.copy _t in
       Hashtbl.remove new_t t;
       {
-        info = new_ty_info();
+        ty_info = new_ty_info();
         ty = Union_ty(new_t);
       }
     )
@@ -335,7 +335,7 @@ let make_unions types =
 
 let new_list_type ?(ty = unkown_ty) () =
   {
-    info = new_ty_info();
+    ty_info = new_ty_info();
     ty = List_ty(ty, [], [])
   }
 
@@ -375,7 +375,7 @@ let get_subscript_ty vt st =
 
 let new_fun_ty func env =
   {
-    info = new_ty_info();
+    ty_info = new_ty_info();
     ty = Fun_ty({fun_node = func; cls_ty = None; self_ty = None;
                  env = env;  def_tys = []; ret_ty = unkown_ty;
                  is_class = false});
@@ -383,19 +383,19 @@ let new_fun_ty func env =
 
 let fun_ty_set_def_tys ty args_ty =
   match ty.ty with
-  | Fun_ty(info) ->
-      ty.ty <- Fun_ty({info with def_tys = args_ty})
+  | Fun_ty(ty_info) ->
+      ty.ty <- Fun_ty({ty_info with def_tys = args_ty})
   | _ -> failwith "fun_ty_set_defaults_ty error type"
 
 let fun_ty_set_ret_ty ty ret_ty =
   match ty.ty with
-  | Fun_ty(info) ->
-    ty.ty <- Fun_ty({info with ret_ty = ret_ty})
+  | Fun_ty(ty_info) ->
+    ty.ty <- Fun_ty({ty_info with ret_ty = ret_ty})
   | _ -> failwith "fun_ty_set_ret_ty error type"
 
 let fun_ty_info ty =
   match ty.ty with
-  | Fun_ty(info) -> info
+  | Fun_ty(ty_info) -> ty_info
   | _ -> failwith "fun_ty_info error type"
 
 let compare_type_t t1 t2=

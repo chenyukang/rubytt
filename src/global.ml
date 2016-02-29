@@ -1,6 +1,4 @@
-open Core.Std
-open Node
-open Type
+open Core.Std;;
 
 module TypeSet : sig
   type t = Type.type_t
@@ -28,21 +26,20 @@ end = struct
   include Comparable.Make(T)
 end
 
-(* module TypeHash : sig *)
-(*     type t = Type.type_t *)
-(*     include Hashable.S with type t := t *)
-(*   end = struct *)
-(*     module T = struct *)
-(*       type t = Type.type_t with sexp, compare *)
-(*       let hash t = *)
-(*         (String.hash t.info.file) *)
-(*     end *)
-(*     include T *)
-(*     include Hashable.Make(T) *)
-(* end *)
+module NodeHash : sig
+  type t = Node.node_t
+  include Hashable.S with type t := t
+end = struct
+    module T = struct
+      type t = Node.node_t with sexp, compare
+      let hash t = Node.node_t_hash t
+    end
+    include T
+    include Hashable.Make(T)
+end
 
 
-let refs: (Node.node_t, Type.binding_ty list) Hashtbl.t = Hashtbl.Poly.create();;
+let refs = Hashtbl.create ~hashable:NodeHash.hashable ();;
 let resolved = ref NodeSet.Set.empty;;
 let unresolved = ref NodeSet.Set.empty;;
 let callstack = ref NodeSet.Set.empty;;
