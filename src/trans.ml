@@ -194,7 +194,7 @@ and
       else (
         let target_ty = transform target state in
         let id = name_node_id attr in
-        let bs = lookup_attr target_ty.ty_info.table id in
+        let bs = lookup_attr target_ty.info.table id in
         match bs with
         | Some(_bs) -> make_unions_from_bs _bs
         | _ -> (
@@ -249,9 +249,9 @@ and
       let args_ty = List.map info.defaults ~f:(fun arg -> transform arg state) in
       fun_ty_set_def_tys func_ty args_ty;
       bind_name state info.name func_ty Type.MethodK;
-      State.set_parent func_ty.ty_info.table state;
+      State.set_parent func_ty.info.table state;
       let id = name_node_id info.name in
-      State.set_path func_ty.ty_info.table (State.extend_path state id "#");
+      State.set_path func_ty.info.table (State.extend_path state id "#");
       Global.set_uncalled func_ty;
       func_ty
     )
@@ -265,8 +265,8 @@ and
   | Module(locator, name, body, _) -> (
       let module_ty = lookup_or_create_module state locator node.info.file in
       bind state name module_ty Type.ModuleK;
-      state_insert module_ty.ty_info.table "self" name module_ty Type.ScopeK;
-      ignore(transform body module_ty.ty_info.table);
+      state_insert module_ty.info.table "self" name module_ty Type.ScopeK;
+      ignore(transform body module_ty.info.table);
       Printf.printf "module name: %s\n" (name_node_id name);
       module_ty
     )
@@ -278,8 +278,8 @@ and
       let parent = Some(state) in
       let class_ty = new_class_type id parent ~super:None () in
       bind state name class_ty Type.ClassK;
-      state_insert class_ty.ty_info.table "self" name class_ty Type.ScopeK;
-      ignore(transform body class_ty.ty_info.table);
+      state_insert class_ty.info.table "self" name class_ty Type.ScopeK;
+      ignore(transform body class_ty.info.table);
       Type.cont_ty
     )
   | Kwd(_, v) | Return(v) | Starred(v) | Yield(v)

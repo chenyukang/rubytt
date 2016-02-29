@@ -136,7 +136,7 @@ let test_type() =
   assert_equal (type_equal a b) true;
   assert_equal (is_mutated a) false;
   set_file a "file";
-  assert_equal (a.ty_info.file) "file";
+  assert_equal (a.info.file) "file";
   set_mutated a true;
   assert_equal (is_mutated a) true;
   assert_equal (is_undecided_bool a) true

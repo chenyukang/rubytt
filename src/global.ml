@@ -1,4 +1,4 @@
-open Core.Std;;
+open Core.Std
 
 module TypeSet : sig
   type t = Type.type_t
