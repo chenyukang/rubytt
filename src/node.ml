@@ -342,6 +342,11 @@ let try_attr_to_name attr =
 
 let is_attr node = match node.ty with | Attribute(_) -> true |_ -> false
 
+let attr_target node =
+  match node.ty with
+  | Attribute(target, _) -> target
+  | _ -> failwith "error type attr_target"
+
 let make_undef_node targets file s e =
   let node = {
     info = {path=""; file = file; ss = s; ee = e };

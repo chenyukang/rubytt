@@ -245,13 +245,21 @@ and
       make_unions [body_ty; else_ty; rescue_ty; final_ty]
     )
   | Func(info) -> (
-      let func_ty = new_fun_ty node (Some state) in
-      let args_ty = List.map info.defaults ~f:(fun arg -> transform arg state) in
+      let _state = ref state in (
+      if is_attr info.locator then
+        let loc_ty = transform (attr_target info.locator) state in
+        if not (type_equal loc_ty unkown_ty) then
+          _state := loc_ty.info.table);
+      let func_ty = new_fun_ty node (Some !_state) in
+      let args_ty = List.map info.defaults ~f:(fun arg -> transform arg !_state) in
+      let state_ty = ty_of_state !_state in
+      if (not info.is_lambda) && (is_class_ty state_ty) then
+        fun_ty_set_class_ty func_ty (Some state_ty);
       fun_ty_set_def_tys func_ty args_ty;
-      bind_name state info.name func_ty Type.MethodK;
-      State.set_parent func_ty.info.table state;
+      bind_name !_state info.name func_ty Type.MethodK;
+      State.set_parent func_ty.info.table !_state;
       let id = name_node_id info.name in
-      State.set_path func_ty.info.table (State.extend_path state id "#");
+      State.set_path func_ty.info.table (State.extend_path !_state id "#");
       Global.set_uncalled func_ty;
       func_ty
     )

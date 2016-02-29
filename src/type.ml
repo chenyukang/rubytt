@@ -14,7 +14,7 @@ and
 and
   fun_info = {
   fun_node: node_t;
-  cls_ty: type_t option;
+  class_ty: type_t option;
   self_ty: type_t option;
   env: state_t option;
   def_tys: type_t list;
@@ -83,6 +83,7 @@ let set_file t f = t.info <- {t.info with file = f}
 
 let set_table (t: type_t) (table: state_t) =
   t.info <- {t.info with table = table}
+
 
 let is_undecided_bool t =
   match t.ty with
@@ -207,6 +208,10 @@ let new_class_type name parent ?(super = None) () =
      )
    | _ -> ());
   ret
+
+let is_class_ty ty =
+  match ty.ty with
+  | Class_ty(_) -> true | _ -> false
 
 let new_module_type name file parent =
   let ret = { info = new_ty_info();
@@ -376,7 +381,7 @@ let get_subscript_ty vt st =
 let new_fun_ty func env =
   {
     info = new_ty_info();
-    ty = Fun_ty({fun_node = func; cls_ty = None; self_ty = None;
+    ty = Fun_ty({fun_node = func; class_ty = None; self_ty = None;
                  env = env;  def_tys = []; ret_ty = unkown_ty;
                  is_class = false});
   }
@@ -393,6 +398,12 @@ let fun_ty_set_ret_ty ty ret_ty =
     ty.ty <- Fun_ty({info with ret_ty = ret_ty})
   | _ -> failwith "fun_ty_set_ret_ty error type"
 
+let fun_ty_set_class_ty ty cls_ty =
+  match ty.ty with
+  | Fun_ty(info) ->
+    ty.ty <- Fun_ty({info with class_ty = cls_ty})
+  | _ -> failwith "fun_ty_set_class_ty error type"
+           
 let fun_ty_info ty =
   match ty.ty with
   | Fun_ty(info) -> info
@@ -408,3 +419,8 @@ let type_t_of_sexp s =
 
 let sexp_of_type_t ty =
   Int.sexp_of_t 1
+
+let ty_of_state state =
+  match (state.t_type) with
+  | Some(ty) -> ty
+  | None -> unkown_ty
