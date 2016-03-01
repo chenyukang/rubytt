@@ -3,12 +3,26 @@
   (Name Demo)
   (Nil)
    (Block 
+    (Func initialize
+     (body: 
+      (Block 
+       (Call puts
+        (args: 
+         (String initialize)))
+       (Assign 
+        (Name a)
+        (Int 1)))))
     (Func test
      (body: 
       (Block 
        (Call puts
         (args: 
-         (String hello))))))))
+         (String hello)))
+       (Call puts
+        (args: 
+         (BinOp:Add 
+          (String @a: )
+          (Nil)))))))))
  (Assign 
   (Name demo)
   (Call 
@@ -25,3 +39,4 @@
 bind: demo ty: Inst_ty: Demo
 bind: Demo ty: Class_ty: Demo
   bind: test ty: Func_ty: [] => unkown_ty
+  bind: initialize ty: Func_ty: [] => Int_ty

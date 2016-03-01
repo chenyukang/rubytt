@@ -416,6 +416,12 @@ let fun_ty_set_class_ty ty cls_ty =
     ty.ty <- Fun_ty({info with class_ty = cls_ty})
   | _ -> failwith "fun_ty_set_class_ty error type"
 
+let fun_ty_set_self_ty ty self_ty =
+  match ty.ty with
+  | Fun_ty(info) ->
+    ty.ty <- Fun_ty({info with self_ty = self_ty})
+  | _ -> failwith "fun_ty_set_self_ty error type"
+
 let fun_ty_info ty =
   match ty.ty with
   | Fun_ty(info) -> info

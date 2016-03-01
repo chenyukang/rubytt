@@ -52,6 +52,12 @@ let rec lookup_attr state id =
           res)
     )
 
+let lookup_attr_ty state id =
+  let bs = lookup_attr state id in
+  match bs with
+  | Some(_bs) -> make_unions_from_bs _bs
+  | _ -> unkown_ty
+
 let lookup_attr_tagged st attr tag =
   lookup_attr st (Util.make_tag_id attr tag)
 
@@ -310,6 +316,17 @@ and resolve_call fun_ty name args_ty star_ty block_arg_ty call state =
       (* class contructor *)
       let class_ty = fun_ty in
       let inst_ty = new_instance_type class_ty in
+      let inst_state = inst_ty.info.table in
+      let init_func_ty = lookup_attr_ty inst_state "initialize" in
+      classty_set_canon class_ty (Some inst_ty);
+      if not (type_equal init_func_ty unkown_ty) then (
+        let bs = lookup_attr inst_state "initialize" in
+        (match bs with
+        | Some(_bs) -> Global.put_refs name _bs
+        | _ -> ());
+        fun_ty_set_self_ty init_func_ty (Some inst_ty);
+        ignore(apply_func init_func_ty args_ty star_ty block_arg_ty call);
+      );
       inst_ty
     )
   | _ -> (Printf.printf "try to resolve_call: unkown_ty\n"); Type.unkown_ty
