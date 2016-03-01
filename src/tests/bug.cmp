@@ -30,4 +30,4 @@
 
 ----------------------------------------
 
-bind: demo ty: Func_ty: [Int_ty] => unkown_ty
+bind: demo ty: Func_ty: [Int_ty] => Unkown_ty

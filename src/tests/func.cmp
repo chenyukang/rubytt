@@ -13,4 +13,4 @@
 
 ----------------------------------------
 
-bind: print ty: Func_ty: [Int_ty Int_ty] => unkown_ty
+bind: print ty: Func_ty: [Int_ty Int_ty] => Unkown_ty

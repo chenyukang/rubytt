@@ -34,6 +34,7 @@ let set_path st path = st.path <- path
 let set_supers st supers = st.supers <- supers
 let parent st = st.parent
 let s_type st = st.s_type
+let super st = st.supers
 
 let remove st id =
   Hashtbl.remove st.s_table id

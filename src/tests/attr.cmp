@@ -42,6 +42,6 @@
 
 bind: a ty: Inst_ty: Demo
 bind: Demo ty: Class_ty: Demo
-  bind: test ty: Func_ty: [Int_ty] => unkown_ty
+  bind: test ty: Func_ty: [Int_ty] => Unkown_ty
   bind: b ty: Int_ty
   bind: initialize ty: Func_ty: [] => Int_ty

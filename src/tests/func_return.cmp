@@ -49,8 +49,8 @@
 
 ----------------------------------------
 
-bind: max ty: Func_ty: [Int_ty Int_ty] => [(Int_ty)|(Str_ty)]
+bind: max ty: Func_ty: [Int_ty Int_ty] => {(Int_ty)|(Str_ty)}
 bind: demo ty: Func_ty: [] => Int_ty
-bind: hah ty: Func_ty: [Int_ty] => unkown_ty
+bind: hah ty: Func_ty: [Int_ty] => Unkown_ty
 bind: y ty: Int_ty
 bind: x ty: Int_ty

@@ -52,11 +52,14 @@ let rec lookup_attr state id =
           res)
     )
 
-let lookup_attr_ty state id =
+let rec lookup_attr_ty state id =
   let bs = lookup_attr state id in
   match bs with
   | Some(_bs) -> make_unions_from_bs _bs
-  | _ -> unkown_ty
+  | _ -> (
+      match State.super state with
+      | Some(super) -> lookup_attr_ty super id
+      | _ -> unkown_ty)
 
 let lookup_attr_tagged st attr tag =
   lookup_attr st (Util.make_tag_id attr tag)
@@ -273,16 +276,14 @@ and
       let _func = ref func in
       let _name = ref nil_node in
       if is_attr func then (
-        if attr_id func = "new" then (
-          _func := attr_target func;
-          _name := attr_attr func
-        )
+        _func := attr_target func;
+        _name := attr_attr func;
+        Printf.printf "set name here: %s\n" (name_node_id !_name);
       );
       let fun_ty = transform !_func state in
       let args_ty = List.map pos ~f:(fun x -> transform x state) in
       let star_ty = transform star state in
       let block_arg_ty = transform block_arg state in
-
       resolve_call fun_ty !_name args_ty star_ty block_arg_ty node state
     )
   | Module(locator, name, body, _) -> (
@@ -293,13 +294,14 @@ and
       Printf.printf "module name: %s\n" (name_node_id name);
       module_ty
     )
-  | Class(name, _, body, _, static) -> (
+  | Class(name, super, body, _, static) -> (
       if (is_nil name) = false && static then (
 
       );
       let id = name_node_id name in
       let parent = Some(state) in
-      let class_ty = new_class_type id parent ~super:None () in
+      let super_ty = transform super state in
+      let class_ty = new_class_type id parent ~super:(Some super_ty) () in
       bind state name class_ty Type.ClassK;
       state_insert class_ty.info.table "self" name class_ty Type.ScopeK;
       ignore(transform body class_ty.info.table);
@@ -313,21 +315,41 @@ and resolve_call fun_ty name args_ty star_ty block_arg_ty call state =
   match fun_ty.ty with
   | Fun_ty(_) -> apply_func fun_ty args_ty star_ty block_arg_ty call
   | Class_ty(_) -> (
-      (* class contructor *)
-      let class_ty = fun_ty in
-      let inst_ty = new_instance_type class_ty in
-      let inst_state = inst_ty.info.table in
-      let init_func_ty = lookup_attr_ty inst_state "initialize" in
-      classty_set_canon class_ty (Some inst_ty);
-      if not (type_equal init_func_ty unkown_ty) then (
-        let bs = lookup_attr inst_state "initialize" in
-        (match bs with
-        | Some(_bs) -> Global.put_refs name _bs
-        | _ -> ());
-        fun_ty_set_self_ty init_func_ty (Some inst_ty);
-        ignore(apply_func init_func_ty args_ty star_ty block_arg_ty call);
-      );
-      inst_ty
+      let id = name_node_id name in
+      match id with
+      | "new" -> (
+          (* class contructor *)
+          let class_ty = fun_ty in
+          let inst_ty = new_instance_type class_ty in
+          let inst_state = inst_ty.info.table in
+          let init_func_ty = lookup_attr_ty inst_state "initialize" in
+          classty_set_canon class_ty (Some inst_ty);
+          if not (type_equal init_func_ty unkown_ty) then (
+            let bs = lookup_attr inst_state "initialize" in
+            (match bs with
+             | Some(_bs) -> Global.put_refs name _bs
+             | _ -> ());
+            fun_ty_set_self_ty init_func_ty (Some inst_ty);
+            ignore(apply_func init_func_ty args_ty star_ty block_arg_ty call);
+          );
+          inst_ty
+        )
+      | _ -> (
+          Printf.printf "error method name: %s\n" id;
+          ignore(failwith "resolve_call");
+          unkown_ty
+        )
+    )
+  | Instance_ty(class_ty) -> (
+      if not (Type.is_unkown_ty fun_ty) then (
+        let id = name_node_id name in
+        let method_ty = lookup_attr_ty class_ty.info.table id in
+        if Type.is_unkown_ty method_ty then (
+          Printf.printf "error unkown method: %s\n" id;
+          unkown_ty
+        ) else
+          apply_func method_ty args_ty star_ty block_arg_ty call
+      ) else unkown_ty
     )
   | _ -> (Printf.printf "try to resolve_call: unkown_ty\n"); Type.unkown_ty
 
@@ -359,9 +381,9 @@ let apply_uncalled () =
       let info = Type.fun_ty_info fun_ty in
       let node_info = func_node_info info.fun_node in
       let id = name_node_id node_info.name in
+      Printf.printf "apply id: %s\n" id;
       let env = State.new_state ~parent:info.env State.Function in
       let ret_ty = transform node_info.body env in
-      Printf.printf "apply id: %s\n" id;
       ignore(fun_ty_set_ret_ty fun_ty ret_ty))
 
 let transform_expr node state =

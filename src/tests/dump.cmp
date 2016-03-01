@@ -3189,22 +3189,22 @@
 
 bind: hash_max_nest ty: Func_ty: [] => Int_ty
 bind: AstSimplifier ty: Class_ty: AstSimplifier
-  bind: make_string ty: Func_ty: [unkown_ty] => unkown_ty
-  bind: convert ty: Func_ty: [] => unkown_ty
-  bind: negate ty: Func_ty: [] => unkown_ty
-  bind: args_to_array ty: Func_ty: [] => unkown_ty
-  bind: convert_array ty: Func_ty: [] => unkown_ty
+  bind: make_string ty: Func_ty: [Unkown_ty] => Unkown_ty
+  bind: convert ty: Func_ty: [] => Unkown_ty
+  bind: negate ty: Func_ty: [] => Unkown_ty
+  bind: args_to_array ty: Func_ty: [] => Unkown_ty
+  bind: convert_array ty: Func_ty: [] => Unkown_ty
   bind: ident_end ty: Func_ty: [] => Int_ty
-  bind: find_locations ty: Func_ty: [] => unkown_ty
-  bind: detect_encoding ty: Func_ty: [] => unkown_ty
-  bind: find_line_starts ty: Func_ty: [] => unkown_ty
-  bind: simplify ty: Func_ty: [] => unkown_ty
-  bind: node_start ty: Func_ty: [] => unkown_ty
-  bind: convert_when ty: Func_ty: [] => unkown_ty
-  bind: find_docs ty: Func_ty: [] => unkown_ty
-  bind: op ty: Func_ty: [] => unkown_ty
-  bind: initialize ty: Func_ty: [] => unkown_ty
-bind: $options ty: unkown_ty
-bind: parse_dump ty: Func_ty: [] => unkown_ty
-bind: lambda%12 ty: Func_ty: [] => unkown_ty
-bind: banner ty: Func_ty: [] => unkown_ty
+  bind: find_locations ty: Func_ty: [] => Unkown_ty
+  bind: detect_encoding ty: Func_ty: [] => Unkown_ty
+  bind: find_line_starts ty: Func_ty: [] => Unkown_ty
+  bind: simplify ty: Func_ty: [] => Unkown_ty
+  bind: node_start ty: Func_ty: [] => Unkown_ty
+  bind: convert_when ty: Func_ty: [] => Unkown_ty
+  bind: find_docs ty: Func_ty: [] => Unkown_ty
+  bind: op ty: Func_ty: [] => Unkown_ty
+  bind: initialize ty: Func_ty: [] => Unkown_ty
+bind: $options ty: Unkown_ty
+bind: parse_dump ty: Func_ty: [] => Unkown_ty
+bind: lambda%12 ty: Func_ty: [] => Unkown_ty
+bind: banner ty: Func_ty: [] => Unkown_ty

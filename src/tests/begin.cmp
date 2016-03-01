@@ -25,5 +25,5 @@
 ----------------------------------------
 
 bind: a ty: Int_ty
-bind: res ty: [(Str_ty)|(Int_ty)]
+bind: res ty: {(Str_ty)|(Int_ty)}
 bind: div ty: Int_ty

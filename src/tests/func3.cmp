@@ -30,4 +30,4 @@
 
 ----------------------------------------
 
-bind: add ty: Func_ty: [] => unkown_ty
+bind: add ty: Func_ty: [] => Unkown_ty

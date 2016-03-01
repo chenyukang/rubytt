@@ -17,4 +17,4 @@
 
 ----------------------------------------
 
-bind: test ty: Func_ty: [] => unkown_ty
+bind: test ty: Func_ty: [] => Unkown_ty

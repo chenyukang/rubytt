@@ -11,4 +11,4 @@
 
 ----------------------------------------
 
-bind: a ty: List_ty: unkown_ty
+bind: a ty: [Unkown_ty]

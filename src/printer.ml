@@ -180,7 +180,8 @@ let rec type_to_str ty depth =
   | Str_ty _  -> "Str_ty"
   | Bool_ty _ -> "Bool_ty"
   | List_ty(elem_ty, _, _) ->
-    Printf.sprintf "List_ty: %s" (type_to_str elem_ty 0)
+    let elem_str = (type_to_str elem_ty 0) in
+    Printf.sprintf "[%s]" elem_str
   | Class_ty(name, _, _) ->
     Printf.sprintf "Class_ty: %s" name
     ^ (table_to_str ty.info.table (depth+1))
@@ -190,17 +191,17 @@ let rec type_to_str ty depth =
   | Instance_ty(class_ty) -> (
       let class_name = classty_get_name class_ty in
       match class_name with
-      | "?" -> "unkown_ty"
-      | "nil" -> "nil_ty"
+      | "?" -> "Unkown_ty"
+      | "nil" -> "Nil_ty"
       | _ ->
         Printf.sprintf "Inst_ty: %s" class_name
     )
   | Union_ty(tys_table)  -> (
-      let res = ref "[" in
+      let res = ref "{" in
       Hashtbl.iter tys_table ~f:(fun ~key:k ~data:_ ->
-          let sep = if !res = "[" then "(" else "|(" in
+          let sep = if !res = "{" then "(" else "|(" in
           res := !res ^ sep ^ (type_to_str k 0) ^ ")");
-      !res ^ "]"
+      !res ^ "}"
     )
   | Fun_ty(info) -> (
       let defaults = ref "[" in

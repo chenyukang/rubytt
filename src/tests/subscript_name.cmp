@@ -12,4 +12,4 @@
 
 ----------------------------------------
 
-bind: demo ty: Func_ty: [] => List_ty: Int_ty
+bind: demo ty: Func_ty: [] => [Int_ty]

@@ -26,5 +26,5 @@
 
 ----------------------------------------
 
-bind: a ty: List_ty: Int_ty
-bind: b ty: List_ty: [(Int_ty)|(Str_ty)]
+bind: a ty: [Int_ty]
+bind: b ty: [{(Int_ty)|(Str_ty)}]

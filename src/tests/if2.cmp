@@ -34,5 +34,5 @@
 
 ----------------------------------------
 
-bind: a ty: [(Int_ty)|(Str_ty)]
+bind: a ty: {(Int_ty)|(Str_ty)}
 bind: c ty: Str_ty

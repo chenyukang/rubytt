@@ -263,6 +263,8 @@ let unkown_ty =
   let class_ty = new_class_type "?" None ~super:None () in
   new_instance_type class_ty
 
+let is_unkown_ty ty =
+  type_equal ty unkown_ty
 
 let rec union_ty_add_ty u t =
   match t.ty with

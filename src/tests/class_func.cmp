@@ -1,7 +1,32 @@
 (Block 
  (Class static: false
-  (Name Demo)
+  (Name Base)
   (Nil)
+   (Block 
+    (Func initialize
+     (body: 
+      (Block 
+       (Assign 
+        (Name a)
+        (Int 1)))))
+    (Func base_base_func
+     (body: 
+      (Block 
+       (Array 
+        (Int 1)
+        (Int 2)
+        (Int 3)))))))
+ (Class static: false
+  (Name Hello)
+  (Name Base)
+   (Block 
+    (Func base_func
+     (body: 
+      (Block 
+       (String here))))))
+ (Class static: false
+  (Name Demo)
+  (Name Hello)
    (Block 
     (Func initialize
      (body: 
@@ -22,7 +47,11 @@
         (args: 
          (BinOp:Add 
           (String @a: )
-          (Nil)))))))))
+          (Nil)))))))
+    (Func hello
+     (body: 
+      (Block 
+       (Int 1))))))
  (Assign 
   (Name demo)
   (Call 
@@ -32,11 +61,47 @@
  (Call 
   (Attribute 
    (Name demo)
-   (Name test))))
+   (Name test)))
+ (Assign 
+  (Name res)
+  (Call 
+   (Attribute 
+    (Name demo)
+    (Name base_func))))
+ (Call puts
+  (args: 
+   (Name res)))
+ (Assign 
+  (Name hello)
+  (Call 
+   (Attribute 
+    (Name demo)
+    (Name hello))))
+ (Call puts
+  (args: 
+   (Name hello)))
+ (Assign 
+  (Name base)
+  (Call 
+   (Attribute 
+    (Name demo)
+    (Name base_base_func))))
+ (Call puts
+  (args: 
+   (Name base))))
 
 ----------------------------------------
 
+bind: hello ty: Int_ty
+bind: base ty: [Int_ty]
 bind: demo ty: Inst_ty: Demo
+bind: res ty: Str_ty
+bind: Base ty: Class_ty: Base
+  bind: base_base_func ty: Func_ty: [] => [Int_ty]
+  bind: initialize ty: Func_ty: [] => Int_ty
+bind: Hello ty: Class_ty: Hello
+  bind: base_func ty: Func_ty: [] => Str_ty
 bind: Demo ty: Class_ty: Demo
-  bind: test ty: Func_ty: [] => unkown_ty
+  bind: hello ty: Func_ty: [] => Int_ty
+  bind: test ty: Func_ty: [] => Unkown_ty
   bind: initialize ty: Func_ty: [] => Int_ty

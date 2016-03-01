@@ -20,5 +20,5 @@
 ----------------------------------------
 
 bind: AstSimplifier ty: Class_ty: AstSimplifier
-  bind: find_line_starts ty: Func_ty: [] => unkown_ty
-  bind: initialize ty: Func_ty: [] => unkown_ty
+  bind: find_line_starts ty: Func_ty: [] => Unkown_ty
+  bind: initialize ty: Func_ty: [] => Unkown_ty
