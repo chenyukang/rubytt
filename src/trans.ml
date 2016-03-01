@@ -18,7 +18,7 @@ let put_ref node bind =
 let get_modulebinding_if_global st name =
   let res = ref None in
   if Util.is_global_name name then
-    if global_table <> st then
+    if not(phys_equal global_table st) then
         res := State.lookup_local global_table name;
   !res
 
@@ -277,8 +277,7 @@ and
       let _name = ref nil_node in
       if is_attr func then (
         _func := attr_target func;
-        _name := attr_attr func;
-        Printf.printf "set name here: %s\n" (name_node_id !_name);
+        _name := attr_attr func
       );
       let fun_ty = transform !_func state in
       let args_ty = List.map pos ~f:(fun x -> transform x state) in
