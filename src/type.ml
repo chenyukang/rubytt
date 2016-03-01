@@ -308,11 +308,11 @@ let new_binding node ttype kind =
     tail = 0;
     body_start = 0;
     body_end = 0;
-    refs = Hashtbl.Poly.create ();
+    refs = Hashtbl.create ~hashable:NodeHash.hashable ();
   }
 
 let binding_add_ref binding node =
-  Hashtbl.add_exn binding.refs ~key:node ~data:true
+  ignore(Hashtbl.add binding.refs ~key:node ~data:true)
 
 let bind_equal a b =
   (a.start = b.start && a.tail = b.tail && a.bind_file = b.bind_file)

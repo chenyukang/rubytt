@@ -167,10 +167,10 @@ and
         Type.cont_ty
     )
   | Name(id, _) -> (
-      (* Printf.printf "lookup name: %s\n" id; *)
+      Printf.printf "lookup name: %s\n" id;
       match state_lookup state id with
       | Some(bs) -> (
-          (* put_refs node bs; *)
+          Global.put_refs node bs;
           Global.set_resolve node;
           make_unions_from_bs bs
         )

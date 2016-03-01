@@ -26,18 +26,6 @@ end = struct
   include Comparable.Make(T)
 end
 
-module NodeHash : sig
-  type t = Node.node_t
-  include Hashable.S with type t := t
-end = struct
-    module T = struct
-      type t = Node.node_t with sexp, compare
-      let hash t = Node.node_t_hash t
-    end
-    include T
-    include Hashable.Make(T)
-end
-
 module TypeHash : sig
   type t = Type.type_t
   include Hashable.S with type t := t
@@ -50,7 +38,7 @@ end = struct
     include Hashable.Make(T)
 end
 
-let refs = Hashtbl.create ~hashable:NodeHash.hashable ();;
+let refs:(Node.node_t, Type.binding_ty list) Hashtbl.t = Hashtbl.create ~hashable:Node.NodeHash.hashable ();;
 let resolved = ref NodeSet.Set.empty;;
 let unresolved = ref NodeSet.Set.empty;;
 let callstack = ref NodeSet.Set.empty;;
@@ -66,10 +54,10 @@ let clear() =
   uncalled := TypeSet.Set.empty
 
 let put_refs node bs =
-  let binded = Hashtbl.find refs node in
-  match binded with
+  let bind = Hashtbl.find refs node in
+  match bind with
   | None ->  (
-      ignore(Hashtbl.add refs ~key:node ~data:bs)
+      ignore(Hashtbl.add_exn refs ~key:node ~data:bs)
     )
   | Some(v) -> (
       List.iter bs ~f:(fun b -> Type.binding_add_ref b node);
