@@ -336,7 +336,7 @@ and resolve_call obj name args_ty star_ty block_arg_ty call state =
         )
       | _ -> (
           Printf.printf "error method name: %s\n" id;
-          ignore(failwith "resolve_call");
+          (* ignore(failwith "resolve_call"); *)
           unkown_ty
         )
     )

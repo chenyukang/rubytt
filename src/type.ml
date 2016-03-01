@@ -444,3 +444,16 @@ let ty_of_state state =
   match (state.t_type) with
   | Some(ty) -> ty
   | None -> unkown_ty
+
+let ty_kind_str ty =
+  match ty.ty with
+  | Bool_ty(_) -> "Bool"
+  | Int_ty -> "Int" | Str_ty(s) -> Printf.sprintf "str_ty: %s" s
+  | Float_ty -> "Float" | Instance_ty(_) -> "Instance"
+  | Class_ty(_) -> "Class" | Module_ty(_) -> "Module"
+  | Union_ty(_) -> "Union" | Tuple_ty(_) -> "Tuple"
+  | _ -> "Other"
+
+let type_t_hash ty =
+  let info  = ty.info in
+  String.hash info.file lxor String.hash (ty_kind_str ty)
