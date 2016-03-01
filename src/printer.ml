@@ -8,8 +8,7 @@ let op_to_str op =
   | Mul -> "Mul" | Div -> "Div"
   | Pow -> "Pow" | Cmp -> "Cmp"
   | Match -> "Match" | NotMatch -> "NotMatch"
-  | Equal -> "Equal" | Eq -> "Eq"
-  | Lt -> "Lt" | Gt -> "Gt"
+  | Equal -> "Equal" | Eq -> "Eq" | Lt -> "Lt" | Gt -> "Gt"
   | BitAnd -> "BitAnd" | BitOr -> "BitOr" | BitXor -> "BitXor"
   | In -> "In" | LShift -> "LShift" | RShift -> "RShift"
   | Mod -> "Mod" | Invert -> "Invert"
@@ -189,12 +188,12 @@ let rec type_to_str ty depth =
     Printf.sprintf "Module_ty: %s" id
     ^ (table_to_str ty.info.table (depth+1))
   | Instance_ty(class_ty) -> (
-      let type_name = classty_get_name class_ty in
-      match type_name with
+      let class_name = classty_get_name class_ty in
+      match class_name with
       | "?" -> "unkown_ty"
       | "nil" -> "nil_ty"
       | _ ->
-        Printf.sprintf "Inst_ty: %s" (classty_get_name class_ty)
+        Printf.sprintf "Inst_ty: %s" class_name
     )
   | Union_ty(tys_table)  -> (
       let res = ref "[" in

@@ -220,8 +220,8 @@ let is_class_ty ty =
 
 let new_module_type name file parent =
   let ret = { info = new_ty_info();
-              ty = Module_ty(name, file); } in
-  let state = (State.new_state ~parent:parent State.Module) in
+              ty = Module_ty(name, file) } in
+  let state = State.new_state ~parent:parent State.Module in
   set_table ret state;
   let path = match parent with
     |Some(p) ->  (if String.length p.path > 0 then p.path ^ "::" ^ name else name)
@@ -231,10 +231,17 @@ let new_module_type name file parent =
   ret
 
 let new_instance_type class_ty =
-  {
-    info = new_ty_info();
-    ty = Instance_ty(class_ty);
-  }
+  let ret = { info = new_ty_info();
+              ty = Instance_ty(class_ty) } in
+  let class_state = class_ty.info.table in
+  let state = State.new_state ~parent:(State.parent class_state) State.Instance in
+  Hashtbl.iter class_state.s_table ~f:(fun ~key:name ~data:bindings ->
+      List.iter bindings ~f:(fun b ->
+          if b.kind <> ClassMethodK then State.state_update_bind state name b
+        )
+    );
+  set_table ret state;
+  ret
 
 let int_ty =
   new_int_type()
