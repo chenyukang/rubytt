@@ -429,6 +429,10 @@ let fun_ty_info ty =
   | Fun_ty(info) -> info
   | _ -> failwith "fun_ty_info error type"
 
+let is_fun_ty ty =
+  match ty.ty with
+  | Fun_ty(_) -> true | _ -> false
+
 let compare_type_t t1 t2=
   if type_equal t1 t2 then 0
   else

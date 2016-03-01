@@ -226,7 +226,6 @@ and
   let res = ref "" in
   Hashtbl.iter table ~f:(fun ~key:name ~data:bindings ->
       (* avoid loop *)
-      Printf.printf "now name: %s\n" name;
       if name <> "self" then (
         let final_ty = make_unions_from_bs bindings in
         let ty_str = type_to_str final_ty depth in

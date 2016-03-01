@@ -370,23 +370,24 @@ and bind_param_tys env args args_types =
 
 and apply_func fun_ty args_ty star_ty block_arg_ty call =
   Global.set_called fun_ty;
-  if not (is_nil call) && (Global.contains_call call) then
-    Type.unkown_ty
-  else (
+  if not (Global.contains_call call) && (Type.is_fun_ty fun_ty) then (
     let info = Type.fun_ty_info fun_ty in
     let node_info = func_node_info info.fun_node in
     let env = State.new_state ~parent:info.env State.Function in
     let _ = Global.push_call call in
     let _ = bind_param_tys env node_info.args args_ty in
     let ret_ty = transform node_info.body env in
-    fun_ty_set_ret_ty fun_ty ret_ty;
-    ret_ty)
+    if not (Type.type_equal ret_ty fun_ty) then (
+      fun_ty_set_ret_ty fun_ty ret_ty; ret_ty)
+    else Type.unkown_ty)
+  else
+    Type.unkown_ty
 
 let apply_uncalled () =
   TypeSet.Set.iter !Global.uncalled (fun fun_ty ->
       let info = Type.fun_ty_info fun_ty in
       let node_info = func_node_info info.fun_node in
-      let id = name_node_id node_info.name in
+      (* let id = name_node_id node_info.name in *)
       (* Printf.printf "apply id: %s\n" id; *)
       let env = State.new_state ~parent:info.env State.Function in
       let ret_ty = transform node_info.body env in
@@ -395,3 +396,4 @@ let apply_uncalled () =
 let transform_expr node state =
   ignore(transform node state);
   apply_uncalled()
+
