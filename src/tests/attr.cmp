@@ -40,7 +40,7 @@
 
 ----------------------------------------
 
-bind: a ty: unkown_type
+bind: a ty: Inst_ty: Demo
 bind: Demo ty: Class_ty: Demo
   bind: test ty: Func_ty: [Int_ty] => unkown_type
   bind: b ty: Int_ty

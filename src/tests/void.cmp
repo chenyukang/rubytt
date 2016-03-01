@@ -6,4 +6,4 @@
 
 ----------------------------------------
 
-bind: a ty: Func_ty: [] => unkown_type
+bind: a ty: Func_ty: [] => nil_ty

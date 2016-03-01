@@ -185,10 +185,15 @@ let classty_add_super c super =
   | Class_ty(name, canon, _) -> c.ty <- Class_ty(name, canon, super)
   | _ -> failwith "classty_add_super"
 
-let cassty_get_canon c =
+let classty_get_canon c =
   match c.ty with
   | Class_ty(_, canon, _) -> canon
   | _ -> None
+
+let classty_get_name c =
+  match c.ty with
+  | Class_ty(name, _, _) -> name
+  | _ -> failwith "classty_get_naem error type"
 
 let new_class_type name parent ?(super = None) () =
   let ret = { info = new_ty_info();
@@ -403,7 +408,7 @@ let fun_ty_set_class_ty ty cls_ty =
   | Fun_ty(info) ->
     ty.ty <- Fun_ty({info with class_ty = cls_ty})
   | _ -> failwith "fun_ty_set_class_ty error type"
-           
+
 let fun_ty_info ty =
   match ty.ty with
   | Fun_ty(info) -> info

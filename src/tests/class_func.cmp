@@ -22,6 +22,6 @@
 
 ----------------------------------------
 
-bind: demo ty: unkown_type
+bind: demo ty: Inst_ty: Demo
 bind: Demo ty: Class_ty: Demo
   bind: test ty: Func_ty: [] => unkown_type

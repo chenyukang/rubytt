@@ -12,4 +12,4 @@
 
 ----------------------------------------
 
-bind: puts ty: Func_ty: [] => unkown_type
+bind: puts ty: Func_ty: [] => nil_ty

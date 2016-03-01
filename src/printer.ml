@@ -188,6 +188,14 @@ let rec type_to_str ty depth =
   | Module_ty(id, _) ->
     Printf.sprintf "Module_ty: %s" id
     ^ (table_to_str ty.info.table (depth+1))
+  | Instance_ty(class_ty) -> (
+      let type_name = classty_get_name class_ty in
+      match type_name with
+      | "?" -> "unkown_type"
+      | "nil" -> "nil_ty"
+      | _ ->
+        Printf.sprintf "Inst_ty: %s" (classty_get_name class_ty)
+    )
   | Union_ty(tys_table)  -> (
       let res = ref "[" in
       Hashtbl.iter tys_table ~f:(fun ~key:k ~data:_ ->

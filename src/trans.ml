@@ -264,11 +264,20 @@ and
       func_ty
     )
   | Call(func, pos, star, block_arg) -> (
-      let fun_ty = transform func state in
+      let _func = ref func in
+      let _name = ref nil_node in
+      if is_attr func then (
+        if attr_id func = "new" then (
+          _func := attr_target func;
+          _name := attr_attr func
+        )
+      );
+      let fun_ty = transform !_func state in
       let args_ty = List.map pos ~f:(fun x -> transform x state) in
       let star_ty = transform star state in
       let block_arg_ty = transform block_arg state in
-      resolve_call fun_ty args_ty star_ty block_arg_ty node state
+
+      resolve_call fun_ty !_name args_ty star_ty block_arg_ty node state
     )
   | Module(locator, name, body, _) -> (
       let module_ty = lookup_or_create_module state locator node.info.file in
@@ -294,9 +303,15 @@ and
     -> transform v state
   | _ -> Type.unkown_ty
 
-and resolve_call fun_ty args_ty star_ty block_arg_ty call state =
+and resolve_call fun_ty name args_ty star_ty block_arg_ty call state =
   match fun_ty.ty with
   | Fun_ty(_) -> apply_func fun_ty args_ty star_ty block_arg_ty call
+  | Class_ty(_) -> (
+      (* class contructor *)
+      let class_ty = fun_ty in
+      let inst_ty = new_instance_type class_ty in
+      inst_ty
+    )
   | _ -> (Printf.printf "try to resolve_call: unkown_ty\n"); Type.unkown_ty
 
 and bind_param_tys env args args_types =

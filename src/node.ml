@@ -340,12 +340,22 @@ let try_attr_to_name attr =
     | Name _ | Nil -> attr
     | _ -> failwith "error type try_attr_to_name other"
 
+let attr_id attr =
+  let name = try_attr_to_name attr in
+  name_node_id name
+
 let is_attr node = match node.ty with | Attribute(_) -> true |_ -> false
 
 let attr_target node =
   match node.ty with
   | Attribute(target, _) -> target
   | _ -> failwith "error type attr_target"
+
+let attr_attr node =
+    match node.ty with
+  | Attribute(_, attr) -> attr
+  | _ -> failwith "error type attr_attr"
+
 
 let make_undef_node targets file s e =
   let node = {
