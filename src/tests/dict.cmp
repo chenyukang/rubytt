@@ -1,6 +1,6 @@
 (Block 
  (Assign 
-  (Name a)
+  (Name a Local)
   (Dict  
    (Int 1)
     (Int 2)

@@ -1,13 +1,13 @@
 (Block 
  (Class static: false
-  (Name Base)
+  (Name Base Local)
   (Nil)
    (Block 
     (Func initialize
      (body: 
       (Block 
        (Assign 
-        (Name a)
+        (Name a Instance)
         (Int 1)))))
     (Func base_base_func
      (body: 
@@ -17,16 +17,16 @@
         (Int 2)
         (Int 3)))))))
  (Class static: false
-  (Name Hello)
-  (Name Base)
+  (Name Hello Local)
+  (Name Base Local)
    (Block 
     (Func base_func
      (body: 
       (Block 
        (String here))))))
  (Class static: false
-  (Name Demo)
-  (Name Hello)
+  (Name Demo Local)
+  (Name Hello Local)
    (Block 
     (Func initialize
      (body: 
@@ -35,7 +35,7 @@
         (args: 
          (String initialize)))
        (Assign 
-        (Name a)
+        (Name a Instance)
         (Int 1)))))
     (Func test
      (body: 
@@ -53,42 +53,42 @@
       (Block 
        (Int 1))))))
  (Assign 
-  (Name demo)
+  (Name demo Local)
   (Call 
    (Attribute 
-    (Name Demo)
-    (Name new))))
+    (Name Demo Local)
+    (Name new Local))))
  (Call 
   (Attribute 
-   (Name demo)
-   (Name test)))
+   (Name demo Local)
+   (Name test Local)))
  (Assign 
-  (Name res)
+  (Name res Local)
   (Call 
    (Attribute 
-    (Name demo)
-    (Name base_func))))
+    (Name demo Local)
+    (Name base_func Local))))
  (Call puts
   (args: 
-   (Name res)))
+   (Name res Local)))
  (Assign 
-  (Name hello)
+  (Name hello Local)
   (Call 
    (Attribute 
-    (Name demo)
-    (Name hello))))
+    (Name demo Local)
+    (Name hello Local))))
  (Call puts
   (args: 
-   (Name hello)))
+   (Name hello Local)))
  (Assign 
-  (Name base)
+  (Name base Local)
   (Call 
    (Attribute 
-    (Name demo)
-    (Name base_base_func))))
+    (Name demo Local)
+    (Name base_base_func Local))))
  (Call puts
   (args: 
-   (Name base))))
+   (Name base Local))))
 
 ----------------------------------------
 
@@ -97,11 +97,13 @@ bind: base ty: [Int_ty]
 bind: demo ty: Inst_ty: Demo
 bind: res ty: Str_ty
 bind: Base ty: Class_ty: Base
+  bind: a ty: Int_ty
   bind: base_base_func ty: Func_ty: [] => [Int_ty]
   bind: initialize ty: Func_ty: [] => Int_ty
 bind: Hello ty: Class_ty: Hello
   bind: base_func ty: Func_ty: [] => Str_ty
 bind: Demo ty: Class_ty: Demo
   bind: hello ty: Func_ty: [] => Int_ty
+  bind: a ty: Int_ty
   bind: test ty: Func_ty: [] => Unkown_ty
   bind: initialize ty: Func_ty: [] => Int_ty

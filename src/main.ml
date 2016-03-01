@@ -4,7 +4,7 @@ open Sys
 let load_file file =
   let json = Parser.run_dump_ruby file in
   let ast = Parser.build_ast_from_file json in
-  let _ = Analyzer.trans ast in 
+  let _ = Analyzer.trans ast in
   let ast_str = Printer.node_to_str ast 0 in
   Printf.printf "%s\n" ast_str;
   Printf.printf "\n%s\n\n" (Printer.table_to_str Type.global_table 0)

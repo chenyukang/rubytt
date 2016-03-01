@@ -1,15 +1,15 @@
 (Block 
  (Func qsort
   (args: 
-   (Name lst))
+   (Name lst Local))
   (body: 
    (Block 
     (If 
      (BinOp:Equal 
       (Call 
        (Attribute 
-        (Name lst)
-        (Name size)))
+        (Name lst Local)
+        (Name size Local)))
       (Int 0))
      (Return 
       (Array 
@@ -17,25 +17,25 @@
      (Nil))
     (Assign 
      (Array 
-      (Name less)
-      (Name more))
+      (Name less Local)
+      (Name more Local))
      (Call 
       (Attribute 
        (Call left)
-       (Name partition))))
+       (Name partition Local))))
     (Return 
      (Array 
       (BinOp:Add 
        (BinOp:Add 
         (Call qsort
          (args: 
-          (Name less)))
+          (Name less Local)))
         (Array 
          (Call first)))
        (Call qsort
         (args: 
-         (Name more))))))))))
+         (Name more Local))))))))))
 
 ----------------------------------------
 
-bind: qsort ty: Func_ty: [] => [[[Unkown_ty]]]
+bind: qsort ty: Func_ty: [] => [Unkown_ty]

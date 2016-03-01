@@ -1,21 +1,21 @@
 (Block 
  (Func div
   (args: 
-   (Name a)
-   (Name b))
+   (Name a Local)
+   (Name b Local))
   (body: 
    (Block 
     (If 
      (BinOp:Equal 
-      (Name b)
+      (Name b Local)
       (Int 0))
      (Call raise
       (args: 
        (String zero div!)))
      (Nil))
     (BinOp:Div 
-     (Name a)
-     (Name b)))))
+     (Name a Local)
+     (Name b Local)))))
  (Call div
   (args: 
    (Int 1)

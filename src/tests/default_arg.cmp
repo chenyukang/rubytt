@@ -1,14 +1,14 @@
 (Block 
  (Func demo
   (args: 
-   (Name a)
-   (Name b)
-   (Name c))
+   (Name a Local)
+   (Name b Local)
+   (Name c Local))
   (body: 
    (Block 
     (Call puts
      (args: 
-      (Name a)))))))
+      (Name a Local)))))))
 
 ----------------------------------------
 

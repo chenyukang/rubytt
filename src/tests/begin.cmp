@@ -1,15 +1,15 @@
 (Block 
  (Assign 
-  (Name a)
+  (Name a Local)
   (Int 1))
  (Assign 
-  (Name res)
+  (Name res Local)
   (Try 
    (Block 
     (Assign 
-     (Name div)
+     (Name div Local)
      (BinOp:Div 
-      (Name a)
+      (Name a Local)
       (Int 0))))
    (Handler 
      (Nil)
@@ -20,7 +20,7 @@
    (Nil)))
  (Call puts
   (args: 
-   (Name res))))
+   (Name res Local))))
 
 ----------------------------------------
 

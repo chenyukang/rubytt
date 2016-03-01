@@ -1,15 +1,15 @@
 (Block 
  (Assign 
-  (Name a)
+  (Name a Local)
   (If 
-   (Name true)
+   (Name true Local)
    (Block 
     (Int 1))
    (Block 
     (Int 2))))
  (Call puts
   (args: 
-   (Name a))))
+   (Name a Local))))
 
 ----------------------------------------
 

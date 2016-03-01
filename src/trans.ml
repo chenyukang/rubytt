@@ -61,6 +61,12 @@ let rec lookup_attr_ty state id =
       | Some(super) -> lookup_attr_ty super id
       | _ -> unkown_ty)
 
+let rec lookup_ty state id =
+  let bs = state_lookup state id in
+  match bs with
+  | Some(_bs) -> make_unions_from_bs _bs
+  | _ -> unkown_ty
+
 let lookup_attr_tagged st attr tag =
   lookup_attr st (Util.make_tag_id attr tag)
 
@@ -112,7 +118,7 @@ and
 and
   bind_name state name (rt:type_t) kind =
   let id = name_node_id name in
-  Printf.printf "bind name: %s ty: %s\n" id (Printer.type_to_str rt 0);
+  (* Printf.printf "bind name: %s ty: %s\n" id (Printer.type_to_str rt 0); *)
   if Util.is_global_name id && (name_node_is_globalvar name) then (
     let b = new_binding name rt kind in
     State.state_update_bind global_table id b;
@@ -178,11 +184,8 @@ and
   | BinOp(_, ln, rn) -> (
       let lt = transform ln state in
       let rt = transform rn state in
-      if not (type_equal lt Type.unkown_ty) then lt
-      else (
-        if not (type_equal rt Type.unkown_ty) then rt
-        else Type.unkown_ty
-      )
+      if not (type_equal rt Type.unkown_ty) then rt
+      else Type.unkown_ty
     )
   | Array(elems) -> (
       let list_ty = new_list_type() in
@@ -193,9 +196,15 @@ and
       list_ty
     )
   | UnaryOp(_, operand) -> transform operand state
-  | Assign(t, rv) -> (
-      let vt = transform rv state in
-      bind_node state t vt;
+  | Assign(target, rvalue) -> (
+      let vt = transform rvalue state in
+      if Node.is_instance_var target then (
+        let this_ty = lookup_ty state "self" in
+        if not(Type.is_unkown_ty this_ty) then
+          bind_node this_ty.info.table target vt
+      ) else (
+        bind_node state target vt
+      );
       vt
     )
   | Attribute(target, attr) -> (
@@ -290,7 +299,6 @@ and
       bind state name module_ty Type.ModuleK;
       state_insert module_ty.info.table "self" name module_ty Type.ScopeK;
       ignore(transform body module_ty.info.table);
-      Printf.printf "module name: %s\n" (name_node_id name);
       module_ty
     )
   | Class(name, super, body, _, static) -> (
@@ -375,12 +383,11 @@ and apply_func fun_ty args_ty star_ty block_arg_ty call =
     ret_ty)
 
 let apply_uncalled () =
-  Printf.printf "set size here: %d\n" (TypeSet.Set.length !Global.uncalled);
   TypeSet.Set.iter !Global.uncalled (fun fun_ty ->
       let info = Type.fun_ty_info fun_ty in
       let node_info = func_node_info info.fun_node in
       let id = name_node_id node_info.name in
-      Printf.printf "apply id: %s\n" id;
+      (* Printf.printf "apply id: %s\n" id; *)
       let env = State.new_state ~parent:info.env State.Function in
       let ret_ty = transform node_info.body env in
       ignore(fun_ty_set_ret_ty fun_ty ret_ty))

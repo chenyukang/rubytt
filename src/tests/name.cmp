@@ -1,17 +1,17 @@
 (Block 
  (Assign 
-  (Name a)
+  (Name a Local)
   (Int 1))
  (Assign 
-  (Name b)
+  (Name b Local)
   (Array 
-   (Name a)))
+   (Name a Local)))
  (Assign 
-  (Name b)
+  (Name b Local)
   (String c))
  (Assign 
-  (Name x)
-  (Name false)))
+  (Name x Local)
+  (Name false Local)))
 
 ----------------------------------------
 

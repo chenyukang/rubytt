@@ -1,35 +1,35 @@
 (Block 
  (Assign 
-  (Name a)
+  (Name a Local)
   (Array 
    (Int 1)
    (Int 2)
    (Int 3)))
  (Subscript 
-  (Name a)
+  (Name a Local)
   (Int 0))
  (Subscript 
   (Subscript 
    (Subscript 
-    (Name a)
+    (Name a Local)
     (Int 0))
    (Int 1))
   (Int 3))
  (Subscript 
-  (Name a)
+  (Name a Local)
   (Array 
    (Int 1)
    (Int 2)))
  (Subscript 
-  (Name a)
+  (Name a Local)
   (Array 
    (Int 1)
    (Int 2)))
  (Assign 
-  (Name b)
+  (Name b Local)
   (Dict  ))
  (Subscript 
-  (Name b)
+  (Name b Local)
   (String hello)))
 
 ----------------------------------------

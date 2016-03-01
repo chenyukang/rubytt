@@ -1,6 +1,6 @@
 (Block 
  (Assign 
-  (Name a)
+  (Name a Local)
   (Array 
    (Int 1)
    (String a)

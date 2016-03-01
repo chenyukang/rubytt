@@ -1,11 +1,11 @@
 (Block 
  (Class static: false
-  (Name AstSimplifier)
+  (Name AstSimplifier Local)
   (Nil)
    (Block 
     (Func initialize
      (args: 
-      (Name filename))
+      (Name filename Local))
      (body: 
       (Block 
        (Call find_line_starts))))
@@ -13,12 +13,12 @@
      (body: 
       (Block 
        (Assign 
-        (Name res)
+        (Name res Local)
         (String ))
        (Call 
         (Attribute 
          (Call lines)
-         (Name each)))))))))
+         (Name each Local)))))))))
 
 ----------------------------------------
 

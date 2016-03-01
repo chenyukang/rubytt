@@ -1,9 +1,12 @@
 
-# class Order
+class Order
 
-#   def order_gateway
-#     @order_gateway ||= Order::Gateway.instance(self)
-#   end
+  def order_gateway
+    @order_gateway ||= 1
+  end
 
-# end
+end
 
+
+a = Order.new
+puts a.order_gateway.class

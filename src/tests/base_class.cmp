@@ -1,19 +1,19 @@
 (Block 
  (Class static: false
-  (Name Demo)
+  (Name Demo Local)
   (Nil)
    (Block 
     (Assign 
-     (Name foos)
+     (Name foos Class)
      (Int 0))
     (Assign 
-     (Name a)
+     (Name a Local)
      (Int 1))
     (Assign 
-     (Name hello)
+     (Name hello Local)
      (String hello))
     (Assign 
-     (Name arr)
+     (Name arr Local)
      (Array 
       (Int 1)
       (Int 2)

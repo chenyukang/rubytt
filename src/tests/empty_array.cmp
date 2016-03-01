@@ -1,13 +1,13 @@
 (Block 
  (Assign 
-  (Name a)
+  (Name a Local)
   (Array ))
  (Call puts
   (args: 
    (Call 
     (Attribute 
-     (Name a)
-     (Name size))))))
+     (Name a Local)
+     (Name size Local))))))
 
 ----------------------------------------
 

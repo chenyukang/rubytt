@@ -1,7 +1,7 @@
 (Block 
  (Func eat
   (args: 
-   (Name meal))
+   (Name meal Local))
   (body: 
    (Block 
     (If 
@@ -9,8 +9,8 @@
      (Block 
       (Call 
        (Attribute 
-        (Name meal)
-        (Name each))))
+        (Name meal Local)
+        (Name each Local))))
      (Nil))
     (String delicious!)))))
 

@@ -1,31 +1,31 @@
 (Block 
  (Func demo
   (args: 
-   (Name value))
+   (Name value Local))
   (body: 
    (Block 
     (If 
      (BinOp:Or 
       (BinOp:Lt 
-       (Name value)
+       (Name value Local)
        (Int 1))
       (BinOp:Eq 
-       (Name value)
+       (Name value Local)
        (Int 1)))
      (Return 
       (Array 
-       (Name value)))
+       (Name value Local)))
      (Nil))
     (BinOp:Add 
      (Call demo
       (args: 
        (BinOp:Sub 
-        (Name value)
+        (Name value Local)
         (Int 1))))
      (Call demo
       (args: 
        (BinOp:Sub 
-        (Name value)
+        (Name value Local)
         (Int 2)))))))))
 
 ----------------------------------------

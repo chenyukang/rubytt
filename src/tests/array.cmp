@@ -1,6 +1,6 @@
 (Block 
  (Assign 
-  (Name a)
+  (Name a Local)
   (Array 
    (Int 1)
    (Int 2)
@@ -9,10 +9,10 @@
   (args: 
    (Call 
     (Attribute 
-     (Name a)
-     (Name size)))))
+     (Name a Local)
+     (Name size Local)))))
  (Assign 
-  (Name b)
+  (Name b Local)
   (Array 
    (Int 1)
    (Int 2)
@@ -21,8 +21,8 @@
   (args: 
    (Call 
     (Attribute 
-     (Name b)
-     (Name size))))))
+     (Name b Local)
+     (Name size Local))))))
 
 ----------------------------------------
 

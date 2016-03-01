@@ -1,10 +1,10 @@
 (Block 
  (Module 
-  (Name Test)
+  (Name Test Local)
    (Block 
     (Void)
     (Assign 
-     (Name a)
+     (Name a Local)
      (Int 1)))))
 
 ----------------------------------------

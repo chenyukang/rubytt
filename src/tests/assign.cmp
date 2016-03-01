@@ -1,20 +1,20 @@
 (Block 
  (Assign 
-  (Name a)
+  (Name a Local)
   (Int 1))
  (Assign 
-  (Name arr)
+  (Name arr Local)
   (Array 
    (Int 1)
    (Int 2)))
  (Assign 
   (Subscript 
-   (Name arr)
+   (Name arr Local)
    (Int 0))
   (Int 0))
  (Assign 
   (Subscript 
-   (Name arr)
+   (Name arr Local)
    (Array 
     (Int 0)
     (Int 1)))
@@ -27,12 +27,12 @@
     (Array 
      (Int 1)
      (Int 4)))
-   (Name include?))
+   (Name include? Local))
   (args: 
    (Int 1)))
  (Call puts
   (args: 
-   (Name arr))))
+   (Name arr Local))))
 
 ----------------------------------------
 

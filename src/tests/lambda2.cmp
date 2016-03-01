@@ -1,18 +1,18 @@
 (Block 
  (Assign 
-  (Name twice)
+  (Name twice Local)
   (Func lambda%1
    (args: 
-    (Name x))
+    (Name x Local))
    (body: 
     (Block 
      (BinOp:Mul 
       (Int 2)
-      (Name x))))))
+      (Name x Local))))))
  (Call 
   (Attribute 
-   (Name twice)
-   (Name call))
+   (Name twice Local)
+   (Name call Local))
   (args: 
    (Int 5))))
 

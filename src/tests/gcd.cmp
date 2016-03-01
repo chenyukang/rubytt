@@ -1,42 +1,42 @@
 (Block 
  (Func gcd
   (args: 
-   (Name x)
-   (Name y))
+   (Name x Local)
+   (Name y Local))
   (body: 
    (Block 
     (If 
      (BinOp:Equal 
-      (Name x)
-      (Name y))
+      (Name x Local)
+      (Name y Local))
      (Return 
       (Array 
-       (Name x)))
+       (Name x Local)))
      (Nil))
     (If 
      (BinOp:And 
       (BinOp:Or 
        (BinOp:Gt 
-        (Name x)
-        (Name y))
+        (Name x Local)
+        (Name y Local))
        (BinOp:Eq 
-        (Name x)
-        (Name y)))
+        (Name x Local)
+        (Name y Local)))
       (BinOp:Gt 
-       (Name y)
+       (Name y Local)
        (Int 0)))
      (Block 
       (Call gcd
        (args: 
-        (Name y)
+        (Name y Local)
         (BinOp:Mod 
-         (Name x)
-         (Name y)))))
+         (Name x Local)
+         (Name y Local)))))
      (Block 
       (Call gcd
        (args: 
-        (Name y)
-        (Name x)))))))))
+        (Name y Local)
+        (Name x Local)))))))))
 
 ----------------------------------------
 

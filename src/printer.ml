@@ -27,7 +27,7 @@ let rec node_to_str node depth =
     | String(s) -> "(String " ^ s ^ ")"
     | Symbol(s) -> "(Symbol " ^ s ^ ")"
     | Control(s) -> "(Control " ^ s ^ ")"
-    | Name(s, _) -> "(Name " ^ s ^ ")"
+    | Name(s, k) -> "(Name " ^ s ^ " " ^ (Node.name_ty_to_str k) ^ ")"
     | Kwd(kwd, node) -> "(Kwd " ^ kwd ^ (node_to_str node (depth + 1)) ^ ")"
     | Block(stmts) ->
       let s = ref "(Block " in
@@ -174,6 +174,7 @@ and
   nw n = "\n" ^ k_space n
 
 open Type
+let print_table = ref true;;
 let rec type_to_str ty depth =
   match ty.ty with
   | Int_ty -> "Int_ty"
@@ -183,8 +184,11 @@ let rec type_to_str ty depth =
     let elem_str = (type_to_str elem_ty 0) in
     Printf.sprintf "[%s]" elem_str
   | Class_ty(name, _, _) ->
-    Printf.sprintf "Class_ty: %s" name
-    ^ (table_to_str ty.info.table (depth+1))
+    let name = Printf.sprintf "Class_ty: %s" name in
+    if !print_table then
+      name ^ (table_to_str ty.info.table (depth+1))
+    else
+      name
   | Module_ty(id, _) ->
     Printf.sprintf "Module_ty: %s" id
     ^ (table_to_str ty.info.table (depth+1))
@@ -209,7 +213,9 @@ let rec type_to_str ty depth =
           let s = if i > 0 then " " else "" in
           defaults := !defaults ^ s ^ type_to_str x 0);
       defaults := !defaults ^ "]";
+      print_table := false;
       let ret_str = type_to_str info.ret_ty 0 in
+      print_table := true;
       Printf.sprintf "Func_ty: %s => %s" !defaults ret_str
     )
   | _ -> "unkown_type"
@@ -220,6 +226,7 @@ and
   let res = ref "" in
   Hashtbl.iter table ~f:(fun ~key:name ~data:bindings ->
       (* avoid loop *)
+      Printf.printf "now name: %s\n" name;
       if name <> "self" then (
         let final_ty = make_unions_from_bs bindings in
         let ty_str = type_to_str final_ty depth in

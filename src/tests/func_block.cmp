@@ -1,18 +1,18 @@
 (Block 
  (Func contrived
   (args: 
-   (Name a))
+   (Name a Local))
   (body: 
    (Block 
     (Call 
      (Attribute 
-      (Name f)
-      (Name call))
+      (Name f Local)
+      (Name call Local))
      (args: 
-      (Name a)))
+      (Name a Local)))
     (Yield 
      (Array 
-      (Name a))))))
+      (Name a Local))))))
  (Call contrived
   (args: 
    (Int 25))))

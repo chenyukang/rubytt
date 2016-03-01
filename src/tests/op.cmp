@@ -4,8 +4,8 @@
    (Block 
     (If 
      (BinOp:And 
-      (Name true)
-      (Name true))
+      (Name true Local)
+      (Name true Local))
      (Block 
       (Call puts
        (args: 

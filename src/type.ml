@@ -457,3 +457,5 @@ let ty_kind_str ty =
 let type_t_hash ty =
   let info  = ty.info in
   String.hash info.file lxor String.hash (ty_kind_str ty)
+
+

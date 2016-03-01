@@ -5,32 +5,32 @@
    (Int 0))
   (Block 
    (Assign 
-    (Name a)
+    (Name a Local)
     (Int 1))
    (Try 
     (Block 
      (Assign 
-      (Name c)
+      (Name c Local)
       (Int 1)))
     (Nil)
     (Nil)
     (Nil)))
   (Block 
    (Assign 
-    (Name a)
+    (Name a Local)
     (String 2))
    (Assign 
-    (Name c)
-    (Name false))))
+    (Name c Local)
+    (Name false Local))))
  (Assign 
-  (Name c)
+  (Name c Local)
   (String c))
  (Call puts
   (args: 
-   (Name a)))
+   (Name a Local)))
  (Call puts
   (args: 
-   (Name c))))
+   (Name c Local))))
 
 ----------------------------------------
 

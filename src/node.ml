@@ -220,6 +220,11 @@ let make_name_node id ty file s e =
 let is_name node =
   match node.ty with | Name(_) -> true | _ -> false
 
+let is_instance_var node =
+  match node.ty with
+  | Name(_, k) -> k = Instance
+  | _ -> false
+
 let name_node_id n =
   match n.ty with
   | Name(s, _) -> s
@@ -481,3 +486,10 @@ let sexp_of_node_t ty =
 let node_t_hash node =
   (String.hash node.info.file) lxor (String.hash node.info.path) lxor
   (Int.hash node.info.ss) lxor (Int.hash node.info.ee)
+
+let name_ty_to_str t =
+  match t with
+  | Local -> "Local"
+  | Instance -> "Instance"
+  | Class -> "Class"
+  | Global -> "Global"

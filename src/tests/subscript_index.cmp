@@ -1,6 +1,6 @@
 (Block 
  (Assign 
-  (Name a)
+  (Name a Local)
   (Array 
    (Array )
    (Array )))
@@ -8,7 +8,7 @@
   (args: 
    (Subscript 
     (Subscript 
-     (Name a)
+     (Name a Local)
      (Int 1))
     (Int 2)))))
 

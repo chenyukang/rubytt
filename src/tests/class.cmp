@@ -1,15 +1,15 @@
 (Block 
  (Class static: false
-  (Name Demo)
+  (Name Demo Local)
   (Nil)
    (Block 
     (Class static: true
-     (Name self)
+     (Name self Local)
      (Nil)
       (Block 
        (Void)))
     (Assign 
-     (Name foos)
+     (Name foos Class)
      (Int 0)))))
 
 ----------------------------------------

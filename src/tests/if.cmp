@@ -1,24 +1,24 @@
 (Block 
  (Assign 
-  (Name res)
+  (Name res Local)
   (If 
    (BinOp:Lt 
     (Int 1)
     (Int 0))
    (Block 
     (Assign 
-     (Name a)
+     (Name a Local)
      (Int 1)))
    (Block 
     (Assign 
-     (Name a)
+     (Name a Local)
      (String 2)))))
  (Call puts
   (args: 
-   (Name a)))
+   (Name a Local)))
  (Call puts
   (args: 
-   (Name res))))
+   (Name res Local))))
 
 ----------------------------------------
 

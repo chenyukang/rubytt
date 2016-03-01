@@ -1,16 +1,16 @@
 (Block 
  (Func cur
   (args: 
-   (Name depth))
+   (Name depth Local))
   (body: 
    (Block 
     (If 
      (BinOp:Or 
       (BinOp:Lt 
-       (Name depth)
+       (Name depth Local)
        (Int 0))
       (BinOp:Eq 
-       (Name depth)
+       (Name depth Local)
        (Int 0)))
      (Block 
       (Int 0))
@@ -18,7 +18,7 @@
       (Call cur
        (args: 
         (BinOp:Sub 
-         (Name depth)
+         (Name depth Local)
          (Int 1))))))))))
 
 ----------------------------------------

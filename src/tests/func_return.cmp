@@ -1,41 +1,41 @@
 (Block 
  (Func demo
   (args: 
-   (Name a)
-   (Name b))
+   (Name a Local)
+   (Name b Local))
   (body: 
    (Block 
     (If 
      (BinOp:Lt 
-      (Name a)
-      (Name b))
+      (Name a Local)
+      (Name b Local))
      (Block 
       (Int 1))
      (Block 
       (Int 2))))))
  (Func max
   (args: 
-   (Name a)
-   (Name b))
+   (Name a Local)
+   (Name b Local))
   (body: 
    (Block 
     (If 
      (BinOp:Lt 
-      (Name a)
-      (Name b))
+      (Name a Local)
+      (Name b Local))
      (Block 
       (Int 1))
      (Block 
       (String 2))))))
  (Assign 
-  (Name x)
+  (Name x Local)
   (Int 1))
  (Assign 
-  (Name y)
+  (Name y Local)
   (Int 2))
  (Func hah
   (args: 
-   (Name a))
+   (Name a Local))
   (body: 
    (Block 
     (If 

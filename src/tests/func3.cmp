@@ -1,26 +1,26 @@
 (Block 
  (Func add
   (args: 
-   (Name a)
-   (Name b)
-   (Name c)
-   (Name d))
+   (Name a Local)
+   (Name b Local)
+   (Name c Local)
+   (Name d Local))
   (body: 
    (Block 
     (If 
      (BinOp:Gt 
-      (Name a)
+      (Name a Local)
       (Int 0))
      (Block 
-      (Name b))
+      (Name b Local))
      (Block 
-      (Name c)))
+      (Name c Local)))
     (Assign 
-     (Name x)
+     (Name x Local)
      (Int 1))
     (Call puts
      (args: 
-      (Name x))))))
+      (Name x Local))))))
  (Call add
   (args: 
    (Int 1)

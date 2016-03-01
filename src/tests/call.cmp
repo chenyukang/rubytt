@@ -1,7 +1,7 @@
 (Block 
  (Func puts
   (args: 
-   (Name a))
+   (Name a Local))
   (body: 
    (Block 
     (Void))))

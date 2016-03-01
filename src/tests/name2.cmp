@@ -1,7 +1,7 @@
 (Block 
  (Assign 
-  (Name a)
-  (Name false))
+  (Name a Local)
+  (Name false Local))
  (Call x))
 
 ----------------------------------------
