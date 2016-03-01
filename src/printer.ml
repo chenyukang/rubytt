@@ -191,7 +191,7 @@ let rec type_to_str ty depth =
   | Instance_ty(class_ty) -> (
       let type_name = classty_get_name class_ty in
       match type_name with
-      | "?" -> "unkown_type"
+      | "?" -> "unkown_ty"
       | "nil" -> "nil_ty"
       | _ ->
         Printf.sprintf "Inst_ty: %s" (classty_get_name class_ty)

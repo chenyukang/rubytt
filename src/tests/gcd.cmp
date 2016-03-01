@@ -40,4 +40,4 @@
 
 ----------------------------------------
 
-bind: gcd ty: Func_ty: [] => unkown_type
+bind: gcd ty: Func_ty: [] => unkown_ty

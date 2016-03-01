@@ -14,4 +14,4 @@
 
 ----------------------------------------
 
-bind: a ty: List_ty: [(List_ty: unkown_type)]
+bind: a ty: List_ty: [(List_ty: unkown_ty)]

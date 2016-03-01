@@ -38,4 +38,4 @@
 
 ----------------------------------------
 
-bind: qsort ty: Func_ty: [] => List_ty: List_ty: List_ty: unkown_type
+bind: qsort ty: Func_ty: [] => List_ty: List_ty: List_ty: unkown_ty

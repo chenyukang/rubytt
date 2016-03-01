@@ -19,5 +19,5 @@
 
 ----------------------------------------
 
-bind: a ty: unkown_type
+bind: a ty: unkown_ty
 bind: b ty: List_ty: Int_ty
