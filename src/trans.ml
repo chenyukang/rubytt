@@ -311,15 +311,15 @@ and
     -> transform v state
   | _ -> Type.unkown_ty
 
-and resolve_call fun_ty name args_ty star_ty block_arg_ty call state =
-  match fun_ty.ty with
-  | Fun_ty(_) -> apply_func fun_ty args_ty star_ty block_arg_ty call
+and resolve_call obj name args_ty star_ty block_arg_ty call state =
+  match obj.ty with
+  | Fun_ty(_) -> apply_func obj args_ty star_ty block_arg_ty call
   | Class_ty(_) -> (
       let id = name_node_id name in
       match id with
       | "new" -> (
           (* class contructor *)
-          let class_ty = fun_ty in
+          let class_ty = obj in
           let inst_ty = new_instance_type class_ty in
           let inst_state = inst_ty.info.table in
           let init_func_ty = lookup_attr_ty inst_state "initialize" in
@@ -341,7 +341,7 @@ and resolve_call fun_ty name args_ty star_ty block_arg_ty call state =
         )
     )
   | Instance_ty(class_ty) -> (
-      if not (Type.is_unkown_ty fun_ty) then (
+      if not (Type.is_unkown_ty obj) then (
         let id = name_node_id name in
         let method_ty = lookup_attr_ty class_ty.info.table id in
         if Type.is_unkown_ty method_ty then (
