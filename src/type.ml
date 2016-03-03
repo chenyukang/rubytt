@@ -193,7 +193,7 @@ let classty_get_canon c =
 let classty_get_name c =
   match c.ty with
   | Class_ty(name, _, _) -> name
-  | _ -> failwith "classty_get_naem error type"
+  | _ -> failwith "classty_get_name error type"
 
 let new_class_type name parent ?(super = None) () =
   let ret = { info = new_ty_info();
