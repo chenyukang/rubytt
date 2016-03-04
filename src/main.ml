@@ -14,7 +14,8 @@ let dump_dot file =
   let ast = Parser.build_ast_from_file json in
   let _ = Analyzer.trans ast in
   let dot_res = Dot.node_to_dot_str Type.global_table in
-  Out_channel.write_all "dep.dot" ~data: dot_res
+  Out_channel.write_all "dep.dot" ~data:dot_res;
+  Sys.command_exn "dot dep.dot -Tpng -o dep.png; open dep.png"
 
 let () =
   if Array.length Sys.argv <> 2 then

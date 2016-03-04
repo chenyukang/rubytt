@@ -23,7 +23,13 @@ let node_to_dot_str (state:Type.state_t) =
           )
       )
     );
+  let res = ref "digraph G {
+  size=\"10,7.5\";
+  ratio=\"fill\";
+  fontsize=\"12pt\";
+  rankdir = TB;\n" in
   Hashtbl.iter class_hash ~f:(fun ~key:base ~data:super ->
-      Printf.printf "%s --> %s\n" base super;
+      res := !res ^ Printf.sprintf "\"%s\" -> \"%s\";\n" base super;
     );
-  ""
+  res := !res ^ "}\n";
+  !res
