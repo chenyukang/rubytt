@@ -22,7 +22,6 @@ let make_analyzer () =
     path = [];
   }
 
-let global_Analyzer = make_analyzer();;
 
 let trans ast =
   Trans.transform_expr ast Type.global_table

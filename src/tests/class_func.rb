@@ -31,11 +31,11 @@ class Demo < Hello
   end
 end
 
-class Drive < Base 
+class Drive < Base
 end
 
 
-class Haha < Base 
+class Haha < Base
 end
 
 

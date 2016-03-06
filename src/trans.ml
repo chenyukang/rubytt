@@ -15,6 +15,11 @@ let put_ref node bind =
   let bs = [bind] in
   Global.put_refs node bs
 
+let new_bind node ty kind =
+  let bind = Type.new_binding node ty kind in
+  Global.register_bind bind;
+  bind
+
 let get_modulebinding_if_global st name =
   let res = ref None in
   if Util.is_global_name name then
