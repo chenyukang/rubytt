@@ -4,6 +4,7 @@
 *.json
 *.png
 *.dot
+out
 _build
 _tests
 res
