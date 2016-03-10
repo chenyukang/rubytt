@@ -29,7 +29,13 @@ class Demo < Hello
   def hello
     1
   end
+end
 
+class Drive < Base
+end
+
+
+class Haha < Base
 end
 
 

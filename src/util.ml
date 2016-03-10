@@ -22,9 +22,8 @@ let cmp_file a b =
   if (Sys.file_exists_exn a = false || Sys.file_exists_exn b = false) then
     false
   else
-    let _a = read_file_to_str a in
-    let _b = read_file_to_str b in
-    if _a <> _b then false else true
+    (read_file_to_str a) = (read_file_to_str b)
+
 
 let walk_directory_tree dir pattern =
   let select str = Str.string_match (Str.regexp pattern) str 0 in
@@ -59,7 +58,6 @@ let is_synthetic_name name =
 
 let is_global_name name =
   String.substr_index name "$" = Some(0)
-
 
 let make_tag_id id tag =
   id ^ "^" ^ tag

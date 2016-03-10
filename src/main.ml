@@ -35,6 +35,14 @@ let load_dir input_dir output_dir =
       Out_channel.write_all new_path ~data: (res);
     )
 
+let dump_dot file =
+  let json = Parser.run_dump_ruby file in
+  let ast = Parser.build_ast_from_file json in
+  let _ = Analyzer.trans ast in
+  let dot_res = Dot.node_to_dot_str Type.global_table in
+  Out_channel.write_all "dep.dot" ~data:dot_res;
+  Sys.command_exn "dot dep.dot -Tpng -o dep.png; open dep.png"
+
 let () =
   let len = Array.length Sys.argv in
   Printf.printf "len: %d\n" len;

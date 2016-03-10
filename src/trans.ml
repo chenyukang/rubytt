@@ -15,6 +15,11 @@ let put_ref node bind =
   let bs = [bind] in
   Global.put_refs node bs
 
+let new_bind node ty kind =
+  let bind = Type.new_binding node ty kind in
+  Global.register_bind bind;
+  bind
+
 let get_modulebinding_if_global st name =
   let res = ref None in
   if Util.is_global_name name then
@@ -167,7 +172,7 @@ and
         Type.cont_ty
     )
   | Name(id, _) -> (
-      Printf.printf "lookup name: %s\n" id;
+      (* Printf.printf "lookup name: %s\n" id; *)
       match state_lookup state id with
       | Some(bs) -> (
           Global.put_refs node bs;
@@ -177,9 +182,10 @@ and
       | _ when id = "true" || id = "false" -> (
           Type.bool_ty
         )
-      | _ -> ( Printf.printf "error: unbound variable for %s\n" id;
-               Global.set_unresolve node;
-               Type.unkown_ty)
+      | _ -> (
+          (* Printf.printf "error: unbound variable for %s\n" id; *)
+          Global.set_unresolve node;
+          Type.unkown_ty)
     )
   | BinOp(_, ln, rn) -> (
       let lt = transform ln state in

@@ -43,6 +43,7 @@ let resolved = ref NodeSet.Set.empty;;
 let unresolved = ref NodeSet.Set.empty;;
 let callstack = ref NodeSet.Set.empty;;
 let uncalled = ref TypeSet.Set.empty;;
+let bindings:(Type.binding_ty list ref) = ref [];;
 
 let clear() =
   Node.lambda_coutner := 0;
@@ -83,3 +84,6 @@ let push_call call =
 let contains_call call =
   NodeSet.Set.mem !callstack call
 
+
+let register_bind bind =
+  bindings := !bindings @ [bind]
