@@ -21,25 +21,19 @@ let load_file file =
   Printf.printf "%s" (gen_ty_str())
 
 let load_dir input_dir output_dir =
+  Printf.printf "Dump dir: %s\n%!" input_dir;
   if Sys.file_exists_exn output_dir then
     Sys.command_exn (Printf.sprintf "rm -rf %s;" output_dir);
   Unix.mkdir_p output_dir;
-  let results = Util.walk_directory_tree input_dir ".*\\.rb" in
-  let real_input_dir = Filename.realpath input_dir in
-  let real_output_dir = Filename.realpath output_dir in
-  Printf.eprintf "real_in: %s\n%!" real_input_dir;
-  Printf.eprintf "real_ot: %s\n%!" real_output_dir;
-  List.iter results ~f:(fun x ->
-      let real_path = Filename.realpath x in
-      let new_path = Str.replace_first (Str.regexp_string real_input_dir) output_dir real_path in
-      let ast = run x in
-      let res = gen_ast_str ast in 
-      let dir = Filename.dirname new_path in
-      Printf.eprintf "%s\n%!" real_path;
-      (* Global.print_size(); *)
-      if Sys.file_exists_exn dir = false then
-        Unix.mkdir_p dir;
-      Out_channel.write_all new_path ~data: (res);
+  Sys.command_exn (Printf.sprintf "ruby dump.rb %s %s" input_dir output_dir);
+  let jsons = Util.walk_directory_tree output_dir ".*\\.json" in
+  List.iter jsons ~f:(fun x ->
+      Printf.printf "now: %s\n%!" x;
+      let ast = Parser.build_ast_from_file x in
+      Analyzer.trans ast;
+      let res = gen_ast_str ast in
+      let ty_file = Printf.sprintf "%s.ty" (Filename.chop_extension x) in
+      Out_channel.write_all ty_file ~data: (res);
     )
 
 let dump_dot() =
@@ -50,7 +44,6 @@ let dump_dot() =
 let () =
   let arr = Array.filter ~f:(fun x -> not(String.is_prefix x "-")) Sys.argv in
   let len = Array.length arr in
-  Printf.printf "len: %d\n" len;
   if len <> 2 && len <> 3 then
     Printf.eprintf "Usage: main filename\n"
   else
@@ -66,7 +59,6 @@ let () =
       else
         load_file filename
     );
-    if Array.mem Sys.argv "-dot" then (
-      Printf.printf "hereee\n";
-      dump_dot())
+    if Array.mem Sys.argv "-dot" then
+      dump_dot()
 

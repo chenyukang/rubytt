@@ -228,7 +228,7 @@ let is_instance_var node =
 let name_node_id n =
   match n.ty with
   | Name(s, _) -> s
-  | _ -> failwith "error node type for name_id"
+  | _ -> (* failwith "error node type for name_id" *) "unkown_name_id"
 
 let name_node_is_globalvar n =
   match n.ty with

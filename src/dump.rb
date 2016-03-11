@@ -1,7 +1,10 @@
+#!/usr/bin/ruby
 require 'ripper'
 require 'pp'
 require 'json'
 require 'optparse'
+require 'fileutils'
+
 
 # --------------------- utils ---------------------
 def banner(s)
@@ -892,18 +895,27 @@ def hash_max_nest(hash)
   end
 end
 
-def parse_dump(input, output, endmark)
-  begin
-    simplifier = AstSimplifier.new(input)
-    hash = simplifier.simplify
-    json_string = JSON.pretty_generate(hash, max_nesting: hash_max_nest(hash))
-    out = File.open(output, 'wb')
-    out.write(json_string)
-    out.close
-  ensure
-    end_file = File.open(endmark, 'wb')
-    end_file.close
-  end
+def parse_dump(input, output)
+  simplifier = AstSimplifier.new(input)
+  hash = simplifier.simplify
+  json_string = JSON.pretty_generate(hash, max_nesting: hash_max_nest(hash))
+  out = File.open(output, 'wb')
+  out.write(json_string)
+  out.close
+end
+
+def parse_dir(input, output)
+  abs_input = File.absolute_path input
+  abs_output = File.absolute_path output
+  FileUtils.remove_dir abs_output if File.directory? abs_output
+
+  res = Dir.glob("#{input}/**/*").select{ |x|  x.end_with? ".rb" }.
+        map{ |x| File.absolute_path x}
+  res.each{ |rb|
+    json_path = rb.gsub(abs_input, abs_output).gsub(".rb", ".json")
+    FileUtils.mkdir_p (File.dirname json_path)
+    parse_dump rb, json_path
+  }
 end
 
 $options = {}
@@ -918,6 +930,11 @@ end.parse!
 
 
 if ARGV.length > 0
-  parse_dump(ARGV[0], ARGV[1], ARGV[2])
+  input, output = ARGV[0], ARGV[1]
+  if File.directory? input
+    parse_dir input, output
+  else
+    parse_dump input, output
+  end
 end
 
