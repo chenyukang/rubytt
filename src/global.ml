@@ -54,6 +54,13 @@ let clear() =
   callstack := NodeSet.Set.empty;
   uncalled := TypeSet.Set.empty
 
+
+let print_size() =
+  Printf.printf "resolve: %d\n%!" (NodeSet.Set.length !resolved);
+  Printf.printf "unresolve: %d\n%!" (NodeSet.Set.length !unresolved);
+  Printf.printf "callstack: %d\n%!" (NodeSet.Set.length !callstack);
+  Printf.printf "uncalled: %d\n%!" (TypeSet.Set.length !uncalled)
+
 let put_refs node bs =
   let bind = Hashtbl.find refs node in
   match bind with

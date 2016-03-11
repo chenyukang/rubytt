@@ -139,7 +139,7 @@ and
   | List_ty(_, tys, _) -> (
       let ty_size = List.length tys in
       if ty_size <> elems_size then (
-        Printf.printf "error array assign size mismatch: %d %d\n" elems_size ty_size
+        (* Printf.printf "error array assign size mismatch: %d %d\n" elems_size ty_size *)
       )
       else
         List.iteri elems ~f:(fun i e ->
@@ -147,7 +147,7 @@ and
             bind state e ty kind
           )
     )
-  | _ -> (Printf.printf "error array assign size mismtach: %d 0\n" elems_size)
+  | _ -> (* (Printf.printf "error array assign size mismtach: %d 0\n" elems_size) *) ()
 
 and
   transform (node:node_t) state =
@@ -222,8 +222,8 @@ and
         match bs with
         | Some(_bs) -> make_unions_from_bs _bs
         | _ -> (
-            Printf.printf "error: '%s' attribute not found for : %s\n"
-              id (Printer.type_to_str target_ty 0);
+            (* Printf.printf "error: '%s' attribute not found for : %s\n" *)
+            (*   id (Printer.type_to_str target_ty 0); *)
             Type.unkown_ty
           )
       )
@@ -348,7 +348,7 @@ and resolve_call obj name args_ty star_ty block_arg_ty call state =
           inst_ty
         )
       | _ -> (
-          Printf.printf "error method name: %s\n" id;
+          (* Printf.printf "error method name: %s\n" id; *)
           (* ignore(failwith "resolve_call"); *)
           unkown_ty
         )
@@ -358,13 +358,13 @@ and resolve_call obj name args_ty star_ty block_arg_ty call state =
         let id = name_node_id name in
         let method_ty = lookup_attr_ty class_ty.info.table id in
         if Type.is_unkown_ty method_ty then (
-          Printf.printf "error unkown method: %s\n" id;
+          (* Printf.printf "error unkown method: %s\n" id; *)
           unkown_ty
         ) else
           apply_func method_ty args_ty star_ty block_arg_ty call
       ) else unkown_ty
     )
-  | _ -> (Printf.printf "try to resolve_call: unkown_ty\n"); Type.unkown_ty
+  | _ -> (* (Printf.printf "try to resolve_call: unkown_ty\n"); *) Type.unkown_ty
 
 and bind_param_tys env args args_types =
   List.iteri args ~f:(fun i arg ->
