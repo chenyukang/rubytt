@@ -11,9 +11,8 @@ open Type
 let run_dir dir =
   (* process rb to json *)
   Sys.command_exn (Printf.sprintf "ruby dump.rb %s %s" dir dir);
-  let files = Array.to_list (Sys.readdir dir) in
-  let paths = List.map ~f:(fun x -> Filename.concat dir x) files in
-  let jsons = List.filter paths ~f:(fun x -> Filename.check_suffix x ".json") in
+  
+  let jsons = Util.walk_directory_tree dir ".*\\.json" in
   List.filter ~f:(fun j ->
       Global.clear();
       Printf.printf "now run: %s\n" j;
@@ -30,17 +29,13 @@ let run_dir dir =
       cmp_file cmp log = false
     ) jsons
 
-let rec update_cmp dir =
-  let files = Array.to_list (Sys.readdir dir) in
-  let paths = List.map ~f:(fun x -> Filename.concat dir x) files in
-  let logs = List.filter paths ~f:(fun x -> Filename.check_suffix x ".log") in
-  let dirs = List.filter paths ~f:(fun x -> Sys.is_directory x = `Yes) in
+let update_cmp dir =
+  let logs = Util.walk_directory_tree dir ".*\\.log" in
   List.iter ~f:(fun p ->
       let b = Filename.chop_extension p in
       let o = Printf.sprintf "%s.cmp" b in
       Sys.command_exn (Printf.sprintf "cp %s %s" p o);
-    ) logs;
-  List.iter dirs ~f:(fun d -> update_cmp d)
+    ) logs
 
 let test_node() =
   let nil = nil_node in
