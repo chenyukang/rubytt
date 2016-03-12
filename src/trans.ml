@@ -3,6 +3,7 @@ open Node
 open Type
 open Global
 
+
 let state_add_mode = ref 0;;
 let state_insert st id node ty kind =
   let b = new_binding node ty kind in

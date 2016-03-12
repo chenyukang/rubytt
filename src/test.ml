@@ -8,33 +8,27 @@ open Parser
 open Typestack
 open Type
 
-let rec run_dir dir =
+let run_dir dir =
+  (* process rb to json *)
+  Sys.command_exn (Printf.sprintf "ruby dump.rb %s %s" dir dir);
   let files = Array.to_list (Sys.readdir dir) in
   let paths = List.map ~f:(fun x -> Filename.concat dir x) files in
-  let rb = List.filter paths ~f:(fun x -> Filename.check_suffix x ".rb") in
-  let dirs = List.filter paths ~f:(fun x -> Sys.is_directory x = `Yes) in
-  let failed = ref [] in
-  List.iter ~f:(fun p ->
-      Printf.printf "now run: %s\n" p;
-      let b = Filename.chop_extension p in
-      begin
-        let j = run_dump_ruby p in
-        let ast = build_ast_from_file j in
-        Global.clear();
-        let _ = Trans.transform_expr ast Type.global_table in
-        let ast_str = node_to_str ast 0 in
-        let tys_str = table_to_str Type.global_table 0 in
-        let sep_str = "\n\n" ^ (String.init 40 ~f:(fun _ -> '-')) ^ "\n\n" in
-        let log = Printf.sprintf "%s.log" b in
-        let cmp = Printf.sprintf "%s.cmp" b in (
-          Out_channel.write_all log ~data: (ast_str ^ sep_str ^ tys_str);
-          (* Sys.command_exn (Printf.sprintf "rm %s" j); *)
-          if not (cmp_file cmp log) then
-            failed := !failed @ [p]
-        )
-      end) rb;
-  List.iter dirs ~f:(fun d -> failed := !failed @ (run_dir d));
-  !failed
+  let jsons = List.filter paths ~f:(fun x -> Filename.check_suffix x ".json") in
+  List.filter ~f:(fun j ->
+      Global.clear();
+      Printf.printf "now run: %s\n" j;
+      let base = Filename.chop_extension j in
+      let ast = build_ast_from_file j in
+      let _ = Trans.transform_expr ast Type.global_table in
+      let ast_str = node_to_str ast 0 in
+      let tys_str = table_to_str Type.global_table 0 in
+      let sep_str = "\n\n" ^ (String.init 40 ~f:(fun _ -> '-')) ^ "\n\n" in
+      let log = Printf.sprintf "%s.log" base in
+      let cmp = Printf.sprintf "%s.cmp" base in
+      Out_channel.write_all log ~data: (ast_str ^ sep_str ^ tys_str);
+      Sys.command_exn (Printf.sprintf "rm %s" j);
+      cmp_file cmp log = false
+    ) jsons
 
 let rec update_cmp dir =
   let files = Array.to_list (Sys.readdir dir) in

@@ -907,7 +907,10 @@ end
 def parse_dir(input, output)
   abs_input = File.absolute_path input
   abs_output = File.absolute_path output
-  FileUtils.remove_dir abs_output if File.directory? abs_output
+
+  if (File.directory? abs_output) && (abs_input != abs_output)
+    FileUtils.remove_dir abs_output
+  end
 
   res = Dir.glob("#{input}/**/*").select{ |x|  x.end_with? ".rb" }.
         map{ |x| File.absolute_path x}
