@@ -1,0 +1,10 @@
+(Block 
+ (Class static: false
+  (Name Order Local)
+  (Name Base Local)
+   (Block 
+    (Void))))
+
+----------------------------------------
+
+bind: Order ty: Class_ty: Order

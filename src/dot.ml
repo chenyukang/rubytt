@@ -13,8 +13,8 @@ let node_to_dot_str (state:Type.state_t) =
             match ty.ty with
             | Class_ty(name, _, Some(super)) -> (
                 if not(Type.is_unkown_ty super) then (
-                  let res = Printer.type_to_str super 0 in
-                  Printf.printf "res: %s\n" res;
+                  let super_ty = Printer.type_to_str super 0 in
+                  Printf.printf "res: %s\n" super_ty;
                   let super_name = Type.classty_get_name super in
                   ignore(Hashtbl.add class_hash ~key:name ~data:super_name);
                 )

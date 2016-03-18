@@ -11,7 +11,7 @@ open Type
 let run_dir dir =
   (* process rb to json *)
   Sys.command_exn (Printf.sprintf "ruby dump.rb %s %s" dir dir);
-  
+
   let jsons = Util.walk_directory_tree dir ".*\\.json" in
   List.filter ~f:(fun j ->
       Global.clear();
@@ -26,7 +26,7 @@ let run_dir dir =
       let cmp = Printf.sprintf "%s.cmp" base in
       Out_channel.write_all log ~data: (ast_str ^ sep_str ^ tys_str);
       Sys.command_exn (Printf.sprintf "rm %s" j);
-      cmp_file cmp log = false
+      not(cmp_file cmp log)
     ) jsons
 
 let update_cmp dir =
