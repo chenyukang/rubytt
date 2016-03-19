@@ -1,5 +1,6 @@
 open Core.Std
 open Sys
+open Linker
 
 let run file =
   let json = Parser.run_dump_ruby file in
@@ -42,6 +43,14 @@ let dump_dot() =
   Out_channel.write_all "dep.dot" ~data:dot_res;
   Sys.command_exn "dot dep.dot -Tpng -o dep.png; open dep.png"
 
+let dump_html input output_dir =
+  let root_dir = match Sys.is_directory_exn input with
+    | true -> input
+    | _ -> Sys.getcwd() in
+  new_linker root_dir output_dir;
+  Printf.printf "here: %s %s\n" root_dir output_dir;
+  find_links !Global.bindings
+
 let () =
   let arr = Array.filter ~f:(fun x -> not(String.is_prefix x "-")) Sys.argv in
   let len = Array.length arr in
@@ -61,5 +70,9 @@ let () =
         load_file filename
     );
     if Array.mem Sys.argv "-dot" then
-      dump_dot()
+      dump_dot();
+    if Array.mem Sys.argv "-html" then
+      dump_html filename arr.(2)
+
+
 

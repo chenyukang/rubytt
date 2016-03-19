@@ -26,9 +26,9 @@ type style = {
   ty: style_ty;
   ss: int;
   ee: int;
-  msg: string;
-  url: string;
-  id: string;
+  mutable msg: string;
+  mutable url: string;
+  mutable id: string;
   highlight: string list;
 }
 

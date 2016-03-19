@@ -3,10 +3,14 @@ open Node
 open Type
 open Global
 
+let new_bind node ty kind =
+  let bind = Type.new_binding node ty kind in
+  Global.register_bind bind;
+  bind
 
 let state_add_mode = ref 0;;
 let state_insert st id node ty kind =
-  let b = new_binding node ty kind in
+  let b = new_bind node ty kind in
   if !state_add_mode = 0 then
     State.state_update_bind st id b
   else
@@ -16,15 +20,10 @@ let put_ref node bind =
   let bs = [bind] in
   Global.put_refs node bs
 
-let new_bind node ty kind =
-  let bind = Type.new_binding node ty kind in
-  Global.register_bind bind;
-  bind
-
 let get_modulebinding_if_global st name =
   let res = ref None in
   if Util.is_global_name name then
-    if not(phys_equal global_table st) then
+    if not (phys_equal global_table st) then
         res := State.lookup_local global_table name;
   !res
 
@@ -126,7 +125,7 @@ and
   let id = name_node_id name in
   (* Printf.printf "bind name: %s ty: %s\n" id (Printer.type_to_str rt 0); *)
   if Util.is_global_name id && (name_node_is_globalvar name) then (
-    let b = new_binding name rt kind in
+    let b = new_bind name rt kind in
     State.state_update_bind global_table id b;
     put_ref name b;
   ) else (
