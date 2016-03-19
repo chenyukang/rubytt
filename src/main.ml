@@ -34,6 +34,7 @@ let load_dir input_dir output_dir =
       let res = gen_ast_str ast in
       let ty_file = Printf.sprintf "%s.ty" (Filename.chop_extension x) in
       Out_channel.write_all ty_file ~data: (res);
+      (* Global.print_size(); *)
     )
 
 let dump_dot() =

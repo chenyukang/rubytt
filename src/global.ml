@@ -6,6 +6,7 @@ module TypeSet : sig
 end = struct
   module T = struct
     type t = Type.type_t with sexp
+    (* use to compare fun_ty *)
     let compare t1 t2 =
       Type.compare_type_t t1 t2
   end
@@ -38,7 +39,9 @@ end = struct
     include Hashable.Make(T)
 end
 
-let refs:(Node.node_t, Type.binding_ty list) Hashtbl.t = Hashtbl.create ~hashable:Node.NodeHash.hashable ();;
+let refs:(Node.node_t, Type.binding_ty list) Hashtbl.t =
+  Hashtbl.create ~hashable:Node.NodeHash.hashable ();;
+
 let resolved = ref NodeSet.Set.empty;;
 let unresolved = ref NodeSet.Set.empty;;
 let callstack = ref NodeSet.Set.empty;;
@@ -90,7 +93,6 @@ let push_call call =
 
 let contains_call call =
   NodeSet.Set.mem !callstack call
-
 
 let register_bind bind =
   bindings := !bindings @ [bind]
