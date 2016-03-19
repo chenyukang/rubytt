@@ -31,10 +31,12 @@ let node_to_dot_str (state:Type.state_t) =
   Hashtbl.iter class_hash ~f:(fun ~key:base ~data:super ->
       if Hashtbl.mem setted base = false then (
         Hashtbl.add_exn setted ~key:base ~data:true;
-        res := !res ^ Printf.sprintf "\"%s\" [style=filled, color=darkturquoise];\n" base);
+        res := !res ^
+               Printf.sprintf "\"%s\" [style=filled, color=darkturquoise];\n" base);
       if Hashtbl.mem setted super = false then(
         Hashtbl.add_exn setted ~key:super ~data:true;
-        res := !res ^ Printf.sprintf "\"%s\" [style=filled, color=darkturquoise];\n" super);
+        res := !res ^
+               Printf.sprintf "\"%s\" [style=filled, color=darkturquoise];\n" super);
       res := !res ^ Printf.sprintf "\"%s\" -> \"%s\";\n" base super;
     );
   res := !res ^ "}\n";

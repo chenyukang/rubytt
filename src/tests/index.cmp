@@ -1,0 +1,25 @@
+(Block 
+ (Assign 
+  (Name a Local)
+  (Array 
+   (Int 1)
+   (Int 2)
+   (Int 3)
+   (String now)))
+ (Assign 
+  (Name b Local)
+  (Int 1))
+ (Assign 
+  (Name c Local)
+  (Subscript 
+   (Name a Local)
+   (Name b Local)))
+ (Call puts
+  (args: 
+   (Name c Local))))
+
+----------------------------------------
+
+bind: a ty: [{(Int_ty)|(Str_ty)}]
+bind: b ty: Int_ty
+bind: c ty: {(Int_ty)|(Str_ty)}
