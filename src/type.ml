@@ -60,7 +60,7 @@ and
   binding_ty = {
   node: node_t;
   refs: (Node.node_t, bool) Hashtbl.t;
-  qname: string;
+  mutable qname: string;
   bind_file: string;
   bind_ty: type_t;
   kind: kind;
@@ -313,6 +313,9 @@ let new_binding node ttype kind =
     body_end = 0;
     refs = Hashtbl.create ~hashable:NodeHash.hashable ();
   }
+
+let set_bind_qname binding qname =
+  binding.qname <- qname
 
 let binding_add_ref binding node =
   ignore(Hashtbl.add binding.refs ~key:node ~data:true)

@@ -2,15 +2,22 @@ open Core.Std
 open Node
 open Type
 open Global
+open State
 
 let new_bind node ty kind =
   let bind = Type.new_binding node ty kind in
   Global.register_bind bind;
   bind
 
-let state_add_mode = ref 0;;
+let state_add_mode = ref 0;; (* fixme *)
 let state_insert st id node ty kind =
   let b = new_bind node ty kind in
+  let qname = match ty.ty with
+  | Module_ty(_) -> "" (* fixme *)
+  | Fun_ty(_) -> extend_path st id "#"
+  | _ -> extend_path st id "::"
+  in
+  set_bind_qname b qname;
   if !state_add_mode = 0 then
     State.state_update_bind st id b
   else
@@ -123,7 +130,7 @@ and
 and
   bind_name state name (rt:type_t) kind =
   let id = name_node_id name in
-  (* Printf.printf "bind name: %s ty: %s\n" id (Printer.type_to_str rt 0); *)
+  Printf.printf "bind name: %s ty: %s\n" id (Printer.type_to_str rt 0);
   if Util.is_global_name id && (name_node_is_globalvar name) then (
     let b = new_bind name rt kind in
     State.state_update_bind global_table id b;

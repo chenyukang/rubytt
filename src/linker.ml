@@ -20,7 +20,7 @@ let add_file_style path style =
   | _ -> (Hashtbl.add_exn file_styles ~key:path ~data:[style])
 
 let process_def bind =
-  (* Printf.printf "process_def: %s\n%!" bind.qname; *)
+  Printf.printf "process_def: %s\n%!" bind.qname;
   let qname = bind.qname in
   let style = Style.new_style ANCHOR bind.start bind.tail in
   style.msg <- Printer.type_to_str bind.bind_ty 0;
