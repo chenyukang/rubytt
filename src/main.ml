@@ -4,7 +4,7 @@ open Linker
 
 let run file =
   let json = Parser.run_dump_ruby file in
-  let ast = Parser.build_ast_from_file json in
+  let ast = Parser.build_ast_from_json json in
   Analyzer.trans ast;
   ast
 
@@ -30,7 +30,7 @@ let load_dir input_dir output_dir =
   let jsons = Util.walk_directory_tree output_dir ".*\\.json" in
   List.iter jsons ~f:(fun x ->
       Printf.printf "now: %s\n%!" x;
-      let ast = Parser.build_ast_from_file x in
+      let ast = Parser.build_ast_from_json x in
       Analyzer.trans ast;
       let res = gen_ast_str ast in
       let ty_file = Printf.sprintf "%s.ty" (Filename.chop_extension x) in

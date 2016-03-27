@@ -17,7 +17,7 @@ let run_dir dir =
       Global.clear();
       Printf.printf "now run: %s\n" j;
       let base = Filename.chop_extension j in
-      let ast = build_ast_from_file j in
+      let ast = build_ast_from_json j in
       let _ = Trans.transform_expr ast Type.global_table in
       let ast_str = node_to_str ast 0 in
       let tys_str = table_to_str Type.global_table 0 in

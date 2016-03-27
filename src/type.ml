@@ -300,7 +300,7 @@ let new_tuple_type elem_tys =
     ty = Tuple_ty(elem_tys)
   }
 
-let new_binding node ttype kind =
+let new_binding (node:node_t) ttype kind =
   {
     qname = ttype.info.table.path;
     kind = kind;
