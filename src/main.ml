@@ -48,8 +48,8 @@ let dump_html input output_dir =
     | true -> input
     | _ -> Sys.getcwd() in
   new_linker root_dir output_dir;
-  Printf.printf "here: %s %s\n" root_dir output_dir;
-  find_links !Global.bindings
+  find_links !Global.bindings;
+  Linker.linker_print()
 
 let () =
   let arr = Array.filter ~f:(fun x -> not(String.is_prefix x "-")) Sys.argv in
@@ -73,6 +73,3 @@ let () =
       dump_dot();
     if Array.mem Sys.argv "-html" then
       dump_html filename arr.(2)
-
-
-

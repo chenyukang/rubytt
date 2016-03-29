@@ -323,6 +323,15 @@ let binding_add_ref binding node =
 let bind_equal a b =
   (a.start = b.start && a.tail = b.tail && a.bind_file = b.bind_file)
 
+let bind_hash_str a =
+  Printf.sprintf "file:%s start:%d end:%d"
+    a.bind_file a.start a.tail
+
+let bind_kind_str a =
+  match a.kind with
+  | MethodK -> "MethodK"
+  | ClassK -> "ClassK"
+  | _ -> "Other"
 
 let union_ty_remove u t =
   match u.ty with

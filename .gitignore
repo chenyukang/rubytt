@@ -5,6 +5,7 @@
 *.png
 *.dot
 out
+now
 _build
 _tests
 res
