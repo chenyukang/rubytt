@@ -1,4 +1,4 @@
-open Core.Std
+open Core.Std;;
 
 module TypeSet : sig
   type t = Type.type_t
@@ -7,8 +7,7 @@ end = struct
   module T = struct
     type t = Type.type_t with sexp
     (* use to compare fun_ty *)
-    let compare t1 t2 =
-      Type.compare_type_t t1 t2
+    let compare t1 t2 = Type.compare_type_t t1 t2
   end
   include T
   include Comparable.Make(T)
@@ -20,8 +19,7 @@ module NodeSet : sig
 end = struct
   module T = struct
     type t = Node.node_t with sexp
-    let compare t1 t2 =
-      Node.compare_node_t t1 t2
+    let compare t1 t2 = Node.compare_node_t t1 t2
   end
   include T
   include Comparable.Make(T)
@@ -47,11 +45,13 @@ let unresolved = ref NodeSet.Set.empty;;
 let callstack = ref NodeSet.Set.empty;;
 let uncalled = ref TypeSet.Set.empty;;
 let bindings:(Type.binding_ty list ref) = ref [];;
+let loaded_files = Hash_set.Poly.create();;
 
 let clear() =
   Node.lambda_coutner := 0;
   State.state_clear Type.global_table;
   Hashtbl.clear refs;
+  Hash_set.clear loaded_files;
   resolved := NodeSet.Set.empty;
   unresolved := NodeSet.Set.empty;
   callstack := NodeSet.Set.empty;
@@ -62,7 +62,8 @@ let print_size() =
   Printf.printf "resolve: %d\n%!" (NodeSet.Set.length !resolved);
   Printf.printf "unresolve: %d\n%!" (NodeSet.Set.length !unresolved);
   Printf.printf "callstack: %d\n%!" (NodeSet.Set.length !callstack);
-  Printf.printf "uncalled: %d\n%!" (TypeSet.Set.length !uncalled)
+  Printf.printf "uncalled: %d\n%!" (TypeSet.Set.length !uncalled);
+  Printf.printf "loaded_files: %d\n%!" (Hash_set.length loaded_files)
 
 let put_refs node bs =
   let bind = Hashtbl.find refs node in
@@ -96,3 +97,6 @@ let contains_call call =
 
 let register_bind bind =
   bindings := !bindings @ [bind]
+
+let set_load_file (file:string) =
+  Hash_set.add loaded_files file

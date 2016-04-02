@@ -18,6 +18,7 @@ let gen_ty_str() =
 let load_file file =
   let ast = run file in
   let ast_str = gen_ast_str ast in
+  Global.set_load_file file;
   Printf.printf "%s\n" ast_str;
   Printf.printf "%s" (gen_ty_str())
 
@@ -27,16 +28,17 @@ let load_dir input_dir output_dir =
     Sys.command_exn (Printf.sprintf "rm -rf %s;" output_dir);
   Unix.mkdir_p output_dir;
   Sys.command_exn (Printf.sprintf "ruby dump.rb %s %s" input_dir output_dir);
+  let rb_files = Util.walk_directory_tree input_dir ".*\\.rb" in
+  List.iter rb_files ~f:(fun x -> Global.set_load_file x);
   let jsons = Util.walk_directory_tree output_dir ".*\\.json" in
   List.iter jsons ~f:(fun x ->
-      Printf.printf "now: %s\n%!" x;
       let ast = Parser.build_ast_from_json x in
       Analyzer.trans ast;
       let res = gen_ast_str ast in
       let ty_file = Printf.sprintf "%s.ty" (Filename.chop_extension x) in
-      Out_channel.write_all ty_file ~data: (res);
-      (* Global.print_size(); *)
-    )
+      Out_channel.write_all ty_file ~data: res;
+    );
+  Global.print_size()
 
 let dump_dot() =
   let dot_res = Dot.node_to_dot_str Type.global_table in

@@ -1,5 +1,6 @@
 open Core.Std;;
 open Type;;
+open Node;;
 open Style;;
 
 let file_styles = Hashtbl.Poly.create();;
@@ -8,6 +9,7 @@ let outdir = ref "";;
 let methods_count = ref 0;;
 let class_count = ref 0;;
 let seen_def = Hash_set.Poly.create();;
+let seen_ref = Hash_set.Poly.create();;
 
 let new_linker root out_dir =
   root_path := root;
@@ -26,15 +28,20 @@ let process_def bind =
   if Hash_set.mem seen_def hash_str = false then (
     Hash_set.add seen_def hash_str;
     let qname = bind.qname in
-    let style = Style.new_style ANCHOR bind.start bind.tail in
+    let style = Style.new_style Style.ANCHOR bind.start bind.tail in
     style.msg <- Printer.type_to_str bind.bind_ty 0;
     style.url <- qname;
     style.id <- qname;
     add_file_style bind.bind_file style
   )
 
-let process_ref node bindings =
-  ()
+let process_ref ref_node bindings =
+  let hash = Node.node_t_hash ref_node in
+  if Hash_set.mem seen_ref hash = false then (
+    Hash_set.add seen_ref hash;
+    let style = Style.new_style Style.LINK ref_node.info.ss ref_node.info.ee in
+    add_file_style ref_node.info.file style;
+  )
 
 let find_links bindings =
   Printf.printf "length: %d\n" (List.length bindings);
@@ -47,7 +54,6 @@ let find_links bindings =
     );
   Hashtbl.iter Global.refs
     ~f:(fun ~key:node ~data:bindings -> process_ref node bindings)
-
 
 let linker_print () =
   Printf.printf "methods: %d\n" !methods_count;
