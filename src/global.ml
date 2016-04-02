@@ -39,7 +39,7 @@ end = struct
     include Hashable.Make(T)
 end
 
-let refs:(Node.node_t, Type.binding_ty list) Hashtbl.t =
+let refs : (Node.node_t, Type.binding_ty list) Hashtbl.t =
   Hashtbl.create ~hashable:Node.NodeHash.hashable ();;
 
 let resolved = ref NodeSet.Set.empty;;

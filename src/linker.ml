@@ -33,6 +33,9 @@ let process_def bind =
     add_file_style bind.bind_file style
   )
 
+let process_ref node bindings =
+  ()
+
 let find_links bindings =
   Printf.printf "length: %d\n" (List.length bindings);
   List.iter bindings ~f:(fun bind ->
@@ -41,7 +44,10 @@ let find_links bindings =
       | ClassK -> (class_count := !class_count + 1)
       | _ -> ());
       process_def bind;
-    )
+    );
+  Hashtbl.iter Global.refs
+    ~f:(fun ~key:node ~data:bindings -> process_ref node bindings)
+
 
 let linker_print () =
   Printf.printf "methods: %d\n" !methods_count;
