@@ -42,8 +42,11 @@ let load_dir input_dir output_dir =
 
 let dump_dot() =
   let dot_res = Dot.node_to_dot_str Type.global_table in
-  Out_channel.write_all "dep.dot" ~data:dot_res;
+  Out_channel.write_all "dep.dot" ~data: dot_res;
   Sys.command_exn "dot dep.dot -Tpng -o dep.png; open dep.png"
+
+let markup file =
+  ""
 
 let dump_html input output_dir =
   let root_dir = match Sys.is_directory_exn input with
@@ -51,7 +54,17 @@ let dump_html input output_dir =
     | _ -> Sys.getcwd() in
   new_linker root_dir output_dir;
   find_links !Global.bindings;
-  Linker.linker_print()
+  Linker.linker_print();
+  Printf.printf "Writing HTML\n%!";
+  Hash_set.iter Global.loaded_files ~f:(
+    fun f ->
+      Printf.printf "generate file: %s\n%!" f;
+      let out = Util.change_root_dir_of_path root_dir output_dir f in
+      let outfile = Util.change_extension out ".html" in
+      let html = markup f in
+      Printf.printf "out %s : %s\n%!" outfile html;
+      Out_channel.write_all outfile ~data: html;
+  )
 
 let () =
   let arr = Array.filter ~f:(fun x -> not(String.is_prefix x "-")) Sys.argv in

@@ -45,13 +45,22 @@ let walk_directory_tree dir pattern =
   in
   walk [] [dir]
 
-
 let main_name tagged_name =
   let segs = Str.split (Str.regexp "\\^") tagged_name in
   if List.length segs > 0 then
     List.nth_exn segs 0
-  else
-    tagged_name
+  else tagged_name
+
+
+let change_root_dir_of_path input_dir output_dir file =
+  let abs_in = Filename.realpath input_dir in
+  let abs_ou = Filename.realpath output_dir in
+  let abs_file = Filename.realpath file in
+  abs_ou ^ (String.drop_prefix abs_file (String.length abs_in))
+
+let change_extension file ext =
+  let base = Filename.chop_extension file in
+  base ^ ext
 
 let is_synthetic_name name =
   name = "self" || name = "#this"
