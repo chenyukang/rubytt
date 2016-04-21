@@ -5,19 +5,12 @@ let markup file =
   let source = Util.read_file_to_str file in
   let css = Util.read_file_to_str "./show.css" in
   let js = Util.read_file_to_str "./highlight.js" in
-  let result = "<html><head title=\"" ^
-               file ^
-               "\">" ^
-               "<style type='text/css'>\n" ^
-               css ^
-               "</style>\n" ^
-               "<script language=\"JavaScript\" type=\"text/javascript\">\n" ^
-               js ^
+  let result = "<html><head title=\"" ^ file ^ "\">" ^
+               "<style type='text/css'>\n" ^ css ^ "</style>\n" ^
+               "<script language=\"JavaScript\" type=\"text/javascript\">\n" ^ js ^
                "</script>\n" ^
                "</head>\n<body>\n" ^
-               "<pre>" ^
-               source ^
-               "</pre>" ^
+               "<pre>" ^ source ^ "</pre>" ^
                "</body></html>" in
   result
 
