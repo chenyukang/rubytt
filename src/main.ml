@@ -44,8 +44,13 @@ let load_dir input_dir output_dir =
 let () =
   let arr = Array.filter ~f:(fun x -> not(String.is_prefix x "-")) Sys.argv in
   let len = Array.length arr in
-  if len <> 2 && len <> 3 then
-    Printf.eprintf "Usage: main filename\n"
+  if len <> 2 && len <> 3 then (
+    let info = "Usage: rubytt <options> filename\n" ^
+    "Options are:\n" ^
+    " -dot  generate a dot for visualize project\n" ^
+    " -html generate HTML files for type analysis\n" in
+    Printf.eprintf "%s\n" info
+  )
   else
     let filename = arr.(1) in
     if not (Sys.file_exists_exn filename) then

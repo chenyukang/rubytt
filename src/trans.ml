@@ -316,7 +316,7 @@ and
     )
   | Class(name, super, body, _, static) -> (
       if (is_nil name) = false && static then (
-
+        (* FIXME *)
       );
       let id = name_node_id name in
       let parent = Some(state) in

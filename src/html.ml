@@ -1,6 +1,17 @@
 open Core.Std
 open Sys
 
+let add_line source =
+  let lines = Str.split (Str.regexp "\n") source in
+  let result = ref "" in
+  List.iteri lines ~f:(fun i l ->
+      result := !result ^ (
+          "<span class='lineno'>"
+          ^ (Printf.sprintf "%4d  " (i+1))
+            ^ "</span>" ^ l ^ "\n"
+        ));
+  !result
+
 let markup file =
   let source = Util.read_file_to_str file in
   let css = Util.read_file_to_str "./show.css" in
@@ -10,7 +21,7 @@ let markup file =
                "<script language=\"JavaScript\" type=\"text/javascript\">\n" ^ js ^
                "</script>\n" ^
                "</head>\n<body>\n" ^
-               "<pre>" ^ source ^ "</pre>" ^
+               "<pre>" ^ (add_line source) ^ "</pre>" ^
                "</body></html>" in
   result
 
