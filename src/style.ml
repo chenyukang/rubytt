@@ -1,4 +1,5 @@
-
+open Core.Std
+       
 type style_ty =
   | KEYWORD
   | COMMENT
@@ -39,17 +40,14 @@ let new_style ty ss ee =
     highlight = [];
   }
 
-
-
 type tag = {
   offset: int;
   sty: style;
 }
 
-
 type applier = {
   buffer: string;
-  tags: tag list;
+  mutable tags: tag list;
   offset: int;
   file: string;
 }
@@ -60,5 +58,10 @@ let apply file source styles =
     tags = [];
     offset = 0;
     file = file;
-  } in 
+  } in
+  List.iter styles ~f:(fun s ->
+      let start_tag = { offset = s.ss; sty = s} in
+      let end_tag = { offset = s.ee; sty = s} in
+      applier.tags <- applier.tags @ [start_tag; end_tag]
+    );
   source
