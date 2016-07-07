@@ -13,15 +13,17 @@ let add_line source =
   !result
 
 let markup file =
+  let styles = Linker.get_styles_for_file file in
   let source = Util.read_file_to_str file in
   let css = Util.read_file_to_str "./show.css" in
   let js = Util.read_file_to_str "./highlight.js" in
+  let source_with_style = Style.apply file source styles in
   let result = "<html><head title=\"" ^ file ^ "\">" ^
                "<style type='text/css'>\n" ^ css ^ "</style>\n" ^
                "<script language=\"JavaScript\" type=\"text/javascript\">\n" ^ js ^
                "</script>\n" ^
                "</head>\n<body>\n" ^
-               "<pre>" ^ (add_line source) ^ "</pre>" ^
+               "<pre>" ^ (add_line source_with_style) ^ "</pre>" ^
                "</body></html>" in
   result
 

@@ -40,3 +40,25 @@ let new_style ty ss ee =
   }
 
 
+
+type tag = {
+  offset: int;
+  sty: style;
+}
+
+
+type applier = {
+  buffer: string;
+  tags: tag list;
+  offset: int;
+  file: string;
+}
+
+let apply file source styles =
+  let applier = {
+    buffer = "";
+    tags = [];
+    offset = 0;
+    file = file;
+  } in 
+  source

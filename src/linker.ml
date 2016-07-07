@@ -22,6 +22,12 @@ let add_file_style path style =
     Hashtbl.replace file_styles ~key:path ~data:(style_list @ [style])
   | _ -> (Hashtbl.add_exn file_styles ~key:path ~data:[style])
 
+let get_styles_for_file path =
+  let path = Filename.realpath path in
+  match Hashtbl.find file_styles path with
+  |Some(styles) -> styles
+  | _ -> []
+
 let process_def bind =
   (* Printf.printf "process_def: %s\n bind_file: %s\n%!" bind.qname bind.bind_file; *)
   let hash_str = Type.bind_hash_str bind in

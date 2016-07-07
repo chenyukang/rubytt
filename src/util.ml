@@ -24,7 +24,6 @@ let cmp_file a b =
   else
     (read_file_to_str a) = (read_file_to_str b)
 
-
 let walk_directory_tree dir pattern =
   let select str = Str.string_match (Str.regexp pattern) str 0 in
   let rec walk acc = function
