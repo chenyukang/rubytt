@@ -112,6 +112,7 @@ let apply file source styles =
     file = file;
   } in
   List.iter styles ~f:(fun s ->
+      Printf.printf "ss: %d ee: %d\n" s.ss s.ee;
       let start_tag = { offset = s.ss; sty = s; tag_ty = START} in
       let end_tag = { offset = s.ee; sty = s; tag_ty = END } in
       applier.tags <- applier.tags @ [start_tag; end_tag]

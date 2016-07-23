@@ -25,11 +25,12 @@ let add_file_style path style =
 let get_styles_for_file path =
   let path = Filename.realpath path in
   match Hashtbl.find file_styles path with
-  |Some(styles) -> styles
+  | Some(styles) -> styles
   | _ -> []
 
 let process_def bind =
-  (* Printf.printf "process_def: %s\n bind_file: %s\n%!" bind.qname bind.bind_file; *)
+  Printf.printf "process_def: %s\n bind_file: %s ss:%d ee:%d\n%!"
+    bind.qname bind.bind_file bind.start bind.tail;
   let hash_str = Type.bind_hash_str bind in
   if Hash_set.mem seen_def hash_str = false then (
     Hash_set.add seen_def hash_str;
@@ -45,8 +46,11 @@ let process_ref ref_node bindings =
   let hash = Node.node_t_hash ref_node in
   if Hash_set.mem seen_ref hash = false then (
     Hash_set.add seen_ref hash;
-    let style = Style.new_style Style.LINK ref_node.info.ss ref_node.info.ee in
-    add_file_style ref_node.info.file style;
+    let info = ref_node.info in
+    Printf.printf "process_ref: bind_file: %s ss:%d ee:%d\n%!"
+      info.file info.ss info.ee;
+    let style = Style.new_style Style.LINK info.ss info.ee in
+    add_file_style info.file style;
   )
 
 let find_links bindings =
