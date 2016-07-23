@@ -81,11 +81,11 @@ let apply_tag applier source (t:tag) =
     applier.buffer <- applier.buffer ^ buf in
   if t.offset > applier.offset then (
     let append = String.sub source applier.offset (t.offset - applier.offset) in
-    let escap = escape append in
+    let escp = escape append in
     applier.offset <- t.offset;
-    add escap
+    add escp
   );
-  match t.tag_ty with
+  let _ = match t.tag_ty with
   | START -> (
       (match t.sty.ty with
       | ANCHOR -> (add ("<a name='" ^ t.sty.url ^ "'");
@@ -101,8 +101,13 @@ let apply_tag applier source (t:tag) =
       match t.sty.ty with
       | ANCHOR -> add "</a>"
       | _ -> add "</span>"
-    )
-
+    ) in
+  let len = String.length source in
+  if applier.offset < len then
+    let append = String.sub source applier.offset (len - applier.offset) in
+    let escp = escape append in
+    applier.offset <- len;
+    add escp
 
 let apply file source styles =
   let applier = {
