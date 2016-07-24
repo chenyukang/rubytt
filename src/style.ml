@@ -81,6 +81,7 @@ let apply_tag applier source (t:tag) =
     applier.buffer <- applier.buffer ^ buf in
   if t.offset > applier.offset then (
     let append = String.sub source applier.offset (t.offset - applier.offset) in
+    Printf.printf "append: %s\n" append;
     let escp = escape append in
     applier.offset <- t.offset;
     add escp
@@ -99,7 +100,7 @@ let apply_tag applier source (t:tag) =
     )
   | _ -> (
       match t.sty.ty with
-      | ANCHOR -> add "</a>"
+      | ANCHOR | LINK -> add "</a>"
       | _ -> add "</span>"
     )
 
@@ -111,7 +112,8 @@ let apply file source styles =
     file = file;
   } in
   List.iter styles ~f:(fun s ->
-      Printf.printf "ss: %d ee: %d\n" s.ss s.ee;
+      Printf.printf "ss: %d ee: %d source: %s\n"
+        s.ss s.ee (String.sub source s.ss (s.ee - s.ss));
       let start_tag = { offset = s.ss; sty = s; tag_ty = START} in
       let end_tag = { offset = s.ee; sty = s; tag_ty = END } in
       applier.tags <- applier.tags @ [start_tag; end_tag]
