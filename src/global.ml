@@ -63,7 +63,8 @@ let print_size() =
   Printf.printf "unresolve: %d\n%!" (NodeSet.Set.length !unresolved);
   Printf.printf "callstack: %d\n%!" (NodeSet.Set.length !callstack);
   Printf.printf "uncalled: %d\n%!" (TypeSet.Set.length !uncalled);
-  Printf.printf "loaded_files: %d\n%!" (Hash_set.length loaded_files)
+  Printf.printf "loaded_files: %d\n%!" (Hash_set.length loaded_files);
+  Printf.printf "refs: %d\n%!" (Hashtbl.length refs)
 
 let put_refs node bs =
   let bind = Hashtbl.find refs node in

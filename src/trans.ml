@@ -18,6 +18,7 @@ let state_insert st id node ty kind =
   | _ -> extend_path st id "::"
   in
   set_bind_qname b qname;
+  Printf.printf "set qname: %s\n" qname;
   if !state_add_mode = 0 then
     State.state_update_bind st id b
   else
@@ -130,12 +131,13 @@ and
 and
   bind_name state name (rt:type_t) kind =
   let id = name_node_id name in
-  Printf.printf "bind name: %s ty: %s\n" id (Printer.type_to_str rt 0);
   if Util.is_global_name id && (name_node_is_globalvar name) then (
     let b = new_bind name rt kind in
+    Printf.printf "bind global name: %s ty: %s\n" id (Printer.type_to_str rt 0);
     State.state_update_bind global_table id b;
     put_ref name b;
   ) else (
+    Printf.printf "bind local name: %s ty: %s\n" id (Printer.type_to_str rt 0);
     state_insert state id name rt kind
   )
 
@@ -158,6 +160,7 @@ and
 
 and
   transform (node:node_t) state =
+  Printf.printf "trans: %s\n" (Printer.node_to_str node 0);
   match node.ty with
   | Nil -> Type.unkown_ty
   | Int(_) -> Type.int_ty
@@ -179,9 +182,10 @@ and
         Type.cont_ty
     )
   | Name(id, _) -> (
-      (* Printf.printf "lookup name: %s\n" id; *)
+      Printf.printf "lookup name: %s\n" id;
       match state_lookup state id with
       | Some(bs) -> (
+          Printf.printf "put ref name: %s\n" id;
           Global.put_refs node bs;
           Global.set_resolve node;
           make_unions_from_bs bs
@@ -190,12 +194,12 @@ and
           Type.bool_ty
         )
       | _ -> (
-          (* Printf.printf "error: unbound variable for %s\n" id; *)
+          Printf.printf "error: unbound variable for %s\n" id;
           Global.set_unresolve node;
           Type.unkown_ty)
     )
   | BinOp(_, ln, rn) -> (
-      let lt = transform ln state in
+      let _ = transform ln state in
       let rt = transform rn state in
       if not (type_equal rt Type.unkown_ty) then rt
       else Type.unkown_ty
@@ -292,9 +296,11 @@ and
       let id = name_node_id info.name in
       State.set_path func_ty.info.table (State.extend_path !_state id "#");
       Global.set_uncalled func_ty;
+      Printf.printf "now id: %s\n" id;
       func_ty
     )
   | Call(func, pos, star, block_arg) -> (
+      Printf.printf "call\n";
       let _func = ref func in
       let _name = ref nil_node in
       if is_attr func then (
@@ -377,11 +383,14 @@ and bind_param_tys env args args_types =
   List.iteri args ~f:(fun i arg ->
       if i < List.length args_types then (
         let arg_ty = List.nth_exn args_types i in
+        Printf.printf "here: %d\n" i;
         bind env arg arg_ty Type.ParameterK
-      )
+      ) else
+        bind env arg unkown_ty Type.ParameterK
     )
 
 and apply_func fun_ty args_ty star_ty block_arg_ty call =
+  Printf.printf "apply_func: \n" ;
   Global.set_called fun_ty;
   if not (Global.contains_call call) && (Type.is_fun_ty fun_ty) then (
     let info = Type.fun_ty_info fun_ty in
@@ -400,11 +409,13 @@ let apply_uncalled () =
   TypeSet.Set.iter !Global.uncalled (fun fun_ty ->
       let info = Type.fun_ty_info fun_ty in
       let node_info = func_node_info info.fun_node in
-      (* let id = name_node_id node_info.name in *)
-      (* Printf.printf "apply id: %s\n" id; *)
-      let env = State.new_state ~parent:info.env State.Function in
-      let ret_ty = transform node_info.body env in
-      ignore(fun_ty_set_ret_ty fun_ty ret_ty))
+      let id = name_node_id node_info.name in
+      Printf.printf "apply id: %s\n" id;
+      (* let env = State.new_state ~parent:info.env State.Function in *)
+      (* let ret_ty = transform node_info.body env in *)
+      (* ignore(fun_ty_set_ret_ty fun_ty ret_ty)) *)
+      let _ = apply_func fun_ty [] unkown_ty unkown_ty info.fun_node in
+      ())
 
 let transform_expr node state =
   ignore(transform node state);
