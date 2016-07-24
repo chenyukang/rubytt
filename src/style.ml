@@ -85,7 +85,7 @@ let apply_tag applier source (t:tag) =
     applier.offset <- t.offset;
     add escp
   );
-  let _ = match t.tag_ty with
+  match t.tag_ty with
   | START -> (
       (match t.sty.ty with
       | ANCHOR -> (add ("<a name='" ^ t.sty.url ^ "'");
@@ -94,20 +94,14 @@ let apply_tag applier source (t:tag) =
                  add (", xid='" ^ t.sty.id ^ "'"))
       | _ -> add ("<span class='" ^ to_css(t.sty) ^ "'"));
       if t.sty.msg <> "" then
-        add (Printf.sprintf ",title='%s'" t.sty.msg);
+        add (Printf.sprintf ", title='%s'" t.sty.msg);
       add ">"
     )
   | _ -> (
       match t.sty.ty with
       | ANCHOR -> add "</a>"
       | _ -> add "</span>"
-    ) in
-  let len = String.length source in
-  if applier.offset < len then
-    let append = String.sub source applier.offset (len - applier.offset) in
-    let escp = escape append in
-    applier.offset <- len;
-    add escp
+    )
 
 let apply file source styles =
   let applier = {
@@ -123,4 +117,11 @@ let apply file source styles =
       applier.tags <- applier.tags @ [start_tag; end_tag]
     );
   List.iter applier.tags ~f:(fun tag -> apply_tag applier source tag);
+  let len = String.length source in
+  if applier.offset < len then (
+    let append = String.sub source applier.offset (len - applier.offset) in
+    let escp = escape append in
+    applier.offset <- len;
+    applier.buffer <- applier.buffer ^ escp
+  );
   applier.buffer
