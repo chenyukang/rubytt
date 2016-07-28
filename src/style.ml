@@ -43,9 +43,7 @@ let str_of_style sty =
 let new_style ty ss ee =
   {
     ty = ty; ss = ss; ee = ee;
-    msg = "";
-    url = "";
-    id = "";
+    msg = ""; url = ""; id = "";
     highlight = [];
   }
 
@@ -107,8 +105,6 @@ let apply_tag applier source (t:tag) =
 let apply file source styles =
   let applier = { buffer = ""; tags = []; cur = 0; file = file } in
   List.iter styles ~f:(fun s ->
-      Printf.printf "ss: %d ee: %d source: %s\n"
-        s.ss s.ee (String.sub source s.ss (s.ee - s.ss));
       let start_tag = { offset = s.ss; sty = s; tag_ty = START} in
       let end_tag = { offset = s.ee; sty = s; tag_ty = END } in
       applier.tags <- applier.tags @ [start_tag; end_tag]

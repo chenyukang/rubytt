@@ -18,9 +18,6 @@ let markup file =
   let source = Util.read_file_to_str file in
   let css = Util.read_file_to_str "./show.css" in
   let js = Util.read_file_to_str "./highlight.js" in
-  List.iter styles ~f:(fun s ->
-      Printf.printf "type: %d %d \n"  s.ss s.ee;
-    );
   let source_with_style = Style.apply file source styles in
   let result = "<html><head title=\"" ^ file ^ "\">" ^
                "<style type='text/css'>\n" ^ css ^ "</style>\n" ^

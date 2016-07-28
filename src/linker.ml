@@ -45,13 +45,22 @@ let process_def bind =
 let process_ref ref_node bindings =
   let info = ref_node.info in
   let hash = Node.node_t_hash ref_node in
-  (* if Hash_set.mem seen_ref hash = false then ( *)
-  Printf.printf "process_ref: bind_file: %s ss:%d ee:%d\n%!"
-    info.file info.ss info.ee;
-  Hash_set.add seen_ref hash;
-  let style = Style.new_style Style.LINK info.ss info.ee in
-  add_file_style info.file style
-  (* ) *)
+  if Hash_set.mem seen_ref hash = false then (
+    Printf.printf "process_ref: bind_file: %s ss:%d ee:%d\n%!"
+      info.file info.ss info.ee;
+    Hash_set.add seen_ref hash;
+    let style = Style.new_style Style.LINK info.ss info.ee in
+    let msg =
+      List.fold_left bindings
+        ~init:""
+        ~f:(fun acc bind -> acc ^ "|" ^ (Printer.type_to_str bind.bind_ty 0)) in
+    style.msg <- msg;
+    (* FIXME *)
+    (match List.find bindings ~f:(fun bind -> bind.qname <> "") with
+    | Some(b) -> style.url <- b.qname; style.id <- b.qname
+    | _ -> ());
+    add_file_style info.file style
+  )
 
 let find_links bindings =
   Printf.printf "length: %d\n" (List.length bindings);
