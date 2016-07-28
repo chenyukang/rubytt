@@ -58,7 +58,7 @@ type tag = {
 type applier = {
   mutable buffer: string;
   mutable tags: tag list;
-  mutable offset: int;
+  mutable cur: int;
   file: string;
 }
 
@@ -79,11 +79,11 @@ let escape str =
 let apply_tag applier source (t:tag) =
   let add buf =
     applier.buffer <- applier.buffer ^ buf in
-  if t.offset > applier.offset then (
-    let append = String.sub source applier.offset (t.offset - applier.offset) in
+  if t.offset > applier.cur then (
+    let append = String.sub source applier.cur (t.offset - applier.cur) in
     Printf.printf "append: %s\n" append;
     let escp = escape append in
-    applier.offset <- t.offset;
+    applier.cur <- t.offset;
     add escp
   );
   match t.tag_ty with
@@ -105,12 +105,7 @@ let apply_tag applier source (t:tag) =
     )
 
 let apply file source styles =
-  let applier = {
-    buffer = "";
-    tags = [];
-    offset = 0;
-    file = file;
-  } in
+  let applier = { buffer = ""; tags = []; cur = 0; file = file } in
   List.iter styles ~f:(fun s ->
       Printf.printf "ss: %d ee: %d source: %s\n"
         s.ss s.ee (String.sub source s.ss (s.ee - s.ss));
@@ -118,12 +113,13 @@ let apply file source styles =
       let end_tag = { offset = s.ee; sty = s; tag_ty = END } in
       applier.tags <- applier.tags @ [start_tag; end_tag]
     );
+  applier.tags <- List.sort applier.tags ~cmp:(fun t1 t2 -> t1.offset - t2.offset);
   List.iter applier.tags ~f:(fun tag -> apply_tag applier source tag);
   let len = String.length source in
-  if applier.offset < len then (
-    let append = String.sub source applier.offset (len - applier.offset) in
+  if applier.cur < len then (
+    let append = String.sub source applier.cur (len - applier.cur) in
     let escp = escape append in
-    applier.offset <- len;
+    applier.cur <- len;
     applier.buffer <- applier.buffer ^ escp
   );
   applier.buffer
