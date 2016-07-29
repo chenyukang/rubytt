@@ -29,8 +29,8 @@ let get_styles_for_file path =
   | _ -> []
 
 let process_def bind =
-  Printf.printf "process_def: %s\n bind_file: %s ss:%d ee:%d\n%!"
-    bind.qname bind.bind_file bind.start bind.tail;
+  (* Printf.printf "process_def: %s\n bind_file: %s ss:%d ee:%d\n%!" *)
+  (*   bind.qname bind.bind_file bind.start bind.tail; *)
   let hash_str = Type.bind_hash_str bind in
   if Hash_set.mem seen_def hash_str = false then (
     Hash_set.add seen_def hash_str;
@@ -46,8 +46,8 @@ let process_ref ref_node bindings =
   let info = ref_node.info in
   let hash = Node.node_t_hash ref_node in
   if Hash_set.mem seen_ref hash = false then (
-    Printf.printf "process_ref: bind_file: %s ss:%d ee:%d\n%!"
-      info.file info.ss info.ee;
+    (* Printf.printf "process_ref: bind_file: %s ss:%d ee:%d\n%!" *)
+    (*   info.file info.ss info.ee; *)
     Hash_set.add seen_ref hash;
     let style = Style.new_style Style.LINK info.ss info.ee in
     let msg =
