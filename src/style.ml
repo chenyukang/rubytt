@@ -75,6 +75,7 @@ let escape str =
   !res
 
 let apply_tag applier source (t:tag) =
+  Printf.printf "tag end: %d \n" t.offset;
   let add buf =
     applier.buffer <- applier.buffer ^ buf in
   if t.offset > applier.cur then (
