@@ -5,7 +5,6 @@ require 'json'
 require 'optparse'
 require 'fileutils'
 
-
 # --------------------- utils ---------------------
 def banner(s)
   puts "\033[93m#{s}:\033[0m"
@@ -32,10 +31,9 @@ class AstSimplifier
       @src.force_encoding('utf-8')
     end
 
-    @src.encode('utf-8',
-                {:undef => :replace,
-                 :invalid => :replace,
-                 :universal_newline => true}
+    @src.encode('utf-8', { :undef => :replace,
+                           :invalid => :replace,
+                           :universal_newline => true }
     )
 
     @line_starts = [0]
@@ -54,7 +52,6 @@ class AstSimplifier
       end
     end
   end
-
 
   # initialize the @line_starts array
   # used to convert (line,col) location to (start,end)
@@ -140,9 +137,6 @@ class AstSimplifier
   def find_locations(obj)
     def find1(obj)
       if obj.is_a?(Hash)
-        #if obj[:type] == :binary and not obj[:left]
-        #  puts "problem obj: #{obj.inspect}"
-        #end
         ret = {}
         whole_start = nil
         whole_end = nil
@@ -924,13 +918,10 @@ end
 $options = {}
 OptionParser.new do |opts|
   opts.banner = "Usage: dump.rb [options]"
-
   opts.on("-d", "--debug", "debug run") do |v|
     $options[:debug] = v
   end
-
 end.parse!
-
 
 if ARGV.length > 0
   input, output = ARGV[0], ARGV[1]

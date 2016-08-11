@@ -48,7 +48,7 @@ let () =
     let info = "Usage: rubytt <options> filename\n" ^
     "Options are:\n" ^
     " -dot  generate a dot for visualize project\n" ^
-    " -html generate HTML files for type analysis\n" in
+    " -html generate HTML files after type analysis\n" in
     Printf.eprintf "%s\n" info
   )
   else
