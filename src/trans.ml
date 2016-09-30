@@ -18,7 +18,7 @@ let state_insert st id node ty kind =
   | _ -> extend_path st id "::"
   in
   set_bind_qname b qname;
-  (* Printf.printf "set qname: %s\n" qname; *)
+  (* Printf.printf "set qname: %s now: %d\n" qname !state_add_mode; *)
   if !state_add_mode = 0 then
     State.state_update_bind st id b
   else
@@ -261,7 +261,8 @@ and
   (* | Raise() *)
   | Control(_) -> Type.cont_ty
   | For(_, _, body) -> transform body state
-  | If(_, body, _else) -> (
+  | If(test, body, _else) -> (
+      let _ = transform test state in
       let body_ty = transform body state in
       incr state_add_mode;
       let else_ty = transform _else state in
