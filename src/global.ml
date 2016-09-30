@@ -99,5 +99,5 @@ let contains_call call =
 let register_bind bind =
   bindings := !bindings @ [bind]
 
-let set_load_file (file:string) =
+let set_load_file (file: string) =
   Hash_set.add loaded_files file

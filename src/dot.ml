@@ -4,7 +4,7 @@ open State
 open Type
 
 let class_hash = Hashtbl.Poly.create();;
-let node_to_dot_str (state:Type.state_t) =
+let node_to_dot_str (state: Type.state_t) =
   let table = state.s_table in
   Hashtbl.iter table ~f:(fun ~key:name ~data:bindings ->
       if name <> "self" then (
