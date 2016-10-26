@@ -21,12 +21,11 @@ let rec iter ast =
 and
   build_table ast =
   match ast.ty with
-  |Call(name, args, _, block_arg) -> (
+  | Call(name, args, _, block_arg) -> (
       let name = List.nth_exn args 0 in
-      Printf.printf "table: %s\n" (string_of_str name);
       let columns = table_columns block_arg in
-      Printf.printf "columns: \n";
-      List.iter columns ~f:(fun c -> Printf.printf " %s " c);
+      (* Printf.printf "columns: \n"; *)
+      (* List.iter columns ~f:(fun c -> Printf.printf " %s " c); *)
       Hashtbl.add_exn tables (string_of_str name) columns;
     )
   | _ -> failwith "invalid node in build_table"
@@ -38,33 +37,48 @@ and
     | Block(stmts) ->
       List.map stmts ~f:(fun c ->
           match c.ty with
-          | Call(_, args, _, _) ->
+          | Call(attr, args, _, _) ->
             let name = List.nth_exn args 0 in
-            string_of_str name
-          | _ -> ""
+            [|(string_of_str name); (string_of_attr attr)|]
+          | _ -> [||]
         )
     | _ -> failwith "invalid type in table_columns"
     )
   | _ -> failwith "invalid type in table_columns"
-and string_of_str str =
+and
+  string_of_str str =
   match str.ty with
   | String(s) -> s
   | _ -> failwith "invalid type in string_of_str"
+and
+  string_of_attr attr =
+  match attr.ty with
+  | Attribute(t, v) ->
+    (name_node_id v)
+  | _ -> failwith "invalid type in string_of_attr"
 
 
 let wrapper content =
-  "digraph ReferenceGraph {
-  nodesep = 2;
-  splines=true;
-  overlap=prism;
-  edge [color=gray50, fontname=Calibri, fontsize=11]
-  node [shape=record, fontname=Calibri, fontsize=11]
+  "digraph G {
+    rankdir = \"TB\";
+    ranksep = \"0.5\";
+    nodesep = \"0.4\";
+    pad = \"0.4,0.4\";
+    margin = \"0,0\";
+    concentrate = \"true\";
+    labelloc = \"t\";
+    fontsize = \"13\";
+    fontname = \"Arial BoldMT\";
+    node[ shape  =  \"Mrecord\" , fontsize  =  \"10\" , \
+    fontname  =  \"ArialMT\" , margin  =  \"0.07,0.05\" , penwidth  =  \"1.0\"];
+    edge[ fontname  =  \"ArialMT\" , fontsize  =  \"7\" , dir  =  \"both\" , \
+    arrowsize  =  \"0.9\" , penwidth  =  \"1.0\" , labelangle  =  \"32\" , \
+    labeldistance  =  \"1.8\"];
+    rankdir = \"TB\";
   " ^ content ^ "\n}\n"
 
-let table_id = ref 0;;
-let gen_id () =
-  incr table_id;
-  Printf.sprintf "table%d" !table_id
+let gen_id model =
+  Printf.sprintf "M_%s" model
 
 let node_to_dot_str ast =
   let res = Printer.node_to_str ast 0 in
@@ -73,8 +87,10 @@ let node_to_dot_str ast =
   let content = ref "" in
   Hashtbl.iter tables ~f:(fun ~key:k ~data:v ->
       content := !content ^ (
-          "\n" ^ (gen_id ()) ^ "[label=\"{{" ^ k ^ "}" ^
-          (List.fold v ~init:"" ~f:(fun acc x -> acc ^ "|{" ^ x ^ "}")) ^
+          "\n    " ^ (gen_id k) ^ "[label=\"{{" ^ k ^ "}" ^
+          (List.fold v ~init:"" ~f:(fun acc x ->
+               let name_with_type = x.(0) ^ " : " ^ x.(1) in
+               acc ^ "|{" ^ name_with_type ^ "}")) ^
           "}\",  color=blue, fontcolor=blue]\n"
         )
     );
