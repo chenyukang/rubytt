@@ -4,6 +4,7 @@ open Node
 let tables = Hashtbl.Poly.create();;
 let belongs_table = Hashtbl.Poly.create();;
 let has_one_table = Hashtbl.Poly.create();;
+let has_many_table = Hashtbl.Poly.create();;
 
 let analysis_model_ast ast =
   let rec iter ast =
@@ -12,10 +13,7 @@ let analysis_model_ast ast =
       List.iter stmts ~f:(fun s -> iter s)
     | Class(n, _, body, _, static) -> (
       let res = Printer.node_to_str ast 0 in
-      let name = Node.name_node_id n in (
-        Printf.printf "now: %s\n" res;
-        Printf.printf "class: %s\n" name
-      );
+      let name = Node.name_node_id n in
       process_body name body
       )
     |_ -> ()
@@ -27,16 +25,22 @@ let analysis_model_ast ast =
            (match s.ty with
             | (Call(name, pos_args, _, _)) -> (
                 let key_name = Node.name_node_id name in
+                let model_db_name = Util.class_to_table_name model_name in
                 match key_name with
                 | "belongs_to" -> (
                     let arg_name = first_arg_name pos_args key_name in
-                    Printf.printf "%s belongs_to %s\n" model_name arg_name;
-                    add_relation_ship belongs_table model_name arg_name
+                    Printf.printf "%s belongs_to %s\n" model_db_name arg_name;
+                    add_relation_ship belongs_table  model_db_name (Util.class_to_table_name arg_name)
                   )
                 | "has_one" -> (
                     let arg_name = first_arg_name pos_args key_name in
-                    Printf.printf "%s has_one %s\n" model_name arg_name;
-                    add_relation_ship has_one_table model_name arg_name
+                    Printf.printf "%s has_one %s\n" model_db_name arg_name;
+                    add_relation_ship has_one_table model_db_name (Util.class_to_table_name arg_name)
+                  )
+                | "has_many" -> (
+                    let arg_name = first_arg_name pos_args key_name in
+                    Printf.printf "%s has_many %s\n" model_db_name arg_name;
+                    add_relation_ship has_many_table model_db_name arg_name
                   )
                 | _ -> ()
               )
@@ -149,10 +153,34 @@ let db_to_dot_str ast =
           "}\",  color=blue, fontcolor=blue]\n"
         )
     );
+  Hashtbl.iter has_one_table ~f:(fun ~key:k ~data:vals ->
+      List.iter vals ~f:(fun v ->
+          (Printf.printf "key table: %s -> %s\n" k v);
+          content := !content ^ (
+              Printf.sprintf "M_%s -> M_%s [color=\"red\"]\n" k v
+            )
+        );
+    );
+  Hashtbl.iter belongs_table ~f:(fun ~key:k ~data:vals ->
+      List.iter vals ~f:(fun v ->
+          (Printf.printf "key table: %s -> %s\n" k v);
+          content := !content ^ (
+              Printf.sprintf "M_%s -> M_%s [color=\"red\"]\n" k v
+            )
+        );
+    );
+  Hashtbl.iter has_many_table ~f:(fun ~key:k ~data:vals ->
+      List.iter vals ~f:(fun v ->
+          (Printf.printf "key table: %s -> %s\n" k v);
+          content := !content ^ (
+              Printf.sprintf "M_%s -> M_%s [color=\"orange\"]\n" k v
+            )
+        );
+    );
   wrapper !content
 
 let dump_db ast =
   let dot_res = db_to_dot_str ast in
-  Out_channel.write_all "db.dot" ~data: dot_res
-  (* Sys.command_exn "dot db.dot -Tpng -o db.png; open db.png" *)
+  Out_channel.write_all "db.dot" ~data: dot_res;
+  Sys.command_exn "dot db.dot -Tpng -o db.png; open db.png"
 

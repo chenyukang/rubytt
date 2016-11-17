@@ -70,5 +70,38 @@ let is_global_name name =
 let make_tag_id id tag =
   id ^ "^" ^ tag
 
+(* rails pluralize class name to table_name *)
+let rules =
+  List.map ~f:(fun x -> (Str.regexp (fst x)),(snd x))
+    ["\\([psc]h\\)$\\|z$","\\0es";
+     "\\(ff\\)$\\|\\(ey\\)$","\\0s";
+     "f$","ves";
+     "y$","ies";
+     "ix$","ices";
+     "ius$","ii";
+     "[sx]$","\\0es";
+     "non","na"];;
 
+let f w x =
+  ignore(Str.search_forward (fst x) w 0); 
+  Str.replace_first (fst x) (snd x) w;;
+
+let rec exn_map ex fn1 fn2 l =
+  match l with
+    [] -> fn2
+  | h::t -> try (fn1 h) with ex -> exn_map ex fn1 fn2 t;;
+
+let pluralize x = (* "wish" in *)
+  exn_map Not_found (f x) (x ^ "s") rules;;
+
+let uncapitalize_class_name class_name =
+  String.foldi class_name ~init:"" ~f:(fun i acc c ->
+      if i <> 0 && Char.is_uppercase c then
+        acc ^ (Printf.sprintf "_%c" (Char.lowercase c))
+      else
+        acc ^ (Char.to_string (Char.lowercase c))
+    )
+
+let class_to_table_name class_name =
+  pluralize (uncapitalize_class_name class_name)
 

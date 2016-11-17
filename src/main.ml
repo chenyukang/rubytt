@@ -53,7 +53,7 @@ let load_db_file input_dir =
     Printf.printf "%s" db_schema;
     let model_rbs = Util.walk_directory_tree model_dir ".*\\.rb" in
     List.iter model_rbs ~f:(fun rb ->
-        Printf.printf "Processing: %s\n" rb;
+        Printf.eprintf "Processing: %s\n" rb;
         let model_ast = run ~need_trans:false rb in
         let _ = Db.analysis_model_ast model_ast in
         ()
