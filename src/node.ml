@@ -188,13 +188,15 @@ let make_kwd_node str value file s e =
   set_node_parent value node;
   node
 
-
 let make_symbol_node sym file s e =
   {
     info = {path=""; file = file; ss = s; ee = e};
     ty = Symbol(sym);
     parent = None;
   }
+
+let symbol_to_str sym =
+  match sym.ty with | Symbol(s) -> s | _ -> ""
 
 let make_void_node file s e =
   {

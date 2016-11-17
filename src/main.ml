@@ -2,10 +2,10 @@ open Core.Std
 open Sys
 open Linker
 
-let run file =
+let run ?need_trans:(need_trans=true) file =
   let json = Parser.run_dump_ruby file in
   let ast = Parser.build_ast_from_json json in
-  Analyzer.trans ast;
+  if need_trans then Analyzer.trans ast;
   ast
 
 let gen_ast_str ast =
@@ -44,13 +44,22 @@ let load_db_file input_dir =
   if (Sys.is_directory_exn input_dir) = false then
     Printf.eprintf "Please set the Rails project root directory\n"
   else (
-    let db_schema = input_dir ^ "/db/schema.rb" in
-    if (Sys.is_file_exn db_schema) then (
-      Printf.printf "%s" db_schema;
-      let ast = run db_schema in
-      Db.dump_db ast
-    ) else
-      Printf.eprintf "%s does not exits\n" db_schema
+    let db_schema = input_dir ^ "db/schema.rb" in
+    let model_dir = input_dir ^ "app/models" in
+    if not (Sys.is_file_exn db_schema) then
+      failwith (Printf.sprintf "File %s does not exits" db_schema);
+    if not (Sys.is_directory_exn model_dir) then
+      failwith (Printf.sprintf "Dir: %s does not exits" model_dir);
+    Printf.printf "%s" db_schema;
+    let model_rbs = Util.walk_directory_tree model_dir ".*\\.rb" in
+    List.iter model_rbs ~f:(fun rb ->
+        Printf.printf "Processing: %s\n" rb;
+        let model_ast = run ~need_trans:false rb in
+        let _ = Db.analysis_model_ast model_ast in
+        ()
+      );
+    let db_ast = run db_schema in
+    Db.dump_db db_ast
   )
 
 let () =
