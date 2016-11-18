@@ -7,6 +7,8 @@ let has_one_table = Hashtbl.Poly.create();;
 let has_many_table = Hashtbl.Poly.create();;
 
 let analysis_model_ast ast =
+  (* let str = Printer.node_to_str ast 0 in *)
+  (* Printf.printf "class str: %s\n" str; *)
   let rec iter ast =
     match ast.ty with
     | Block(stmts) ->
@@ -141,8 +143,7 @@ let wrapper content =
 let gen_id model =
   Printf.sprintf "M_%s" model
 
-let db_to_dot_str ast =
-  analysis_db_ast ast;
+let db_to_dot_str() =
   let content = ref "" in
   Hashtbl.iter tables ~f:(fun ~key:k ~data:v ->
       content := !content ^ (
@@ -179,8 +180,9 @@ let db_to_dot_str ast =
     );
   wrapper !content
 
-let dump_db ast =
-  let dot_res = db_to_dot_str ast in
+let dump_db output =
+  let dot_res = db_to_dot_str() in
   Out_channel.write_all "db.dot" ~data: dot_res;
-  Sys.command_exn "dot db.dot -Tpng -o db.png; open db.png"
+  Sys.command_exn (Printf.sprintf "dot db.dot -Tpng -o %s" output);
+  Sys.command_exn ("open " ^ output)
 

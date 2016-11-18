@@ -42,7 +42,7 @@ let node_to_dot_str (state: Type.state_t) =
   res := !res ^ "}\n";
   !res
 
-let dump_dot() =
+let dump_class_dot() =
   let dot_res = node_to_dot_str Type.global_table in
   Out_channel.write_all "dep.dot" ~data: dot_res;
   Sys.command_exn "dot dep.dot -Tpng -o dep.png; open dep.png"
