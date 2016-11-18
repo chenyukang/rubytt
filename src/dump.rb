@@ -33,9 +33,8 @@ class AstSimplifier
 
     @src.encode('utf-8', { :undef => :replace,
                            :invalid => :replace,
-                           :universal_newline => true }
-    )
-
+                           :universal_newline => true })
+    
     @line_starts = [0]
     find_line_starts
     find_docs

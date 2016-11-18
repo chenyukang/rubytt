@@ -80,7 +80,7 @@ let apply_tag applier source (t:tag) =
     applier.buffer <- applier.buffer ^ buf in
   if t.offset > applier.cur then (
     let append = String.sub source applier.cur (t.offset - applier.cur) in
-    (* Printf.printf "append: %s\n" append; *)
+    Printf.printf "append: %s\n" append;
     let escp = escape append in
     applier.cur <- t.offset;
     add escp
