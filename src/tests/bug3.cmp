@@ -3,6 +3,7 @@
   (Name Demo Local)
   (Nil)
    (Block 
+    (Void)
     (Func data
      (body: 
       (Block 

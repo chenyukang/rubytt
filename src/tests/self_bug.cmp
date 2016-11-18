@@ -1,0 +1,18 @@
+(Block 
+ (Module 
+  (Name Demo Local)
+   (Block 
+    (Void)
+    (Func self_func
+     (body: 
+      (Block 
+       (Return 
+        (Array 
+         (BinOp:Or 
+          (Name true Local)
+          (Name self Local))))))))))
+
+----------------------------------------
+
+bind: Demo ty: Module_ty: Demo
+  bind: self_func ty: Func_ty: [] => [Module_ty: Demo]

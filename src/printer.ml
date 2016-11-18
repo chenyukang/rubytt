@@ -180,66 +180,72 @@ and
   nw n = "\n" ^ k_space n
 
 open Type
-let print_table = ref true;;
-let rec type_to_str ty depth =
+let print_table = ref false;;
+let rec type_to_str ?show_bind:(show_bind=true) ty depth =
   match ty.ty with
   | Int_ty -> "Int_ty"
   | Str_ty _  -> "Str_ty"
   | Bool_ty _ -> "Bool_ty"
   | List_ty(elem_ty, _, _) ->
-    let elem_str = (type_to_str elem_ty 0) in
+    let elem_str = (type_to_str ~show_bind:show_bind elem_ty 0) in
     Printf.sprintf "[%s]" elem_str
   | Class_ty(name, _, _) ->
     let name = Printf.sprintf "Class_ty: %s" name in
     if !print_table then
-      name ^ (table_to_str ty.info.table (depth+1))
+      name ^ (table_to_str ty.info.table (depth+1) show_bind)
     else
       name
   | Module_ty(id, _) ->
-    Printf.sprintf "Module_ty: %s" id
-    ^ (table_to_str ty.info.table (depth+1))
+    (* Printf.printf "Module_ty: %s\n" id; *)
+    if !print_table then (
+      Printf.sprintf "Module_ty: %s" id
+      ^ (table_to_str ty.info.table (depth+1) show_bind)
+    ) else
+      Printf.sprintf "Module_ty: %s" id
   | Instance_ty(class_ty) -> (
       let class_name = classty_get_name class_ty in
       match class_name with
       | "?" -> "Unkown_ty"
       | "nil" -> "Nil_ty"
-      | _ ->
-        Printf.sprintf "Inst_ty: %s" class_name
+      | _ -> Printf.sprintf "Inst_ty: %s" class_name
     )
   | Union_ty(tys_table)  -> (
       let res = ref "{" in
       Hashtbl.iter tys_table ~f:(fun ~key:k ~data:_ ->
           let sep = if !res = "{" then "(" else "|(" in
-          res := !res ^ sep ^ (type_to_str k 0) ^ ")");
+          res := !res ^ sep ^ (type_to_str ~show_bind:show_bind k 0) ^ ")");
       !res ^ "}"
     )
   | Fun_ty(info) -> (
       let defaults = ref "[" in
       List.iteri info.def_tys ~f:(fun i x ->
           let s = if i > 0 then " " else "" in
-          defaults := !defaults ^ s ^ type_to_str x 0);
+          defaults := !defaults ^ s ^ type_to_str ~show_bind:show_bind x 0);
       defaults := !defaults ^ "]";
       print_table := false;
-      let ret_str = type_to_str info.ret_ty 0 in
+      let ret_str = type_to_str ~show_bind:show_bind info.ret_ty 0 in
       print_table := true;
       Printf.sprintf "Func_ty: %s => %s" !defaults ret_str
     )
   | _ -> "unkown_type"
 
 and
-  table_to_str (state:Type.state_t) depth =
+  table_to_str (state:Type.state_t) depth show_bind =
   let table = state.s_table in
   let res = ref "" in
   Hashtbl.iter table ~f:(fun ~key:name ~data:bindings ->
       (* avoid loop *)
       if name <> "self" then (
         let final_ty = make_unions_from_bs bindings in
-        let ty_str = type_to_str final_ty depth in
-        let str = Printf.sprintf "bind: %s ty: %s" name ty_str in
-        res := !res ^
+        let ty_str = type_to_str ~show_bind:show_bind final_ty depth in
+        if show_bind then (
+          let str = Printf.sprintf "bind: %s ty: %s" name ty_str in
+          res := !res ^
                (match depth with
                 | 0 -> str ^ "\n"
                 | _ -> "\n" ^ (k_space (2 * depth)) ^ str);
+        ) else
+          res := !res ^ ty_str
       )
     );
   !res

@@ -850,7 +850,6 @@ class AstSimplifier
     end
   end
 
-
   def make_string(content, location=nil)
     ret = {
         :type => :string,
@@ -909,6 +908,8 @@ def parse_dir(input, output)
   res = Dir.glob("#{input}/**/*").select{ |x|  x.end_with? ".rb" }.
         map{ |x| File.absolute_path x}
   res.each{ |rb|
+    next if rb.index("/spec/")
+    next if rb.index("/migrate/")
     json_path = rb.gsub(abs_input, abs_output).gsub(".rb", ".json")
     FileUtils.mkdir_p (File.dirname json_path)
     parse_dump rb, json_path

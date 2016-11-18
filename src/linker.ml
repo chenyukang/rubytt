@@ -36,7 +36,7 @@ let process_def bind =
     Hash_set.add seen_def hash_str;
     let qname = bind.qname in
     let style = Style.new_style Style.ANCHOR bind.start bind.tail in
-    style.msg <- Printer.type_to_str bind.bind_ty 0;
+    (* style.msg <- Printer.type_to_str bind.bind_ty 0; *)
     style.url <- qname;
     style.id <- qname;
     add_file_style bind.bind_file style
@@ -49,7 +49,7 @@ let process_ref ref_node bindings =
   let msg =
     List.fold_left bindings
       ~init:""
-      ~f:(fun acc bind -> acc ^ "|" ^ (Printer.type_to_str bind.bind_ty 0)) in
+      ~f:(fun acc bind -> acc ^ "|" ^ (Printer.type_to_str ~show_bind:false bind.bind_ty 0)) in
   style.msg <- msg;
   (* FIXME *)
   (match List.find bindings ~f:(fun bind -> bind.qname <> "") with

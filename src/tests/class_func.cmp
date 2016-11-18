@@ -3,6 +3,7 @@
   (Name Base Local)
   (Nil)
    (Block 
+    (Void)
     (Func initialize
      (body: 
       (Block 

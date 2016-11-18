@@ -3,6 +3,7 @@
   (Name Demo Local)
   (Nil)
    (Block 
+    (Void)
     (Class static: true
      (Name self Local)
      (Nil)

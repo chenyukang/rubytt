@@ -3,6 +3,7 @@
   (Name AstSimplifier Local)
   (Nil)
    (Block 
+    (Void)
     (Func initialize
      (args: 
       (Name filename Local))
@@ -15,7 +16,14 @@
        (Call 
         (Attribute 
          (Call lines)
-         (Name each Local)))))))))
+         (Name each Local))
+        (block_arg: 
+         (Func lambda%1
+          (args: 
+           (Name line Local))
+          (body: 
+           (Block 
+            (Void))))))))))))
 
 ----------------------------------------
 

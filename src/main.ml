@@ -1,6 +1,5 @@
 open Core.Std
 open Sys
-open Linker
 
 let parse_to_ast ?need_trans:(need_trans=true) file =
   let json = Parser.run_dump_ruby file in
@@ -11,16 +10,16 @@ let parse_to_ast ?need_trans:(need_trans=true) file =
 let gen_ast_str ast =
   Printer.node_to_str ast 0
 
-let gen_ty_str() =
-  let ty_str = Printer.table_to_str Type.global_table 0 in
-  Printf.sprintf "%s\n\n" ty_str
+(* let gen_ty_str() = *)
+(*   let ty_str = Printer.table_to_str Type.global_table 0 in *)
+(*   Printf.sprintf "%s\n\n" ty_str *)
 
-let load_file file =
-  let ast = parse_to_ast file in
-  let ast_str = gen_ast_str ast in
-  Global.set_load_file file;
-  Printf.eprintf "%s\n" ast_str;
-  Printf.eprintf "%s" (gen_ty_str())
+(* let load_file file = *)
+(*   let ast = parse_to_ast file in *)
+(*   let ast_str = gen_ast_str ast in *)
+(*   Global.set_load_file file; *)
+(*   Printf.eprintf "%s\n" ast_str; *)
+(*   Printf.eprintf "%s" (gen_ty_str()) *)
 
 let load_dir ?need_trans:(need_trans=true) input_dir output_dir =
   Printf.printf "Dump dir: %s\n%!" input_dir;
@@ -29,6 +28,11 @@ let load_dir ?need_trans:(need_trans=true) input_dir output_dir =
   Unix.mkdir_p output_dir;
   Sys.command_exn (Printf.sprintf "ruby dump.rb %s %s" input_dir output_dir);
   let rb_files = Util.walk_directory_tree input_dir ".*\\.rb" in
+  let rb_files = List.filter
+      ~f:(fun rb -> not((Util.contains rb "/spec/") ||
+                        (Util.contains rb "/migrate/"))
+         ) rb_files in
+  List.iter rb_files ~f:(fun x -> Printf.printf "now processing: %s\n" x);
   List.iter rb_files ~f:(fun x -> Global.set_load_file x);
   let jsons = Util.walk_directory_tree output_dir ".*\\.json" in
   let asts = List.map jsons ~f:(fun x ->
@@ -43,7 +47,6 @@ let load_dir ?need_trans:(need_trans=true) input_dir output_dir =
     ) in
   Global.print_size();
   asts
-
 
 let load_db ?dump_db:(dump_db=false) input_dir output =
   if (Sys.is_directory_exn input_dir) = false then
@@ -91,7 +94,7 @@ let command =
            | Some("db") -> load_db ~dump_db:true source output
            | Some("model") -> load_db ~dump_db:false source output
            | Some("type") -> (
-               ignore(load_dir source "/tmp/rubytt/");
+               ignore(load_dir source output);
                Html.dump_html source output
              )
            | _ -> failwith "Invalid option"

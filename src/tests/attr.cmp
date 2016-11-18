@@ -3,6 +3,7 @@
   (Name Demo Local)
   (Nil)
    (Block 
+    (Void)
     (Assign 
      (Name b Local)
      (Int 1))

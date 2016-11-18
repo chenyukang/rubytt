@@ -3,6 +3,7 @@
   (Name String Local)
   (Nil)
    (Block 
+    (Void)
     (Func conv_to_valid
      (body: 
       (Block 
@@ -43,7 +44,23 @@
                    (Name self Local)
                    (Name chars Local)))
                  (Name map Local)))
-               (Name with_index Local)))
+               (Name with_index Local))
+              (block_arg: 
+               (Func lambda%1
+                (args: 
+                 (Name c Local)
+                 (Name i Local))
+                (body: 
+                 (Block 
+                  (Block 
+                   (If 
+                    (BinOp:Equal 
+                     (Name c Local)
+                     (Subscript 
+                      (Name conved_chars Local)
+                      (Name i Local)))
+                    (Name c Local)
+                    (String  ))))))))
              (Name join Local)))
            (Name strip Local)))))))))))
 
