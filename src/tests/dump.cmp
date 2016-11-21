@@ -27,7 +27,6 @@
   (Name AstSimplifier Local)
   (Nil)
    (Block 
-    (Void)
     (Func initialize
      (args: 
       (Name filename Local))
@@ -590,7 +589,7 @@
                    (Symbol begin)
                    (Symbol while)
                    (Symbol for))
-                  (Name include? Local))
+                  (Name               .include? Local))
                  (args: 
                   (Subscript 
                    (Name obj Local)

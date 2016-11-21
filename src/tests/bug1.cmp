@@ -3,7 +3,6 @@
   (Name Order Local)
   (Nil)
    (Block 
-    (Void)
     (Func order_gateway
      (body: 
       (Block 

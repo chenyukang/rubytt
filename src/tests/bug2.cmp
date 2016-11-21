@@ -3,7 +3,6 @@
   (Name String Local)
   (Nil)
    (Block 
-    (Void)
     (Func conv_to_valid
      (body: 
       (Block 
