@@ -1,18 +1,32 @@
 (Block 
  (Func contrived
   (args: 
-   (Name a))
+   (Name a Local))
   (body: 
    (Block 
     (Call 
      (Attribute 
-      (Name f)
-      (Name call))
+      (Name f Local)
+      (Name call Local))
      (args: 
-      (Name a)))
+      (Name a Local)))
     (Yield 
      (Array 
-      (Name a))))))
+      (Name a Local))))))
  (Call contrived
   (args: 
-   (Int 25))))
+   (Int 25))
+  (block_arg: 
+   (Func lambda%1
+    (args: 
+     (Name x Local))
+    (body: 
+     (Block 
+      (Call puts
+       (args: 
+        (Name x Local)))))))))
+
+----------------------------------------
+
+bind: lambda%1 ty: Func_ty: [] => Unkown_ty
+bind: contrived ty: Func_ty: [] => [Int_ty]

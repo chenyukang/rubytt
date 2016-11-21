@@ -3,12 +3,10 @@ require 'pp'
 require 'json'
 require 'optparse'
 
-
 # --------------------- utils ---------------------
 def banner(s)
   puts "\033[93m#{s}:\033[0m"
 end
-
 
 class AstSimplifier
 
@@ -109,7 +107,7 @@ class AstSimplifier
       return start_idx + 2
     end
     idx = start_idx
-    while idx < @src.length and @src[idx].match /[[:alpha:]0-9_@$\?!]/
+    while (idx < @src.length) and @src[idx].match(/[[:alpha:]0-9_@$\?!]/)
       idx += 1
     end
     idx
@@ -867,14 +865,12 @@ class AstSimplifier
     ret
   end
 
-
   def op(name)
     {
         :type => :op,
         :name => name
     }
   end
-
 
   def negate(exp)
     {
@@ -910,10 +906,9 @@ def parse_dump(input, output, endmark)
   end
 end
 
-
 $options = {}
 OptionParser.new do |opts|
-  opts.banner = "Usage: dump_ruby.rb [options]"
+  opts.banner = "Usage: dump.rb [options]"
 
   opts.on("-d", "--debug", "debug run") do |v|
     $options[:debug] = v

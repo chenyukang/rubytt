@@ -1,12 +1,16 @@
 (Block 
  (Func print
   (args: 
-   (Name s)
-   (Name a))
+   (Name s Local)
+   (Name a Local))
   (after_rest: 
-   (Name c))
+   (Name c Local))
   (body: 
    (Block 
     (Call puts
      (args: 
-      (Name s)))))))
+      (Name s Local)))))))
+
+----------------------------------------
+
+bind: print ty: Func_ty: [Int_ty Int_ty] => Unkown_ty

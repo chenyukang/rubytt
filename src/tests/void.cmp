@@ -1,0 +1,9 @@
+(Block 
+ (Func a
+  (body: 
+   (Block 
+    (Void)))))
+
+----------------------------------------
+
+bind: a ty: Func_ty: [] => Nil_ty

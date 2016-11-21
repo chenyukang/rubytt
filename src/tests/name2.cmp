@@ -1,0 +1,9 @@
+(Block 
+ (Assign 
+  (Name a Local)
+  (Name false Local))
+ (Call x))
+
+----------------------------------------
+
+bind: a ty: Bool_ty

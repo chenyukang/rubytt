@@ -1,0 +1,22 @@
+(Block 
+ (Module 
+  (Name ActiveRecord Local)
+   (Block 
+    (Void)
+    (Class static: false
+     (Name Base Local)
+     (Nil)
+      (Block 
+       (Void)))))
+ (Class static: false
+  (Name Order Local)
+  (Attribute 
+   (Name ActiveRecord Local)
+   (Name Base Local))
+   (Block 
+    (Void))))
+
+----------------------------------------
+
+bind: Order ty: Class_ty: Order
+bind: ActiveRecord ty: Module_ty: ActiveRecord

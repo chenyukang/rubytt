@@ -1,0 +1,29 @@
+(Block 
+ (Assign 
+  (Name a Local)
+  (Int 1))
+ (Assign 
+  (Name res Local)
+  (Try 
+   (Block 
+    (Assign 
+     (Name div Local)
+     (BinOp:Div 
+      (Name a Local)
+      (Int 0))))
+   (Handler 
+     (Nil)
+     (Block 
+      (String div error))
+     (Nil)
+   (Nil)
+   (Nil)))
+ (Call puts
+  (args: 
+   (Name res Local))))
+
+----------------------------------------
+
+bind: a ty: Int_ty
+bind: res ty: {(Str_ty)|(Int_ty)}
+bind: div ty: Int_ty

@@ -1,0 +1,15 @@
+(Block 
+ (Func demo
+  (args: 
+   (Name a Local)
+   (Name b Local)
+   (Name c Local))
+  (body: 
+   (Block 
+    (Call puts
+     (args: 
+      (Name a Local)))))))
+
+----------------------------------------
+
+bind: demo ty: Func_ty: [Int_ty Str_ty Int_ty] => Unkown_ty

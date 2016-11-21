@@ -27,23 +27,27 @@ let new_state ?(parent = None) state_ty : ('ty, 'binding) state =
     path = "";
   }
 
-let set_state_parent st parent =
-  st.parent <- Some(parent)
+let set_parent st parent = st.parent <- Some(parent)
+let set_stype st stype = st.s_type <- stype
+let set_ttype st ttype = st.t_type <- ttype
+let set_path st path = st.path <- path
+let set_supers st supers = st.supers <- supers
+let parent st = st.parent
+let s_type st = st.s_type
+let super st = st.supers
 
-let set_state_stype st stype =
-  st.s_type <- stype
-
-let set_state_ttype st ttype =
-  st.t_type <- ttype
-
-let set_path st path =
-  st.path <- path
-
-let set_supers st supers =
-  st.supers <- supers
-
-let state_remove st id =
+let remove st id =
   Hashtbl.remove st.s_table id
+
+let state_keyset st =
+  Hashtbl.keys st.s_table
+
+let state_clear st =
+  Hashtbl.clear st.s_table;
+  st.supers <- None;
+  st.parent <- None;
+  st.t_type <- None;
+  st.path <- ""
 
 let state_copy st =
   {
@@ -63,19 +67,21 @@ let state_overwrite st st_v =
   st.t_type <- st_v.t_type;
   st.s_type <- st_v.s_type
 
-let state_merge_with st1 st2 =
-  st1
-
-let state_merge st1 st2 =
-  let ret = state_copy st1 in
-  ignore(state_merge_with ret st2);
-  ret
-
 let state_update st id bindings =
-  Hashtbl.add st.s_table id bindings
+  match Hashtbl.add st.s_table ~key:id ~data:bindings with
+  | `Duplicate -> Hashtbl.replace st.s_table ~key:id ~data:bindings
+  | _ -> ()
 
 let state_update_bind st id binding =
   state_update st id [binding]
+
+let state_add_bind st id binding =
+  match Hashtbl.add st.s_table ~key:id ~data:[binding] with
+  | `Duplicate -> (
+      let prev_bindings = Hashtbl.find_exn st.s_table id in
+      Hashtbl.replace st.s_table ~key:id ~data:(prev_bindings @ [binding])
+    )
+  | _ -> ()
 
 
 let extend_path st name sep =
@@ -89,4 +95,5 @@ let extend_path st name sep =
 
 let lookup_local st name =
   Hashtbl.find st.s_table name
+
 

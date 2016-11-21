@@ -7,32 +7,35 @@ open Util
 open Parser
 open Typestack
 open Type
-open State
-open Binding
 
 let run_dir dir =
-  let files = Array.to_list (Sys.readdir dir) in
-  let rb = List.filter files ~f:(fun x -> extension x = "rb") in
-  List.map ~f:(fun f ->
-      Printf.printf "\nnow: %s\n" f;
-      let p = Filename.concat dir f in
+  (* process rb to json *)
+  Sys.command_exn (Printf.sprintf "ruby dump.rb %s %s" dir dir);
+
+  let jsons = Util.walk_directory_tree dir ".*\\.json" in
+  List.filter ~f:(fun j ->
+      Global.clear();
+      Printf.printf "now run: %s\n" j;
+      let base = Filename.chop_extension j in
+      let ast = build_ast_from_json j in
+      let _ = Trans.transform_expr ast Type.global_table in
+      let ast_str = node_to_str ast 0 in
+      let tys_str = table_to_str Type.global_table 0 true in
+      let sep_str = "\n\n" ^ (String.init 40 ~f:(fun _ -> '-')) ^ "\n\n" in
+      let log = Printf.sprintf "%s.log" base in
+      let cmp = Printf.sprintf "%s.cmp" base in
+      Out_channel.write_all log ~data: (ast_str ^ sep_str ^ tys_str);
+      Sys.command_exn (Printf.sprintf "rm %s" j);
+      not(cmp_file cmp log)
+    ) jsons
+
+let update_cmp dir =
+  let logs = Util.walk_directory_tree dir ".*\\.log" in
+  List.iter ~f:(fun p ->
       let b = Filename.chop_extension p in
-      begin
-        let j = run_dump_ruby p in
-        let ast = parse_file j in
-        let ast_str = node_to_str ast 0 in
-        let log = Printf.sprintf "%s.log" b in
-        let cmp = Printf.sprintf "%s.cmp" b in (
-          Out_channel.write_all log ~data: ast_str;
-          (* Sys.command_exn (Printf.sprintf "rm %s" j); *)
-          if cmp_file cmp log then (
-            (* Printf.printf "pass: %s\n" p; *)
-            true)
-          else (
-            Printf.printf "fail: %s\n\n" p;
-            false)
-        )
-      end) rb
+      let o = Printf.sprintf "%s.cmp" b in
+      Sys.command_exn (Printf.sprintf "cp %s %s" p o);
+    ) logs
 
 let test_node() =
   let nil = nil_node in
@@ -92,19 +95,20 @@ let test_typestack() =
 
 let test_state() =
   let a = State.new_state ~parent:None State.Class in
-  assert_equal a.parent None
+  assert_equal (State.parent a) None
 
 let test_bool_type() =
-  let b = Type.new_bool_type Undecided None None in(
+  let b = Type.new_bool_type ~v:Undecided ~s1:None ~s2:None () in(
   match b.ty with
   | Bool_ty(v, s1, s2) ->
-    if not (v = Undecided && s1 = None && s2 = None) then assert_failure "default bool value"
+    if not (v = Undecided && s1 = None && s2 = None) then
+      assert_failure "default bool value"
   | _ -> assert_failure "default bool type error"
   );
   let s = State.new_state ~parent:None State.Class in
   bool_set_s2 b (Some s);
   (match b.ty with
-  | Bool_ty(v, s1, s2) ->
+  | Bool_ty(v, _, s2) ->
     if not(v = Undecided && s2 <> None) then assert_failure "bool_set_s1 failed"
   | _ -> ()
   );
@@ -115,8 +119,8 @@ let test_bool_type() =
   | _ -> ())
 
 let test_type() =
-  let a = new_bool_type Undecided None None in
-  let b = new_bool_type Undecided None None in
+  let a = new_bool_type ~v:Undecided ~s1:None ~s2:None () in
+  let b = new_bool_type ~v:Undecided ~s1:None ~s2:None () in
   assert_equal (is_num_type a || is_str_type a) false;
   assert_equal (type_equal a b) true;
   assert_equal (is_mutated a) false;
@@ -126,9 +130,64 @@ let test_type() =
   assert_equal (is_mutated a) true;
   assert_equal (is_undecided_bool a) true
 
+let test_union_a() =
+  let a = new_bool_type ~v:Undecided ~s1:None ~s2:None () in
+  let _union_ty = new_union_type ~elems:([a; a]) () in
+  assert_equal (union_ty_is_empty _union_ty) false;
+  match _union_ty.ty with
+  | Union_ty(t) -> (
+      assert_equal (Hashtbl.length t) 1;
+    )
+  | _ -> assert_failure "invalid union_ty"
+
+let test_union_b() =
+  let a = new_bool_type ~v:Undecided ~s1:None ~s2:None () in
+  let b = new_bool_type ~v:True ~s1:None ~s2:None () in
+  let _union_ty = new_union_type ~elems:([a; b]) () in
+  match _union_ty.ty with
+  | Union_ty(t) -> assert_equal (Hashtbl.length t) 2;
+  | _ -> assert_failure "invalid union_ty"
+
+let test_union_c() =
+  let a = new_bool_type ~v:Undecided ~s1:None ~s2:None () in
+  let b = new_bool_type ~v:True ~s1:None ~s2:None () in
+  let _union_ty = new_union_type ~elems:([a; b]) () in
+  let _res = union_ty_remove _union_ty a in
+  let _res = union_ty_remove _res b in
+  match _res.ty with
+  | Union_ty(t) -> assert_equal (Hashtbl.length t) 0;
+  | _ -> assert_failure "invalid union_ty"
+
+let test_union_d() =
+  let a = new_bool_type ~v:Undecided ~s1:None ~s2:None () in
+  let b = new_bool_type ~v:True ~s1:None ~s2:None () in
+  let _union_ty = new_union_type ~elems:([a; b]) () in
+  let _res = union_ty_remove _union_ty a in
+  match _res.ty with
+  | Union_ty(t) -> assert_equal (Hashtbl.length t) 1;
+  | _ -> assert_failure "invalid union_ty"
+
+let test_union_e() =
+  let a = new_bool_type ~v:Undecided ~s1:None ~s2:None () in
+  let b = new_bool_type ~v:True ~s1:None ~s2:None () in
+  assert_equal (type_equal a b) true;
+  let res = union_ty_remove a b in
+  assert_equal (type_equal res unkown_ty) true
+
+let test_union() =
+  test_union_a();
+  test_union_b();
+  test_union_c();
+  test_union_d();
+  test_union_e()
+
 let test_dir() =
   let res = run_dir "tests" in
-  assert_equal (List.exists res ~f:(fun x -> x = false)) false
+  if (List.length res <> 0) then
+    Printf.printf "\n\n";
+    List.iter res ~f:(fun p -> Printf.printf "fail case: %s\n" p);
+  assert_equal (List.length res) 0
+
 
 let test_unit = [
   "Node", `Quick, test_node;
@@ -139,8 +198,14 @@ let test_unit = [
   "State", `Quick, test_state;
   "Bool", `Quick, test_bool_type;
   "Type", `Quick, test_type;
-  "Cases", `Quick, test_dir;
+  "UnionTy", `Quick, test_union;
+  "Cases", `Slow, test_dir;
 ]
 
 let () =
-  Alcotest.run "My Test" [ "test_unit", test_unit;]
+  if Array.length Sys.argv = 2 then
+    let arg = Array.nget Sys.argv 1 in
+    if arg = "-update" || arg = "-u" then
+      update_cmp "./tests"
+  else
+    Alcotest.run "My Test" [ "test_unit", test_unit;]

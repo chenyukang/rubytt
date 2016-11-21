@@ -1,0 +1,26 @@
+(Block 
+ (Func div
+  (args: 
+   (Name a Local)
+   (Name b Local))
+  (body: 
+   (Block 
+    (If 
+     (BinOp:Equal 
+      (Name b Local)
+      (Int 0))
+     (Call raise
+      (args: 
+       (String zero div!)))
+     (Nil))
+    (BinOp:Div 
+     (Name a Local)
+     (Name b Local)))))
+ (Call div
+  (args: 
+   (Int 1)
+   (Int 0))))
+
+----------------------------------------
+
+bind: div ty: Func_ty: [] => Int_ty

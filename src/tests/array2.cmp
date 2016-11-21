@@ -1,18 +1,23 @@
 (Block 
  (Assign 
-  (Name a)
+  (Name a Local)
   (Dict  
    (Int 1)
     (Int 2)))
  (Assign 
-  (Name b)
+  (Name b Local)
   (Array 
-   (Name a)
+   (Name a Local)
    (Int 3)
    (Int 4)))
  (Call puts
   (args: 
    (Call 
     (Attribute 
-     (Name b)
-     (Name size))))))
+     (Name b Local)
+     (Name size Local))))))
+
+----------------------------------------
+
+bind: a ty: Unkown_ty
+bind: b ty: [Int_ty]

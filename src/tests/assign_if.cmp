@@ -1,0 +1,16 @@
+(Block 
+ (Assign 
+  (Name a Local)
+  (If 
+   (Name true Local)
+   (Block 
+    (Int 1))
+   (Block 
+    (Int 2))))
+ (Call puts
+  (args: 
+   (Name a Local))))
+
+----------------------------------------
+
+bind: a ty: Int_ty

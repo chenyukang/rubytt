@@ -1,6 +1,19 @@
 (Block 
- (Class 
-  (Name Demo)
+ (Class static: false
+  (Name Demo Local)
   (Nil)
    (Block 
-    (Void))))
+    (Void)
+    (Class static: true
+     (Name self Local)
+     (Nil)
+      (Block 
+       (Void)))
+    (Assign 
+     (Name foos Class)
+     (Int 0)))))
+
+----------------------------------------
+
+bind: Demo ty: Class_ty: Demo
+  bind: foos ty: Int_ty

@@ -1,0 +1,70 @@
+(Block 
+ (Class static: false
+  (Name String Local)
+  (Nil)
+   (Block 
+    (Void)
+    (Func conv_to_valid
+     (body: 
+      (Block 
+       (If 
+        (BinOp:Equal 
+         (Call 
+          (Attribute 
+           (Attribute 
+            (Name ActiveSupport Local)
+            (Name Inflector Local))
+           (Name transliterate Local))
+          (args: 
+           (Name self Local)))
+         (Name self Local))
+        (Block 
+         (Name self Local))
+        (Block 
+         (Assign 
+          (Name conved_chars Local)
+          (Call 
+           (Attribute 
+            (Attribute 
+             (Name ActiveSupport Local)
+             (Name Inflector Local))
+            (Name transliterate Local))
+           (args: 
+            (Name self Local))))
+         (Call 
+          (Attribute 
+           (Call 
+            (Attribute 
+             (Call 
+              (Attribute 
+               (Call 
+                (Attribute 
+                 (Call 
+                  (Attribute 
+                   (Name self Local)
+                   (Name chars Local)))
+                 (Name map Local)))
+               (Name with_index Local))
+              (block_arg: 
+               (Func lambda%1
+                (args: 
+                 (Name c Local)
+                 (Name i Local))
+                (body: 
+                 (Block 
+                  (Block 
+                   (If 
+                    (BinOp:Equal 
+                     (Name c Local)
+                     (Subscript 
+                      (Name conved_chars Local)
+                      (Name i Local)))
+                    (Name c Local)
+                    (String  ))))))))
+             (Name join Local)))
+           (Name strip Local)))))))))))
+
+----------------------------------------
+
+bind: String ty: Class_ty: String
+  bind: conv_to_valid ty: Func_ty: [] => Class_ty: String

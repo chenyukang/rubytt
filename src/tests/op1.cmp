@@ -1,8 +1,11 @@
 (Block 
  (If 
-  (Name true)
+  (Name true Local)
   (Block 
    (Call puts
     (args: 
      (String yes))))
   (Nil)))
+
+----------------------------------------
+

@@ -1,0 +1,33 @@
+(Block 
+ (Func demo
+  (args: 
+   (Name value Local))
+  (body: 
+   (Block 
+    (If 
+     (BinOp:Or 
+      (BinOp:Lt 
+       (Name value Local)
+       (Int 1))
+      (BinOp:Eq 
+       (Name value Local)
+       (Int 1)))
+     (Return 
+      (Array 
+       (Name value Local)))
+     (Nil))
+    (BinOp:Add 
+     (Call demo
+      (args: 
+       (BinOp:Sub 
+        (Name value Local)
+        (Int 1))))
+     (Call demo
+      (args: 
+       (BinOp:Sub 
+        (Name value Local)
+        (Int 2)))))))))
+
+----------------------------------------
+
+bind: demo ty: Func_ty: [Int_ty] => Unkown_ty

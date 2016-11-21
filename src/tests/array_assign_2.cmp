@@ -1,0 +1,16 @@
+(Block 
+ (Assign 
+  (Array 
+   (Name a Local)
+   (Name b Local))
+  (Array 
+   (Int 1)
+   (Int 2)))
+ (Assign 
+  (Name a Local)
+  (String str)))
+
+----------------------------------------
+
+bind: a ty: Str_ty
+bind: b ty: Int_ty

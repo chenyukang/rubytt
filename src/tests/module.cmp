@@ -1,5 +1,13 @@
 (Block 
  (Module 
-  (Name Demo)
+  (Name Test Local)
    (Block 
-    (Void))))
+    (Void)
+    (Assign 
+     (Name a Local)
+     (Int 1)))))
+
+----------------------------------------
+
+bind: Test ty: Module_ty: Test
+  bind: a ty: Int_ty

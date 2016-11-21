@@ -1,0 +1,38 @@
+(Block 
+ (Func func
+  (body: 
+   (Block 
+    (Assign 
+     (Array )
+     (Array 
+      (Int 2)
+      (Int 3)
+      (Int 4)
+      (Int 5)))
+    (Call puts
+     (args: 
+      (Call 
+       (Attribute 
+        (Name b Local)
+        (Name size Local))))))))
+ (Call func
+  (args: 
+   (Int 1)
+   (Int 2)
+   (Int 3)))
+ (Assign 
+  (Name a Local)
+  (Array 
+   (Int 1)
+   (Int 2)
+   (Int 3)))
+ (Assign 
+  (Name a Local)
+  (Array 
+   (Int 1)
+   (Int 2))))
+
+----------------------------------------
+
+bind: a ty: [Int_ty]
+bind: func ty: Func_ty: [] => Unkown_ty

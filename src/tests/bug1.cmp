@@ -1,0 +1,35 @@
+(Block 
+ (Class static: false
+  (Name Order Local)
+  (Nil)
+   (Block 
+    (Void)
+    (Func order_gateway
+     (body: 
+      (Block 
+       (Assign 
+        (Name order_gateway Instance)
+        (BinOp:Or 
+         (Name order_gateway Instance)
+         (Int 1))))))))
+ (Assign 
+  (Name a Local)
+  (Call 
+   (Attribute 
+    (Name Order Local)
+    (Name new Local))))
+ (Call puts
+  (args: 
+   (Call 
+    (Attribute 
+     (Call 
+      (Attribute 
+       (Name a Local)
+       (Name order_gateway Local)))
+     (Name class Local))))))
+
+----------------------------------------
+
+bind: a ty: Inst_ty: Order
+bind: Order ty: Class_ty: Order
+  bind: order_gateway ty: Int_ty

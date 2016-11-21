@@ -2,6 +2,11 @@
 *.byte
 *.log
 *.json
+*.png
+*.dot
+out
+now
+xx
 _build
 _tests
 res

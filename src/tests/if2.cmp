@@ -1,0 +1,38 @@
+(Block 
+ (If 
+  (BinOp:Lt 
+   (Int 1)
+   (Int 0))
+  (Block 
+   (Assign 
+    (Name a Local)
+    (Int 1))
+   (Try 
+    (Block 
+     (Assign 
+      (Name c Local)
+      (Int 1)))
+    (Nil)
+    (Nil)
+    (Nil)))
+  (Block 
+   (Assign 
+    (Name a Local)
+    (String 2))
+   (Assign 
+    (Name c Local)
+    (Name false Local))))
+ (Assign 
+  (Name c Local)
+  (String c))
+ (Call puts
+  (args: 
+   (Name a Local)))
+ (Call puts
+  (args: 
+   (Name c Local))))
+
+----------------------------------------
+
+bind: a ty: {(Int_ty)|(Str_ty)}
+bind: c ty: Str_ty

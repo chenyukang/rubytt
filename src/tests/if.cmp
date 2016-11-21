@@ -1,0 +1,26 @@
+(Block 
+ (Assign 
+  (Name res Local)
+  (If 
+   (BinOp:Lt 
+    (Int 1)
+    (Int 0))
+   (Block 
+    (Assign 
+     (Name a Local)
+     (Int 1)))
+   (Block 
+    (Assign 
+     (Name a Local)
+     (String 2)))))
+ (Call puts
+  (args: 
+   (Name a Local)))
+ (Call puts
+  (args: 
+   (Name res Local))))
+
+----------------------------------------
+
+bind: a ty: {(Int_ty)|(Str_ty)}
+bind: res ty: {(Int_ty)|(Str_ty)}

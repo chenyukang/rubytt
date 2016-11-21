@@ -1,0 +1,55 @@
+(Block 
+ (Class static: false
+  (Name Demo Local)
+  (Nil)
+   (Block 
+    (Void)
+    (Func data
+     (body: 
+      (Block 
+       (Name data Instance))))
+    (Func now
+     (body: 
+      (Block 
+       (Name data Instance))))))
+ (Assign 
+  (Name a Local)
+  (Call 
+   (Attribute 
+    (Name Demo Local)
+    (Name new Local))))
+ (Call puts
+  (args: 
+   (Call 
+    (Attribute 
+     (Name a Local)
+     (Name data Local)))))
+ (Call puts
+  (args: 
+   (Call 
+    (Attribute 
+     (Call 
+      (Attribute 
+       (Name a Local)
+       (Name data Local)))
+     (Name class Local)))))
+ (Call puts
+  (args: 
+   (Call 
+    (Attribute 
+     (Name a Local)
+     (Name instance_variables Local)))))
+ (Assign 
+  (Name res Local)
+  (Call 
+   (Attribute 
+    (Name a Local)
+    (Name now Local)))))
+
+----------------------------------------
+
+bind: a ty: Inst_ty: Demo
+bind: res ty: Func_ty: [] => Unkown_ty
+bind: Demo ty: Class_ty: Demo
+  bind: data ty: Func_ty: [] => Unkown_ty
+  bind: now ty: Func_ty: [] => Func_ty: [] => Unkown_ty

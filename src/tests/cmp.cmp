@@ -1,6 +1,6 @@
 (Block 
  (Assign 
-  (Name a)
+  (Name a Local)
   (BinOp:Cmp 
    (String hello)
    (Int 1)))
@@ -8,5 +8,9 @@
   (args: 
    (Call 
     (Attribute 
-     (Name a)
-     (Name class))))))
+     (Name a Local)
+     (Name class Local))))))
+
+----------------------------------------
+
+bind: a ty: Int_ty

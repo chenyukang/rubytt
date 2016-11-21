@@ -1,0 +1,22 @@
+(Block 
+ (Assign 
+  (Name twice Local)
+  (Func lambda%1
+   (args: 
+    (Name x Local))
+   (body: 
+    (Block 
+     (BinOp:Mul 
+      (Int 2)
+      (Name x Local))))))
+ (Call 
+  (Attribute 
+   (Name twice Local)
+   (Name call Local))
+  (args: 
+   (Int 5))))
+
+----------------------------------------
+
+bind: twice ty: Func_ty: [] => Int_ty
+bind: lambda%1 ty: Func_ty: [] => Int_ty

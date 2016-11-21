@@ -1,0 +1,49 @@
+(Block 
+ (Class static: false
+  (Name Demo Local)
+  (Nil)
+   (Block 
+    (Void)
+    (Assign 
+     (Name b Local)
+     (Int 1))
+    (Func initialize
+     (body: 
+      (Block 
+       (Assign 
+        (Name attr Instance)
+        (Int 1)))))
+    (Func test
+     (args: 
+      (Name a Local)
+      (Name b Local))
+     (body: 
+      (Block 
+       (Call puts
+        (args: 
+         (Name a Local))))))))
+ (Assign 
+  (Name a Local)
+  (Call 
+   (Attribute 
+    (Name Demo Local)
+    (Name new Local))))
+ (Call 
+  (Attribute 
+   (Name a Local)
+   (Name test Local))
+  (args: 
+   (Int 1)
+   (Int 2)))
+ (Call puts
+  (args: 
+   (Name a Local))))
+
+----------------------------------------
+
+bind: a ty: Inst_ty: Demo
+bind: Demo ty: Class_ty: Demo
+  bind: test ty: Func_ty: [Int_ty] => Unkown_ty
+  bind: b ty: Int_ty
+  bind: attr ty: Int_ty
+  bind: initialize ty: Func_ty: [] => Int_ty

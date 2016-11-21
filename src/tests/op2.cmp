@@ -1,5 +1,5 @@
 (Block 
- (Name false)
+ (Name false Local)
  (Float 12.032)
  (BinOp:And 
   (Int 12)
@@ -7,3 +7,6 @@
  (Return 
   (Array 
    (Int 1))))
+
+----------------------------------------
+

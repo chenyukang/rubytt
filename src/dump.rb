@@ -1,14 +1,14 @@
+#!/usr/bin/ruby
 require 'ripper'
 require 'pp'
 require 'json'
 require 'optparse'
-
+require 'fileutils'
 
 # --------------------- utils ---------------------
 def banner(s)
   puts "\033[93m#{s}:\033[0m"
 end
-
 
 class AstSimplifier
 
@@ -31,12 +31,9 @@ class AstSimplifier
       @src.force_encoding('utf-8')
     end
 
-    @src.encode('utf-8',
-                {:undef => :replace,
-                 :invalid => :replace,
-                 :universal_newline => true}
-    )
-
+    @src.encode('utf-8', { :undef => :replace,
+                           :invalid => :replace,
+                           :universal_newline => true })
     @line_starts = [0]
     find_line_starts
     find_docs
@@ -53,7 +50,6 @@ class AstSimplifier
       end
     end
   end
-
 
   # initialize the @line_starts array
   # used to convert (line,col) location to (start,end)
@@ -109,7 +105,7 @@ class AstSimplifier
       return start_idx + 2
     end
     idx = start_idx
-    while idx < @src.length and @src[idx].match /[[:alpha:]0-9_@$\?!]/
+    while (idx < @src.length) and @src[idx].match(/[[:alpha:]0-9_@$\?!]/)
       idx += 1
     end
     idx
@@ -139,9 +135,6 @@ class AstSimplifier
   def find_locations(obj)
     def find1(obj)
       if obj.is_a?(Hash)
-        #if obj[:type] == :binary and not obj[:left]
-        #  puts "problem obj: #{obj.inspect}"
-        #end
         ret = {}
         whole_start = nil
         whole_end = nil
@@ -855,7 +848,6 @@ class AstSimplifier
     end
   end
 
-
   def make_string(content, location=nil)
     ret = {
         :type => :string,
@@ -867,14 +859,12 @@ class AstSimplifier
     ret
   end
 
-
   def op(name)
     {
         :type => :op,
         :name => name
     }
   end
-
 
   def negate(exp)
     {
@@ -896,33 +886,48 @@ def hash_max_nest(hash)
   end
 end
 
-def parse_dump(input, output, endmark)
-  begin
-    simplifier = AstSimplifier.new(input)
-    hash = simplifier.simplify
-    json_string = JSON.pretty_generate(hash, max_nesting: hash_max_nest(hash))
-    out = File.open(output, 'wb')
-    out.write(json_string)
-    out.close
-  ensure
-    end_file = File.open(endmark, 'wb')
-    end_file.close
-  end
+def parse_dump(input, output)
+  simplifier = AstSimplifier.new(input)
+  hash = simplifier.simplify
+  json_string = JSON.pretty_generate(hash, max_nesting: hash_max_nest(hash))
+  out = File.open(output, 'wb')
+  out.write(json_string)
+  out.close
 end
 
+def parse_dir(input, output)
+  abs_input = File.absolute_path input
+  abs_output = File.absolute_path output
+
+  if (File.directory? abs_output) && (abs_input != abs_output)
+    FileUtils.remove_dir abs_output
+  end
+
+  res = Dir.glob("#{input}/**/*").select{ |x|  x.end_with? ".rb" }.
+        map{ |x| File.absolute_path x}
+  res.each{ |rb|
+    next if rb.index("/spec/")
+    next if rb.index("/migrate/")
+    json_path = rb.gsub(abs_input, abs_output).gsub(".rb", ".json")
+    FileUtils.mkdir_p (File.dirname json_path)
+    parse_dump rb, json_path
+  }
+end
 
 $options = {}
 OptionParser.new do |opts|
-  opts.banner = "Usage: dump_ruby.rb [options]"
-
+  opts.banner = "Usage: dump.rb [options]"
   opts.on("-d", "--debug", "debug run") do |v|
     $options[:debug] = v
   end
-
 end.parse!
 
-
 if ARGV.length > 0
-  parse_dump(ARGV[0], ARGV[1], ARGV[2])
+  input, output = ARGV[0], ARGV[1]
+  if File.directory? input
+    parse_dir input, output
+  else
+    parse_dump input, output
+  end
 end
 

@@ -1,0 +1,10 @@
+(Block 
+ (Func a
+  (body: 
+   (Block 
+    (Return 
+     (Nil))))))
+
+----------------------------------------
+
+bind: a ty: Func_ty: [] => Unkown_ty

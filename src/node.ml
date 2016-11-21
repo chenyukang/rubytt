@@ -42,11 +42,24 @@ type node_info = {
   ss: int;
   ee: int;
 }
+type fun_node_info = {
+  locator: node_t;
+  name: node_t;
+  args: node_t list;
+  defaults: node_t list;
+  kw_ks: node_t list;
+  kw_vs: node_t list;
+  after_rest: node_t list;
+  block_arg: node_t;
+  body: node_t;
+  doc: string;
+  is_lambda: bool
+}
 and
   node_type =
   | Nil
-  | Index of node
-  | Kwd of string * node
+  | Index of node_t
+  | Kwd of string * node_t
   | Int of int
   | Float of float
   | String of string
@@ -54,35 +67,35 @@ and
   | Control of string
   | Void
   | Name of string * name_ty
-  | Block of node list
-  | BinOp of op * node * node (* left op * right op *)
-  | UnaryOp of op * node
-  | While of node * node
-  | Assign of node * node
-  | Yield of node
-  | Return of node
-  | Attribute of node * node
-  | Try of node * node * node * node
-  | If of node * node * node
-  | For of node * node * node
-  | Regexp of node * node
-  | Undef of node list
-  | StrEmbed of string
-  | Starred of node
-  | Array of node list
-  | Module of node * node * string
-  | Subscript of node * node list
-  | Class of node * node * node * string * bool
-  | Handler of node list * node * node * node
-  | Dict of node list * node list
-  | Call of node * node list * node * node
-  | Func of node * node list * node list * node list * node list * node list *
-            node * node * string
+  | Block of node_t list
+  | BinOp of op * node_t * node_t (* left op * right op *)
+  | UnaryOp of op * node_t
+  | While of node_t * node_t
+  | Assign of node_t * node_t
+  | Yield of node_t
+  | Return of node_t
+  | Attribute of node_t * node_t
+  | Try of node_t * node_t * node_t * node_t
+  | If of node_t * node_t * node_t
+  | For of node_t * node_t * node_t
+  | Regexp of node_t * node_t
+  | Undef of node_t list
+  | StrEmbed of node_t
+  | Starred of node_t
+  | Array of node_t list
+  | Module of node_t * node_t * node_t * string
+  | Subscript of node_t * node_t list
+  | Class of node_t * node_t * node_t * string * bool
+  | Handler of node_t list * node_t * node_t * node_t
+  | Dict of node_t list * node_t list
+  | Call of node_t * node_t list * node_t * node_t
+  | Func of fun_node_info
+
 and
-  node = {
+  node_t = {
   info: node_info;
   ty: node_type;
-  mutable parent: node option;
+  mutable parent: node_t option;
 }
 
 let rec get_ast_root node =
@@ -106,6 +119,10 @@ let nil_node =
     parent = None;
   }
 
+let is_nil node =
+  match node.ty with
+  | Nil -> true  | _ -> false
+
 let make_nil_node file s e =
   {
     info = {path = ""; file = file; ss = s; ee = e};
@@ -114,7 +131,7 @@ let make_nil_node file s e =
   }
 
 let add_children parent children =
-  List.iter children ~f:(fun a -> set_node_parent a parent) 
+  List.iter children ~f:(fun a -> set_node_parent a parent)
 
 let make_block_node stmts file s e =
   let block = {
@@ -171,13 +188,15 @@ let make_kwd_node str value file s e =
   set_node_parent value node;
   node
 
-
 let make_symbol_node sym file s e =
   {
     info = {path=""; file = file; ss = s; ee = e};
     ty = Symbol(sym);
     parent = None;
   }
+
+let symbol_to_str sym =
+  match sym.ty with | Symbol(s) -> s | _ -> ""
 
 let make_void_node file s e =
   {
@@ -199,6 +218,24 @@ let make_name_node id ty file s e =
     ty = Name(id, ty);
     parent = None;
   }
+
+let is_name node =
+  match node.ty with | Name(_) -> true | _ -> false
+
+let is_instance_var node =
+  match node.ty with
+  | Name(_, k) -> k = Instance
+  | _ -> false
+
+let name_node_id n =
+  match n.ty with
+  | Name(s, _) -> s
+  | _ -> (* failwith "error node type for name_id" *) "unkown_name_id"
+
+let name_node_is_globalvar n =
+  match n.ty with
+  | Name(_, t) -> t = Global
+  | _ -> false
 
 let make_yield_node value file s e =
   let node = {
@@ -254,7 +291,7 @@ let make_if_node test body _else file s e =
   add_children node [test; body; _else];
   node
 
-let make_for_node target iter body file s e = 
+let make_for_node target iter body file s e =
   let node = {
     info = {path=""; file = file; ss = s; ee = e};
     ty = For(target, iter, body);
@@ -304,6 +341,29 @@ let make_attribute_node value attr file s e =
   add_children node [value; attr];
   node
 
+let try_attr_to_name attr =
+    match attr.ty with
+    | Attribute(_, attr) -> attr
+    | Name _ | Nil -> attr
+    | _ -> failwith "error type try_attr_to_name other"
+
+let attr_id attr =
+  let name = try_attr_to_name attr in
+  name_node_id name
+
+let is_attr node = match node.ty with | Attribute(_) -> true |_ -> false
+
+let attr_target node =
+  match node.ty with
+  | Attribute(target, _) -> target
+  | _ -> failwith "error type attr_target"
+
+let attr_attr node =
+    match node.ty with
+  | Attribute(_, attr) -> attr
+  | _ -> failwith "error type attr_attr"
+
+
 let make_undef_node targets file s e =
   let node = {
     info = {path=""; file = file; ss = s; ee = e };
@@ -323,16 +383,18 @@ let make_subscript_node name slice file s e =
   add_children node slice;
   node
 
-let make_module_node name body doc file s e =
+let make_module_node locator body doc file s e =
+  let name = try_attr_to_name locator in
   let node = {
     info = {path=""; file = file; ss = s; ee = e };
-    ty = Module(name, body, doc);
+    ty = Module(locator, name, body, doc);
     parent = None;
   } in
-  add_children node [name; body];
+  add_children node [locator; body];
   node
 
-let make_class_node name super body doc static file s e =
+let make_class_node locator super body doc static file s e =
+  let name = try_attr_to_name locator in
   let node = {
     info = {path=""; file = file; ss = s; ee = e };
     ty = Class(name, super, body, doc, static);
@@ -347,8 +409,7 @@ let make_handler_node exceps binder handler orelse file s e =
     ty = Handler(exceps, binder, handler, orelse);
     parent = None;
   } in
-  add_children node [binder; handler; orelse];
-  add_children node exceps;
+  add_children node ([binder; handler; orelse] @ exceps);
   node
 
 
@@ -358,25 +419,44 @@ let make_dict_node keys vals file s e =
     ty = Dict(keys, vals);
     parent = None;
   } in
-  add_children node keys;
-  add_children node vals;
+  add_children node (keys @ vals);
   node
 
-let make_func_node binder positional defaults kw_ks kw_vs
+let lambda_coutner = ref 0;;
+let gen_lambda_name() =
+  incr lambda_coutner;
+  Printf.sprintf "lambda%%%d" !lambda_coutner
+
+let make_func_node locator positional defaults kw_ks kw_vs
     after_rest block_arg body doc file s e =
+  let is_lambda = is_nil locator in
+  let loc = if is_nil locator then
+      let gen_name = gen_lambda_name() in
+      make_name_node gen_name Local file 0 0
+    else
+      locator in
+  let name = try_attr_to_name loc in
   let node = {
     info = {path=""; file = file; ss = s; ee = e };
-    ty = Func(binder, positional, defaults, kw_ks, kw_vs,
-              after_rest, block_arg, body, doc);
+    ty = Func({locator = loc; name = name; args = positional;
+               defaults = defaults; kw_ks = kw_ks;  kw_vs = kw_vs;
+               after_rest = after_rest; block_arg = block_arg;
+               body = body;  doc = doc;  is_lambda = is_lambda});
     parent = None;
   } in
-  add_children node positional;
-  add_children node defaults;
-  add_children node after_rest;
-  add_children node kw_ks;
-  add_children node kw_vs;
-  add_children node [binder; body; block_arg];
+  add_children node (positional @ defaults @ after_rest @ kw_ks @ kw_vs);
+  add_children node [locator; body; block_arg];
   node
+
+let func_node_name node =
+  match node.ty with
+  | Func(info) -> name_node_id info.name
+  | _ -> "unknown"
+
+let func_node_info node =
+  match node.ty with
+  | Func(info) -> info
+  | _ -> failwith "func_node_info error type"
 
 let make_call_node func pos star block_arg file s e =
   let node = {
@@ -384,6 +464,46 @@ let make_call_node func pos star block_arg file s e =
     ty = Call(func, pos, star, block_arg);
     parent = None;
   } in
-  add_children node pos;
-  add_children node [func; star; block_arg];
+  add_children node ([func; star; block_arg] @ pos);
   node
+
+
+let compare_node_t n1 n2 =
+  let f1 = n1.info in
+  let f2 = n2.info in
+  if f1.file <> f2.file then
+    String.compare f1.file f2.file
+  else (
+    if f1.ss <> f2.ss then Int.compare f1.ss f2.ss
+    else Int.compare f1.ee f2.ee
+  )
+
+let node_t_of_sexp s =
+  nil_node
+
+let sexp_of_node_t ty =
+  Int.sexp_of_t 1
+
+
+let node_t_hash node =
+  (String.hash node.info.file) lxor (String.hash node.info.path) lxor
+  (Int.hash node.info.ss) lxor (Int.hash node.info.ee)
+
+let name_ty_to_str t =
+  match t with
+  | Local -> "Local"
+  | Instance -> "Instance"
+  | Class -> "Class"
+  | Global -> "Global"
+
+module NodeHash : sig
+  type t = node_t
+  include Hashable.S with type t := t
+end = struct
+    module T = struct
+      type t = node_t with sexp, compare
+      let hash t = node_t_hash t
+    end
+    include T
+    include Hashable.Make(T)
+end

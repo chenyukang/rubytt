@@ -1,10 +1,10 @@
 (Block 
  (Func my_puts
   (args: 
-   (Name a)
-   (Name b))
+   (Name a Local)
+   (Name b Local))
   (kw: 
-   (Name c) --> 
+   (Name c Local) --> 
    (Int 3))
   (body: 
    (Block 
@@ -13,14 +13,18 @@
       (Call 
        (Attribute 
         (Array 
-         (Name a)
-         (Name b)
-         (Name c))
-        (Name inspect))))))))
+         (Name a Local)
+         (Name b Local)
+         (Name c Local))
+        (Name inspect Local))))))))
  (Call my_puts
   (args: 
    (Int 3)
    (Int 2)
    (Dict  
-    (Name c)
+    (Name c Local)
      (Int 1)))))
+
+----------------------------------------
+
+bind: my_puts ty: Func_ty: [Int_ty] => Unkown_ty

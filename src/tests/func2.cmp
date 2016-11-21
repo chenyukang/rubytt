@@ -1,7 +1,7 @@
 (Block 
  (Func eat
   (args: 
-   (Name meal))
+   (Name meal Local))
   (body: 
    (Block 
     (If 
@@ -9,7 +9,20 @@
      (Block 
       (Call 
        (Attribute 
-        (Name meal)
-        (Name each))))
+        (Name meal Local)
+        (Name each Local))
+       (block_arg: 
+        (Func lambda%1
+         (args: 
+          (Name food Local))
+         (body: 
+          (Block 
+           (Yield 
+            (Array 
+             (Name food Local)))))))))
      (Nil))
     (String delicious!)))))
+
+----------------------------------------
+
+bind: eat ty: Func_ty: [] => Str_ty
