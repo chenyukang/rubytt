@@ -79,7 +79,6 @@ let apply_tag applier source (t:tag) =
   let add buf =
     applier.buffer <- applier.buffer ^ buf in
   if t.offset > applier.cur then (
-    Printf.printf "source: %s len: %d\n" source (String.length source);
     let count = ref (t.offset - applier.cur) in
     let index = ref applier.cur in
     let append = ref "" in
@@ -92,7 +91,8 @@ let apply_tag applier source (t:tag) =
         append := Printf.sprintf "%s%c%c" !append c (String.get source (!index+1));
         incr index;
         incr index;
-      )
+      );
+      decr count;
     done;
     (* String.iter source ~f:(fun c -> *)
     (*     let ans = if Char.is_print(c) then "yes" else "no" in *)
@@ -100,7 +100,7 @@ let apply_tag applier source (t:tag) =
     (*   ); *)
     (* let append = String.sub source applier.cur (t.offset - applier.cur) in *)
     (* Printf.printf "offer: %d current: %d len: %d\n" t.offset applier.cur (t.offset - applier.cur); *)
-    Printf.printf "append: %s\n" !append;
+    (* Printf.printf "append: %s\n" !append; *)
     let escp = escape !append in
     (* applier.cur <- t.offset; *)
     applier.cur <- !index;
