@@ -57,11 +57,10 @@ class AstSimplifier
     lines = @src.split(/\n/)
     total = 0
     lines.each { |line|
-      total += line.length + 1 # line and \n
+      total += line.bytes.to_a.size + 1 # line and \n
       @line_starts.push(total)
     }
   end
-
 
   def find_docs
     @docs = {}
@@ -101,11 +100,15 @@ class AstSimplifier
 
 
   def ident_end(start_idx)
-    if @src[start_idx] == '[' and @src[start_idx + 1] == ']'
+    bytes = @src.bytes.to_a
+    if bytes[start_idx] == '['.ord and bytes[start_idx + 1] == ']'.ord
       return start_idx + 2
     end
     idx = start_idx
-    while (idx < @src.length) and @src[idx].match(/[[:alpha:]0-9_@$\?!]/)
+    while(idx < bytes.size) && ((bytes[idx] >= 'a'.ord && bytes[idx] <= 'z'.ord) ||
+                                (bytes[idx] >= 'A'.ord && bytes[idx] <= 'Z'.ord) ||
+                                (bytes[idx] >= '0'.ord && bytes[idx] <= '9'.ord) ||
+                                bytes[idx] == '_'.ord || bytes[idx] == '?'.ord)
       idx += 1
     end
     idx
@@ -930,4 +933,3 @@ if ARGV.length > 0
     parse_dump input, output
   end
 end
-
