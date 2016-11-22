@@ -10,7 +10,16 @@
       (Call 
        (Attribute 
         (Name meal Local)
-        (Name each Local))))
+        (Name each Local))
+       (block_arg: 
+        (Func lambda%1
+         (args: 
+          (Name food Local))
+         (body: 
+          (Block 
+           (Yield 
+            (Array 
+             (Name food Local)))))))))
      (Nil))
     (String delicious!)))))
 

@@ -70,6 +70,9 @@ let is_global_name name =
 let make_tag_id id tag =
   id ^ "^" ^ tag
 
+let contains search target =
+  String.substr_index search target <> None
+
 (* rails pluralize class name to table_name *)
 let rules =
   List.map ~f:(fun x -> (Str.regexp (fst x)),(snd x))
