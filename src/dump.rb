@@ -15,9 +15,8 @@ class AstSimplifier
   def initialize(filename)
     @filename = filename
 
-    f = File.open(filename, 'rb')
-    @src = f.read
-    f.close
+    @src = File.open(filename, 'rb') do |f| f.read end
+    @bytes = @src.bytes
 
     detected_enc = detect_encoding(@src)
     if detected_enc
@@ -57,7 +56,7 @@ class AstSimplifier
     lines = @src.split(/\n/)
     total = 0
     lines.each { |line|
-      total += line.bytes.to_a.size + 1 # line and \n
+      total += line.bytes.size + 1 # line and \n
       @line_starts.push(total)
     }
   end
@@ -100,16 +99,18 @@ class AstSimplifier
 
 
   def ident_end(start_idx)
-    bytes = @src.bytes.to_a
-    if bytes[start_idx] == '['.ord and bytes[start_idx + 1] == ']'.ord
+    if @bytes[start_idx] == '['.ord and @bytes[start_idx + 1] == ']'.ord
       return start_idx + 2
     end
     idx = start_idx
-    while(idx < bytes.size) && ((bytes[idx] >= 'a'.ord && bytes[idx] <= 'z'.ord) ||
-                                (bytes[idx] >= 'A'.ord && bytes[idx] <= 'Z'.ord) ||
-                                (bytes[idx] >= '0'.ord && bytes[idx] <= '9'.ord) ||
-                                bytes[idx] == '_'.ord || bytes[idx] == '?'.ord)
+    cur = @bytes[idx]
+    while(idx < @bytes.size) &&
+         ((cur >= 'a'.ord && cur <= 'z'.ord) ||
+          (cur >= 'A'.ord && cur <= 'Z'.ord) ||
+          (cur >= '0'.ord && cur <= '9'.ord) ||
+          (cur == '_'.ord || cur == '?'.ord))
       idx += 1
+      cur = @bytes[idx]
     end
     idx
   end
