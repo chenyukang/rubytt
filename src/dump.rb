@@ -15,9 +15,8 @@ class AstSimplifier
   def initialize(filename)
     @filename = filename
 
-    f = File.open(filename, 'rb')
-    @src = f.read
-    f.close
+    @src = File.open(filename, 'rb') do |f| f.read end
+    @bytes = @src.bytes
 
     detected_enc = detect_encoding(@src)
     if detected_enc
@@ -33,9 +32,7 @@ class AstSimplifier
 
     @src.encode('utf-8', { :undef => :replace,
                            :invalid => :replace,
-                           :universal_newline => true }
-    )
-
+                           :universal_newline => true })
     @line_starts = [0]
     find_line_starts
     find_docs
@@ -59,11 +56,10 @@ class AstSimplifier
     lines = @src.split(/\n/)
     total = 0
     lines.each { |line|
-      total += line.length + 1 # line and \n
+      total += line.bytes.size + 1 # line and \n
       @line_starts.push(total)
     }
   end
-
 
   def find_docs
     @docs = {}
@@ -103,12 +99,18 @@ class AstSimplifier
 
 
   def ident_end(start_idx)
-    if @src[start_idx] == '[' and @src[start_idx + 1] == ']'
+    if @bytes[start_idx] == '['.ord and @bytes[start_idx + 1] == ']'.ord
       return start_idx + 2
     end
     idx = start_idx
-    while (idx < @src.length) and @src[idx].match(/[[:alpha:]0-9_@$\?!]/)
+    cur = @bytes[idx]
+    while(idx < @bytes.size) &&
+         ((cur >= 'a'.ord && cur <= 'z'.ord) ||
+          (cur >= 'A'.ord && cur <= 'Z'.ord) ||
+          (cur >= '0'.ord && cur <= '9'.ord) ||
+          (cur == '_'.ord || cur == '?'.ord))
       idx += 1
+      cur = @bytes[idx]
     end
     idx
   end
@@ -850,7 +852,6 @@ class AstSimplifier
     end
   end
 
-
   def make_string(content, location=nil)
     ret = {
         :type => :string,
@@ -909,6 +910,8 @@ def parse_dir(input, output)
   res = Dir.glob("#{input}/**/*").select{ |x|  x.end_with? ".rb" }.
         map{ |x| File.absolute_path x}
   res.each{ |rb|
+    next if rb.index("/spec/")
+    next if rb.index("/migrate/")
     json_path = rb.gsub(abs_input, abs_output).gsub(".rb", ".json")
     FileUtils.mkdir_p (File.dirname json_path)
     parse_dump rb, json_path
@@ -931,4 +934,3 @@ if ARGV.length > 0
     parse_dump input, output
   end
 end
-

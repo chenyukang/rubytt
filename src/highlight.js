@@ -1,7 +1,6 @@
 var highlighted;
 
-function highlight(xid)
-{
+function highlight(xid) {
     var elms = document.querySelectorAll('[xid="' + xid + '"]');
     for (k in elms) {
         v = elms[k]

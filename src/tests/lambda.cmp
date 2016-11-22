@@ -8,7 +8,17 @@
  (Call 
   (Attribute 
    (Name a Local)
-   (Name sort Local))))
+   (Name sort Local))
+  (block_arg: 
+   (Func lambda%1
+    (args: 
+     (Name a Local)
+     (Name b Local))
+    (body: 
+     (Block 
+      (BinOp:Cmp 
+       (Name a Local)
+       (Name b Local))))))))
 
 ----------------------------------------
 

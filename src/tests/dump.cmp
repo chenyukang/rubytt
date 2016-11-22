@@ -167,7 +167,29 @@
        (Call 
         (Attribute 
          (Name lines Local)
-         (Name each Local))))))
+         (Name each Local))
+        (block_arg: 
+         (Func lambda%1
+          (args: 
+           (Name line Local))
+          (body: 
+           (Block 
+            (Assign 
+             (Name total Local)
+             (BinOp:Add 
+              (Name total Local)
+              (BinOp:Add 
+               (Call 
+                (Attribute 
+                 (Name line Local)
+                 (Name length Local)))
+               (Int 1))))
+            (Call 
+             (Attribute 
+              (Name line_starts Instance)
+              (Name push Local))
+             (args: 
+              (Name total Local)))))))))))
     (Func find_docs
      (body: 
       (Block 
@@ -194,7 +216,86 @@
        (Call 
         (Attribute 
          (Name lines Local)
-         (Name each Local))))))
+         (Name each Local))
+        (block_arg: 
+         (Func lambda%2
+          (args: 
+           (Name line Local))
+          (body: 
+           (Block 
+            (Assign 
+             (Name matched Local)
+             (Call 
+              (Attribute 
+               (Name line Local)
+               (Name match Local))
+              (args: 
+               (String ^\s*#\s*(.*)))))
+            (If 
+             (Name matched Local)
+             (Block 
+              (Call 
+               (Attribute 
+                (Name accum Local)
+                (Name push Local))
+               (args: 
+                (Subscript 
+                 (Name matched Local)
+                 (Int 1))))
+              (If 
+               (UnaryOp:Not 
+                (Name first_line Local))
+               (Block 
+                (Assign 
+                 (Name first_line Local)
+                 (Name current_line Local)))
+               (Nil)))
+             (If 
+              (UnaryOp:Not 
+               (Call 
+                (Attribute 
+                 (Name accum Local)
+                 (Name empty? Local))))
+              (Block 
+               (Assign 
+                (Name doc Local)
+                (Dict  
+                 (Symbol type)
+                  (Symbol string)
+                 (Symbol id)
+                  (Call 
+                   (Attribute 
+                    (Name accum Local)
+                    (Name join Local))
+                   (args: 
+                    (String \n)))))
+               (Assign 
+                (Subscript 
+                 (Name docs Instance)
+                 (BinOp:Add 
+                  (Name current_line Local)
+                  (Int 1)))
+                (Name doc Local))
+               (Assign 
+                (Subscript 
+                 (Name docs Instance)
+                 (BinOp:Sub 
+                  (Name first_line Local)
+                  (Int 1)))
+                (Name doc Local))
+               (Call 
+                (Attribute 
+                 (Name accum Local)
+                 (Name clear Local)))
+               (Assign 
+                (Name first_line Local)
+                (Name nil Local)))
+              (Nil)))
+            (Assign 
+             (Name current_line Local)
+             (BinOp:Add 
+              (Name current_line Local)
+              (Int 1)))))))))))
     (Func node_start
      (args: 
       (Name loc Local))
@@ -357,7 +458,121 @@
             (Call 
              (Attribute 
               (Name obj Local)
-              (Name each Local)))
+              (Name each Local))
+             (block_arg: 
+              (Func lambda%3
+               (args: 
+                (Name k Local)
+                (Name v Local))
+               (body: 
+                (Block 
+                 (If 
+                  (BinOp:Equal 
+                   (Name k Local)
+                   (Symbol location))
+                  (Block 
+                   (Assign 
+                    (Name start_idx Local)
+                    (Call node_start
+                     (args: 
+                      (Name v Local))))
+                   (Assign 
+                    (Name end_idx Local)
+                    (Call ident_end
+                     (args: 
+                      (Name start_idx Local))))
+                   (Assign 
+                    (Subscript 
+                     (Name ret Local)
+                     (Symbol start))
+                    (Name start_idx Local))
+                   (Assign 
+                    (Subscript 
+                     (Name ret Local)
+                     (Symbol end))
+                    (Name end_idx Local))
+                   (Assign 
+                    (Subscript 
+                     (Name ret Local)
+                     (Symbol start_line))
+                    (Subscript 
+                     (Name v Local)
+                     (Int 0)))
+                   (Assign 
+                    (Subscript 
+                     (Name ret Local)
+                     (Symbol end_line))
+                    (Subscript 
+                     (Name v Local)
+                     (Int 1)))
+                   (Assign 
+                    (Name whole_start Local)
+                    (Name start_idx Local))
+                   (Assign 
+                    (Name whole_end Local)
+                    (Name end_idx Local))
+                   (Assign 
+                    (Name start_line Local)
+                    (Subscript 
+                     (Name v Local)
+                     (Int 0)))
+                   (Assign 
+                    (Name end_line Local)
+                    (Subscript 
+                     (Name v Local)
+                     (Int 1))))
+                  (Block 
+                   (Assign 
+                    (Array 
+                     (Name new_node Local)
+                     (Name start_idx Local)
+                     (Name end_idx Local)
+                     (Name line_start Local)
+                     (Name line_end Local))
+                    (Call find1
+                     (args: 
+                      (Name v Local))))
+                   (Assign 
+                    (Subscript 
+                     (Name ret Local)
+                     (Name k Local))
+                    (Name new_node Local))
+                   (If 
+                    (BinOp:And 
+                     (Name start_idx Local)
+                     (Block 
+                      (BinOp:Or 
+                       (UnaryOp:Not 
+                        (Name whole_start Local))
+                       (BinOp:Gt 
+                        (Name whole_start Local)
+                        (Name start_idx Local)))))
+                    (Block 
+                     (Assign 
+                      (Name whole_start Local)
+                      (Name start_idx Local))
+                     (Assign 
+                      (Name start_line Local)
+                      (Name line_start Local)))
+                    (Nil))
+                   (If 
+                    (BinOp:And 
+                     (Name end_idx Local)
+                     (Block 
+                      (BinOp:Or 
+                       (UnaryOp:Not 
+                        (Name whole_end Local))
+                       (BinOp:Lt 
+                        (Name whole_end Local)
+                        (Name end_idx Local)))))
+                    (Block 
+                     (Assign 
+                      (Name whole_end Local)
+                      (Name end_idx Local))
+                     (Assign 
+                      (Name end_line Local)
+                      (Name line_end Local)))
+                    (Nil)))))))))
             (If 
              (Name whole_start Local)
              (Block 
@@ -1042,7 +1257,25 @@
                                 (Subscript 
                                  (Name exp Local)
                                  (Int 2))
-                                (Name each Local)))
+                                (Name each Local))
+                               (block_arg: 
+                                (Func lambda%4
+                                 (args: 
+                                  (Name x Local))
+                                 (body: 
+                                  (Block 
+                                   (Call 
+                                    (Attribute 
+                                     (Subscript 
+                                      (Name ret Local)
+                                      (Symbol positional))
+                                     (Name push Local))
+                                    (args: 
+                                     (Call convert
+                                      (args: 
+                                       (Subscript 
+                                        (Name x Local)
+                                        (Int 0)))))))))))
                               (Assign 
                                (Subscript 
                                 (Name ret Local)
@@ -1052,7 +1285,18 @@
                                  (Subscript 
                                   (Name exp Local)
                                   (Int 2))
-                                 (Name map Local)))))
+                                 (Name map Local))
+                                (block_arg: 
+                                 (Func lambda%5
+                                  (args: 
+                                   (Name x Local))
+                                  (body: 
+                                   (Block 
+                                    (Call convert
+                                     (args: 
+                                      (Subscript 
+                                       (Name x Local)
+                                       (Int 1)))))))))))
                              (Nil))
                             (If 
                              (BinOp:And 
@@ -1107,7 +1351,16 @@
                                    (Subscript 
                                     (Name exp Local)
                                     (Int 5))
-                                   (Name map Local))))))
+                                   (Name map Local))
+                                  (block_arg: 
+                                   (Func lambda%6
+                                    (args: 
+                                     (Name x Local))
+                                    (body: 
+                                     (Block 
+                                      (Subscript 
+                                       (Name x Local)
+                                       (Int 0))))))))))
                               (Assign 
                                (Subscript 
                                 (Name ret Local)
@@ -1119,7 +1372,16 @@
                                    (Subscript 
                                     (Name exp Local)
                                     (Int 5))
-                                   (Name map Local)))))))
+                                   (Name map Local))
+                                  (block_arg: 
+                                   (Func lambda%7
+                                    (args: 
+                                     (Name x Local))
+                                    (body: 
+                                     (Block 
+                                      (Subscript 
+                                       (Name x Local)
+                                       (Int 1)))))))))))
                              (Nil))
                             (If 
                              (Subscript 
@@ -2871,7 +3133,16 @@
        (Call 
         (Attribute 
          (Name arr Local)
-         (Name map Local))))))
+         (Name map Local))
+        (block_arg: 
+         (Func lambda%8
+          (args: 
+           (Name x Local))
+          (body: 
+           (Block 
+            (Call convert
+             (args: 
+              (Name x Local)))))))))))
     (Func convert_when
      (args: 
       (Name exp Local)
@@ -3054,7 +3325,19 @@
            (Call 
             (Attribute 
              (Name hash Local)
-             (Name map Local)))
+             (Name map Local))
+            (block_arg: 
+             (Func lambda%9
+              (args: 
+               (Name e Local))
+              (body: 
+               (Block 
+                (Call 
+                 (Attribute 
+                  (Call hash_max_nest
+                   (args: 
+                    (Name e Local)))
+                  (Name to_i Local))))))))
            (Name max Local)))
          (Name to_i Local)))
        (Int 1)))
@@ -3077,7 +3360,19 @@
                (Attribute 
                 (Name hash Local)
                 (Name values Local)))
-              (Name map Local)))
+              (Name map Local))
+             (block_arg: 
+              (Func lambda%10
+               (args: 
+                (Name s Local))
+               (body: 
+                (Block 
+                 (Call 
+                  (Attribute 
+                   (Call hash_max_nest
+                    (args: 
+                     (Name s Local)))
+                   (Name to_i Local))))))))
             (Name max Local)))
           (Name to_i Local)))
         (Int 1)))
@@ -3162,7 +3457,37 @@
    (Call 
     (Attribute 
      (Name OptionParser Local)
-     (Name new Local)))
+     (Name new Local))
+    (block_arg: 
+     (Func lambda%12
+      (args: 
+       (Name opts Local))
+      (body: 
+       (Block 
+        (Assign 
+         (Attribute 
+          (Name opts Local)
+          (Name banner Local))
+         (String Usage: dump.rb [options]))
+        (Call 
+         (Attribute 
+          (Name opts Local)
+          (Name on Local))
+         (args: 
+          (String -d)
+          (String --debug)
+          (String debug run))
+         (block_arg: 
+          (Func lambda%11
+           (args: 
+            (Name v Local))
+           (body: 
+            (Block 
+             (Assign 
+              (Subscript 
+               (Name $options Global)
+               (Symbol debug))
+              (Name v Local))))))))))))
    (Name parse! Local)))
  (If 
   (BinOp:Gt 
