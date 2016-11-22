@@ -40,9 +40,9 @@ let analysis_model_ast ast =
                     add_relation_ship has_one_table model_db_name (Util.class_to_table_name arg_name)
                   )
                 | "has_many" -> (
-                    let arg_name = first_arg_name pos_args key_name in
-                    Printf.printf "%s has_many %s\n" model_db_name arg_name;
-                    add_relation_ship has_many_table model_db_name arg_name
+                  let arg_name = optional_class_name pos_args key_name in
+                  Printf.printf "%s has_many %s\n" model_db_name arg_name;
+                  add_relation_ship has_many_table model_db_name arg_name
                   )
                 | _ -> ()
               )
@@ -51,11 +51,31 @@ let analysis_model_ast ast =
          ))
     | _ -> ()
   and
-    first_arg_name pos_args key_name =
+    first_arg_name pos_args key =
     let arg_node = List.nth pos_args 0 in
     match arg_node with
     | Some(arg) -> (Node.symbol_to_str arg)
-    | _ -> failwith (Printf.sprintf "belongs_to dont have arg: %s\n" key_name)
+    | _ -> failwith (Printf.sprintf "belongs_to dont have arg: %s\n" key)
+  and
+    optional_class_name pos_args cur_key =
+    let arg_node = List.nth pos_args 1 in
+    match arg_node with
+    | Some(arg) -> (
+      match arg.ty with
+      | Dict(keys, vals) -> (
+        let key = List.nth keys 0 in
+        let value = List.nth vals 0 in
+        match key, value with
+        | Some(k), Some(v) -> (
+          match k.ty, v.ty with
+          | Name("class_name", _), String(s)  -> (Util.class_to_table_name s)
+          | _, _ -> (first_arg_name pos_args cur_key)
+        )
+        | _ -> failwith "unknown optional arg type"
+      )
+      | _ ->(first_arg_name pos_args cur_key))
+    (* failwith "unknown optional arg") *)
+    | _ -> (first_arg_name pos_args cur_key)
   and
     add_relation_ship hash a b =
     match Hashtbl.find hash a with
