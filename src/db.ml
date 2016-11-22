@@ -13,8 +13,8 @@ let analysis_model_ast ast =
     match ast.ty with
     | Block(stmts) ->
       List.iter stmts ~f:(fun s -> iter s)
-    | Class(n, _, body, _, static) -> (
-      let res = Printer.node_to_str ast 0 in
+    | Class(n, _, body, _, _) -> (
+      (* let res = Printer.node_to_str ast 0 in *)
       let name = Node.name_node_id n in
       process_body name body
       )
@@ -59,8 +59,8 @@ let analysis_model_ast ast =
   and
     add_relation_ship hash a b =
     match Hashtbl.find hash a with
-    | Some(v) -> Hashtbl.set hash a (b :: v)
-    | _ -> Hashtbl.add_exn hash a ([b])
+    | Some(v) -> Hashtbl.set hash ~key:a ~data:(b :: v)
+    | _ -> Hashtbl.add_exn hash ~key:a ~data:[b]
   in
   iter ast
 
@@ -83,12 +83,10 @@ let analysis_db_ast ast =
   and
     build_table ast =
     match ast.ty with
-    | Call(name, args, _, block_arg) -> (
+    | Call(_, args, _, block_arg) -> (
         let name = List.nth_exn args 0 in
         let columns = table_columns block_arg in
-        (* Printf.printf "columns: \n"; *)
-        (* List.iter columns ~f:(fun c -> Printf.printf " %s " c); *)
-        Hashtbl.add_exn tables (string_of_str name) columns;
+        Hashtbl.add_exn tables ~key:(string_of_str name) ~data:columns;
       )
     | _ -> failwith "invalid node in build_table"
   and
@@ -115,7 +113,7 @@ let analysis_db_ast ast =
   and
     string_of_attr attr =
     match attr.ty with
-    | Attribute(t, v) ->
+    | Attribute(_, v) ->
       (name_node_id v)
     | _ -> failwith "invalid type in string_of_attr"
   in
@@ -185,4 +183,3 @@ let dump_db output =
   Out_channel.write_all "db.dot" ~data: dot_res;
   Sys.command_exn (Printf.sprintf "dot db.dot -Tpng -o %s" output);
   Sys.command_exn ("open " ^ output)
-

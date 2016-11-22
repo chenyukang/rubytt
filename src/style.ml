@@ -62,7 +62,7 @@ type applier = {
 
 let to_css sty =
   let str = str_of_style sty in
-  Stringext.replace_all str "_" "-"
+  Stringext.replace_all str ~pattern:"_" ~with_:"-"
 
 let escape str =
   let a = ["&"; "'"; "\""; "<";  ">"] in
@@ -70,7 +70,7 @@ let escape str =
   let res = ref str in
   List.iteri a ~f:(fun i x ->
       let r = List.nth_exn b i in
-      res := Stringext.replace_all !res x r
+      res := Stringext.replace_all !res ~pattern:x ~with_:r
     );
   !res
 
@@ -78,7 +78,7 @@ let apply_tag applier source (t:tag) =
   let add buf =
     applier.buffer <- applier.buffer ^ buf in
   if t.offset > applier.cur then (
-    let append = String.sub source applier.cur (t.offset - applier.cur) in
+    let append = String.sub source ~pos:applier.cur ~len:(t.offset - applier.cur) in
     let escp = escape append in
     applier.cur <- t.offset;
     add escp
@@ -112,7 +112,7 @@ let apply file source styles =
   List.iter applier.tags ~f:(fun tag -> apply_tag applier source tag);
   let len = String.length source in
   if applier.cur < len then (
-    let append = String.sub source applier.cur (len - applier.cur) in
+    let append = String.sub source ~pos:applier.cur ~len:(len - applier.cur) in
     let escp = escape append in
     applier.cur <- len;
     applier.buffer <- applier.buffer ^ escp
