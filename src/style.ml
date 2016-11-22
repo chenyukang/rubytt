@@ -75,12 +75,10 @@ let escape str =
   !res
 
 let apply_tag applier source (t:tag) =
-  (* Printf.printf "tag end: %d \n" t.offset; *)
   let add buf =
     applier.buffer <- applier.buffer ^ buf in
   if t.offset > applier.cur then (
     let append = String.sub source applier.cur (t.offset - applier.cur) in
-    Printf.printf "append: %s\n" append;
     let escp = escape append in
     applier.cur <- t.offset;
     add escp
@@ -93,8 +91,8 @@ let apply_tag applier source (t:tag) =
       | LINK -> (add ("<a href='" ^ t.sty.url ^ "'");
                  add (", xid='" ^ t.sty.id ^ "'"))
       | _ -> add ("<span class='" ^ to_css(t.sty) ^ "'"));
-      if t.sty.msg <> "" then
-        add (Printf.sprintf ", title='%s'" t.sty.msg);
+      (* if t.sty.msg <> "" then *)
+      add (Printf.sprintf ", title='type: %s'" t.sty.msg);
       add ">"
     )
   | _ -> (

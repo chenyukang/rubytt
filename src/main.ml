@@ -10,17 +10,6 @@ let parse_to_ast ?need_trans:(need_trans=true) file =
 let gen_ast_str ast =
   Printer.node_to_str ast 0
 
-(* let gen_ty_str() = *)
-(*   let ty_str = Printer.table_to_str Type.global_table 0 in *)
-(*   Printf.sprintf "%s\n\n" ty_str *)
-
-(* let load_file file = *)
-(*   let ast = parse_to_ast file in *)
-(*   let ast_str = gen_ast_str ast in *)
-(*   Global.set_load_file file; *)
-(*   Printf.eprintf "%s\n" ast_str; *)
-(*   Printf.eprintf "%s" (gen_ty_str()) *)
-
 let load_dir ?need_trans:(need_trans=true) input_dir output_dir =
   Printf.printf "Dump dir: %s\n%!" input_dir;
   if Sys.file_exists_exn output_dir then

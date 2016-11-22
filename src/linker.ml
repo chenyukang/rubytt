@@ -36,7 +36,7 @@ let process_def bind =
     Hash_set.add seen_def hash_str;
     let qname = bind.qname in
     let style = Style.new_style Style.ANCHOR bind.start bind.tail in
-    (* style.msg <- Printer.type_to_str bind.bind_ty 0; *)
+    style.msg <- Printer.type_to_str ~show_bind:false bind.bind_ty 0;
     style.url <- qname;
     style.id <- qname;
     add_file_style bind.bind_file style
