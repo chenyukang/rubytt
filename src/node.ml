@@ -504,7 +504,6 @@ let node_t_of_sexp s =
 let sexp_of_node_t ty =
   Int.sexp_of_t 1
 
-
 let node_t_hash node =
   (String.hash node.info.file) lxor (String.hash node.info.path) lxor
   (Int.hash node.info.ss) lxor (Int.hash node.info.ee)

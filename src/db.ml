@@ -5,6 +5,7 @@ let tables = Hashtbl.Poly.create();;
 let belongs_table = Hashtbl.Poly.create();;
 let has_one_table = Hashtbl.Poly.create();;
 let has_many_table = Hashtbl.Poly.create();;
+let model_db_name = Hashtbl.Poly.create();;
 
 let analysis_model_ast ast =
   let rec iter ast =
@@ -21,6 +22,8 @@ let analysis_model_ast ast =
     match node.ty with
     | Block(stmts) ->
       (List.iter stmts ~f:(fun s ->
+           let _s = Printer.node_to_str s 0 in
+           Printf.printf "now: %s\n" _s;
            (match s.ty with
             | (Call(name, pos_args, _, _)) -> (
                 let key_name = Node.name_node_id name in
@@ -31,6 +34,15 @@ let analysis_model_ast ast =
                     let table = match_table key_name in
                     Printf.printf "%s %s %s\n" db_name key_name arg_name;
                     add_relation table db_name arg_name
+                  )
+                | _ -> ()
+              )
+            | (Assign(target, value)) -> (
+                match target.ty with
+                | Attribute(v, at) -> (
+                    match (attr_id v), (attr_id at), value.ty with
+                    | "self", "table_name", String(n) -> Hashtbl.add_exn model_db_name model_name n
+                    | _ -> ()
                   )
                 | _ -> ()
               )
