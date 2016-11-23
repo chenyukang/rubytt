@@ -21,7 +21,7 @@ let load_dir ?need_trans:(need_trans=true) input_dir output_dir =
       ~f:(fun rb -> not((Util.contains rb "/spec/") ||
                         (Util.contains rb "/migrate/"))
          ) rb_files in
-  List.iter rb_files ~f:(fun x -> Printf.printf "now processing: %s\n" x);
+  (* List.iter rb_files ~f:(fun x -> Printf.printf "now processing: %s\n" x); *)
   List.iter rb_files ~f:(fun x -> Global.set_load_file x);
   let jsons = Util.walk_directory_tree output_dir ".*\\.json" in
   let asts = List.map jsons ~f:(fun x ->
@@ -59,7 +59,7 @@ let load_db ?dump_db:(dump_db=false) input_dir output =
 
 let command =
   Command.basic
-    ~summary: "rubytt an Ruby analysis"
+    ~summary: "rubytt an Ruby analyser"
     Command.Spec.(
       empty
       +> flag "-s" (optional string) ~doc:"the source code directory"
