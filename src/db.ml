@@ -27,22 +27,13 @@ let analysis_model_ast ast =
            (match s.ty with
             | (Call(name, pos_args, _, _)) -> (
                 let key_name = Node.name_node_id name in
-                let model_db_name = Util.class_to_table_name model_name in
+                let db_name = Util.class_to_table_name model_name in
                 match key_name with
-                | "belongs_to" -> (
-                    let arg_name = first_arg_name pos_args key_name in
-                    Printf.printf "%s belongs_to %s\n" model_db_name arg_name;
-                    add_relation_ship belongs_table  model_db_name (Util.class_to_table_name arg_name)
-                  )
-                | "has_one" -> (
-                    let arg_name = first_arg_name pos_args key_name in
-                    Printf.printf "%s has_one %s\n" model_db_name arg_name;
-                    add_relation_ship has_one_table model_db_name (Util.class_to_table_name arg_name)
-                  )
-                | "has_many" -> (
-                  let arg_name = optional_class_name pos_args key_name in
-                  Printf.printf "%s has_many %s\n" model_db_name arg_name;
-                  add_relation_ship has_many_table model_db_name arg_name
+                | "belongs_to" | "has_one" | "has_many" -> (
+                    let arg_name = optional_class_name pos_args key_name in
+                    let table = match_table key_name in
+                    Printf.printf "%s %s %s\n" db_name key_name arg_name;
+                    add_relation table db_name arg_name
                   )
                 | _ -> ()
               )
@@ -51,33 +42,56 @@ let analysis_model_ast ast =
          ))
     | _ -> ()
   and
+    match_table key =
+    match key with
+    | "belongs_to" -> belongs_table
+    | "has_one" -> has_one_table
+    | "has_many" -> has_many_table
+    | _ -> failwith "invalid table"
+  and
     first_arg_name pos_args key =
     let arg_node = List.nth pos_args 0 in
     match arg_node with
-    | Some(arg) -> (Node.symbol_to_str arg)
-    | _ -> failwith (Printf.sprintf "belongs_to dont have arg: %s\n" key)
+    | Some(arg) -> (
+        let name = Node.symbol_to_str arg in
+        match key with
+        | "has_many" -> name
+        | _ -> Util.class_to_table_name name
+      )
+    | _ -> failwith (Printf.sprintf "%s dont have arg" key)
   and
     optional_class_name pos_args cur_key =
-    let arg_node = List.nth pos_args 1 in
+    let arg = List.nth pos_args 1 in
+    match class_name_arg arg with
+    | Some(s) -> s
+    | _ -> first_arg_name pos_args cur_key
+  and
+    class_name_arg arg_node =
     match arg_node with
     | Some(arg) -> (
-      match arg.ty with
-      | Dict(keys, vals) -> (
-        let key = List.nth keys 0 in
-        let value = List.nth vals 0 in
-        match key, value with
-        | Some(k), Some(v) -> (
-          match k.ty, v.ty with
-          | Name("class_name", _), String(s)  -> (Util.class_to_table_name s)
-          | _, _ -> (first_arg_name pos_args cur_key)
-        )
-        | _ -> failwith "unknown optional arg type"
+        let str = Printer.node_to_str arg 0 in
+        Printf.printf "now: %s\n" str;
+        match arg.ty with
+        | Dict(keys, vals) -> (
+            let res = ref "" in
+            let i = ref 0 in
+            while !res = "" && !i < (List.length keys) do
+              (match (List.nth keys !i), (List.nth vals !i) with
+              | Some(k), Some(v) -> (
+                  match k.ty, v.ty with
+                  | Name("class_name", _), String(s)  -> (res := Util.class_to_table_name s)
+                  | _, _ -> ()
+                )
+              | _ -> ());
+              incr i
+            done;
+            if !res = "" then None else Some(!res)
+          )
+        | _ -> None
       )
-      | _ ->(first_arg_name pos_args cur_key))
-    (* failwith "unknown optional arg") *)
-    | _ -> (first_arg_name pos_args cur_key)
+    | _ -> None
   and
-    add_relation_ship hash a b =
+    add_relation hash a b =
     match Hashtbl.find hash a with
     | Some(v) -> Hashtbl.set hash ~key:a ~data:(b :: v)
     | _ -> Hashtbl.add_exn hash ~key:a ~data:[b]
@@ -183,8 +197,12 @@ let db_to_dot_str() =
   Hashtbl.iter belongs_table ~f:(fun ~key:k ~data:vals ->
       List.iter vals ~f:(fun v ->
           (Printf.printf "key table: %s -> %s\n" k v);
-          content := !content ^ (
-              Printf.sprintf "M_%s -> M_%s [color=\"red\"]\n" k v
+          match Hashtbl.find has_one_table v with
+          | Some(k) -> ()
+          | _ -> (
+              content := !content ^ (
+                  Printf.sprintf "M_%s -> M_%s [color=\"red\"]\n" k v
+                )
             )
         );
     );

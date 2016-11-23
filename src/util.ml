@@ -86,7 +86,7 @@ let rules =
      "non","na"];;
 
 let f w x =
-  ignore(Str.search_forward (fst x) w 0); 
+  ignore(Str.search_forward (fst x) w 0);
   Str.replace_first (fst x) (snd x) w;;
 
 let rec exn_map ex fn1 fn2 l =

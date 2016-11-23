@@ -48,7 +48,7 @@ let bindings:(Type.binding_ty list ref) = ref [];;
 let loaded_files = Hash_set.Poly.create();;
 
 let clear() =
-  Node.lambda_coutner := 0;
+  Node.lambda_counter := 0;
   State.state_clear Type.global_table;
   Hashtbl.clear refs;
   Hash_set.clear loaded_files;

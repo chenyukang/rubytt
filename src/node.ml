@@ -422,10 +422,30 @@ let make_dict_node keys vals file s e =
   add_children node (keys @ vals);
   node
 
-let lambda_coutner = ref 0;;
+let dict_node_get node key =
+  match node.ty with
+  | Dict(keys, values) -> (
+      let nth = List.findi keys ~f:(fun i a ->
+          match a.ty with
+          | Name(key, _) -> true
+          | _ -> false
+        ) in
+      match nth with
+      | Some(pos, _) -> (
+          let v = List.nth_exn values pos in
+          match v.ty with
+          | String(s) -> Some(s)
+          | _ -> None
+        )
+      | _ -> None
+    )
+  | _ -> None
+
+
+let lambda_counter = ref 0;;
 let gen_lambda_name() =
-  incr lambda_coutner;
-  Printf.sprintf "lambda%%%d" !lambda_coutner
+  incr lambda_counter;
+  Printf.sprintf "lambda%%%d" !lambda_counter
 
 let make_func_node locator positional defaults kw_ks kw_vs
     after_rest block_arg body doc file s e =
