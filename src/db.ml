@@ -7,14 +7,11 @@ let has_one_table = Hashtbl.Poly.create();;
 let has_many_table = Hashtbl.Poly.create();;
 
 let analysis_model_ast ast =
-  (* let str = Printer.node_to_str ast 0 in *)
-  (* Printf.printf "class str: %s\n" str; *)
   let rec iter ast =
     match ast.ty with
     | Block(stmts) ->
       List.iter stmts ~f:(fun s -> iter s)
     | Class(n, _, body, _, _) -> (
-      (* let res = Printer.node_to_str ast 0 in *)
       let name = Node.name_node_id n in
       process_body name body
       )
@@ -188,7 +185,7 @@ let db_to_dot_str() =
     );
   Hashtbl.iter has_one_table ~f:(fun ~key:k ~data:vals ->
       List.iter vals ~f:(fun v ->
-          (Printf.printf "key table: %s -> %s\n" k v);
+          (* (Printf.printf "key table: %s -> %s\n" k v); *)
           content := !content ^ (
               Printf.sprintf "M_%s -> M_%s [color=\"red\"]\n" k v
             )
@@ -196,7 +193,7 @@ let db_to_dot_str() =
     );
   Hashtbl.iter belongs_table ~f:(fun ~key:k ~data:vals ->
       List.iter vals ~f:(fun v ->
-          (Printf.printf "key table: %s -> %s\n" k v);
+          (* (Printf.printf "key table: %s -> %s\n" k v); *)
           match Hashtbl.find has_one_table v with
           | Some(k) -> ()
           | _ -> (
@@ -208,7 +205,7 @@ let db_to_dot_str() =
     );
   Hashtbl.iter has_many_table ~f:(fun ~key:k ~data:vals ->
       List.iter vals ~f:(fun v ->
-          (Printf.printf "key table: %s -> %s\n" k v);
+          (* (Printf.printf "key table: %s -> %s\n" k v); *)
           content := !content ^ (
               Printf.sprintf "M_%s -> M_%s [color=\"orange\"]\n" k v
             )
