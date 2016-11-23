@@ -42,13 +42,13 @@ let load_db ?dump_db:(dump_db=false) input_dir output =
     Printf.eprintf "Please set the Rails project root directory\n"
   else (
     if dump_db then (
-      let db_schema = input_dir ^ "db/schema.rb" in
+      let db_schema = input_dir ^ "/db/schema.rb" in
       if not (Sys.is_file_exn db_schema) then
         failwith (Printf.sprintf "File %s does not exits" db_schema);
       let db_ast = parse_to_ast db_schema in
       Db.analysis_db_ast db_ast
     );
-    let model_dir = input_dir ^ "app/models" in
+    let model_dir = input_dir ^ "/app/models" in
     if not (Sys.is_directory_exn model_dir) then
       failwith (Printf.sprintf "Dir: %s does not exits" model_dir);
     let asts = load_dir ~need_trans:false model_dir "/tmp/rubytt/model/" in

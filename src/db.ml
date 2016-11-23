@@ -66,8 +66,8 @@ let analysis_model_ast ast =
     class_name_arg arg_node =
     match arg_node with
     | Some(arg) -> (
-        let str = Printer.node_to_str arg 0 in
-        Printf.printf "now: %s\n" str;
+        (* let str = Printer.node_to_str arg 0 in *)
+        (* Printf.printf "now: %s\n" str; *)
         match arg.ty with
         | Dict(keys, vals) -> (
             let res = ref "" in
