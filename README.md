@@ -17,6 +17,7 @@ Compile it:
 brew install ocaml 
 brew install opam
 opam install core yojson alcotest ounit
+eval `opam config env`
 
 cd rubytt/src;
 make 
