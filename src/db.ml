@@ -7,27 +7,47 @@ let has_one_table = Hashtbl.Poly.create();;
 let has_many_table = Hashtbl.Poly.create();;
 let model_db_name = Hashtbl.Poly.create();;
 
-let analysis_model_ast ast =
-  let rec iter ast =
+let analysis_model_ast ast proc_type =
+  let rec iter ast iter_func =
     match ast.ty with
-    | Block(stmts) ->
-      List.iter stmts ~f:(fun s -> iter s)
+    | Block(stmts) -> List.iter stmts ~f:(fun s -> iter s iter_func)
     | Class(n, _, body, _, _) -> (
       let name = Node.name_node_id n in
-      process_body name body
-      )
+      iter_func name body)
     |_ -> ()
   and
-    process_body model_name node =
+    process_specify_table model_name node =
     match node.ty with
     | Block(stmts) ->
-      (List.iter stmts ~f:(fun s ->
-           let _s = Printer.node_to_str s 0 in
-           Printf.printf "now: %s\n" _s;
+      List.iter stmts ~f:(fun s ->
+          (match s.ty with
+           | (Assign(target, value)) -> (
+               match target.ty with
+               | Attribute(v, at) -> (
+                   match (attr_id v), (attr_id at), value.ty with
+                   | "self", "table_name", String(n) -> (
+                       Printf.printf "model_name: %s db_name: %s\n" model_name n;
+                       Hashtbl.add_exn model_db_name model_name n
+                     )
+                   | _ -> ()
+                 )
+               | _ -> ()
+             )
+           | _ -> ()
+          )
+        )
+    | _ -> ()
+  and
+    process_relation_ship model_name node =
+    match node.ty with
+    | Block(stmts) ->
+      List.iter stmts ~f:(fun s ->
+           (* let _s = Printer.node_to_str s 0 in *)
+           (* Printf.printf "now: %s\n" _s; *)
            (match s.ty with
-            | (Call(name, pos_args, _, _)) -> (
+             | (Call(name, pos_args, _, _)) -> (
                 let key_name = Node.name_node_id name in
-                let db_name = Util.class_to_table_name model_name in
+                let db_name = match_db_for_model model_name in
                 match key_name with
                 | "belongs_to" | "has_one" | "has_many" -> (
                     let arg_name = optional_class_name pos_args key_name in
@@ -36,20 +56,16 @@ let analysis_model_ast ast =
                     add_relation table db_name arg_name
                   )
                 | _ -> ()
-              )
-            | (Assign(target, value)) -> (
-                match target.ty with
-                | Attribute(v, at) -> (
-                    match (attr_id v), (attr_id at), value.ty with
-                    | "self", "table_name", String(n) -> Hashtbl.add_exn model_db_name model_name n
-                    | _ -> ()
-                  )
-                | _ -> ()
-              )
+               )
             | _ -> ()
            )
-         ))
+        )
     | _ -> ()
+  and
+    match_db_for_model model_name =
+    match Hashtbl.find model_db_name model_name with
+    | Some(db) -> db
+    | _ -> Util.class_to_table_name model_name
   and
     match_table key =
     match key with
@@ -65,7 +81,7 @@ let analysis_model_ast ast =
         let name = Node.symbol_to_str arg in
         match key with
         | "has_many" -> name
-        | _ -> Util.class_to_table_name name
+        | _ -> match_db_for_model name
       )
     | _ -> failwith (Printf.sprintf "%s dont have arg" key)
   and
@@ -88,7 +104,7 @@ let analysis_model_ast ast =
               (match (List.nth keys !i), (List.nth vals !i) with
               | Some(k), Some(v) -> (
                   match k.ty, v.ty with
-                  | Name("class_name", _), String(s)  -> (res := Util.class_to_table_name s)
+                  | Name("class_name", _), String(s)  -> (res := match_db_for_model s)
                   | _, _ -> ()
                 )
               | _ -> ());
@@ -105,7 +121,14 @@ let analysis_model_ast ast =
     | Some(v) -> Hashtbl.set hash ~key:a ~data:(b :: v)
     | _ -> Hashtbl.add_exn hash ~key:a ~data:[b]
   in
-  iter ast
+  if proc_type = "specify_table" then
+    iter ast process_specify_table
+  else
+    iter ast process_relation_ship
+
+let analysis_model_asts asts =
+  List.iter asts ~f:(fun ast -> analysis_model_ast ast "specify_table");
+  List.iter asts ~f:(fun ast -> analysis_model_ast ast "relation_ships")
 
 let analysis_db_ast ast =
   let rec iter ast =

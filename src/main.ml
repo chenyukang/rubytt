@@ -52,7 +52,7 @@ let load_db ?dump_db:(dump_db=false) input_dir output =
     if not (Sys.is_directory_exn model_dir) then
       failwith (Printf.sprintf "Dir: %s does not exits" model_dir);
     let asts = load_dir ~need_trans:false model_dir "/tmp/rubytt/model/" in
-    List.iter asts ~f:(fun ast -> Db.analysis_model_ast ast);
+    Db.analysis_model_asts asts;
     Db.dump_db output
   )
 
