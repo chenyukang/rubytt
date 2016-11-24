@@ -1,4 +1,13 @@
-# rubytt
+# Rubytt
+
+Rubytt is an Ruby code analyzer, espcially for Rails app. 
+
+1. The basic ideas comes from [https://github.com/yinwang0/rubysonar](rubysonar), but with more the help of analyis on db/schema.rb, 
+we may get more types for the code annotation. 
+
+2. I add some visualizations for the class/db/model.
+
+3. The project is in experimental status. It's written in OCmal
 
 to be finished ....
 
