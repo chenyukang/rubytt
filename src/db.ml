@@ -220,7 +220,6 @@ let db_to_dot_str() =
     );
   Hashtbl.iter has_one_table ~f:(fun ~key:k ~data:vals ->
       List.iter vals ~f:(fun v ->
-          (* (Printf.printf "key table: %s -> %s\n" k v); *)
           content := !content ^ (
               Printf.sprintf "M_%s -> M_%s [color=\"red\"]\n" k v
             )
@@ -228,7 +227,6 @@ let db_to_dot_str() =
     );
   Hashtbl.iter belongs_table ~f:(fun ~key:k ~data:vals ->
       List.iter vals ~f:(fun v ->
-          (* (Printf.printf "key table: %s -> %s\n" k v); *)
           match Hashtbl.find has_one_table v with
           | Some(k) -> ()
           | _ -> (
@@ -240,7 +238,6 @@ let db_to_dot_str() =
     );
   Hashtbl.iter has_many_table ~f:(fun ~key:k ~data:vals ->
       List.iter vals ~f:(fun v ->
-          (* (Printf.printf "key table: %s -> %s\n" k v); *)
           content := !content ^ (
               Printf.sprintf "M_%s -> M_%s [color=\"orange\"]\n" k v
             )
