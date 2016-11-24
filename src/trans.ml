@@ -231,7 +231,10 @@ and
         let id = name_node_id attr in
         let bs = lookup_attr target_ty.info.table id in
         match bs with
-        | Some(_bs) -> make_unions_from_bs _bs
+        | Some(_bs) -> (
+            Global.put_refs attr _bs;
+            make_unions_from_bs _bs
+          )
         | _ -> (
             (* Printf.printf "error: '%s' attribute not found for : %s\n" *)
             (*   id (Printer.type_to_str target_ty 0); *)
@@ -285,7 +288,8 @@ and
       if is_attr info.locator then
         let loc_ty = transform (attr_target info.locator) state in
         if not (type_equal loc_ty unkown_ty) then
-          _state := loc_ty.info.table);
+          _state := loc_ty.info.table
+      );
       let func_ty = new_fun_ty node (Some !_state) in
       let args_ty = List.map info.defaults ~f:(fun arg -> transform arg !_state) in
       let state_ty = ty_of_state !_state in
@@ -302,9 +306,13 @@ and
   | Call(func, pos, star, block_arg) -> (
       let _func = ref func in
       let _name = ref nil_node in
+      (* let func_str = Printer.node_to_str func 0 in *)
+      (* Printf.printf "func_str: %s\n" func_str; *)
       if is_attr func then (
         _func := attr_target func;
+        (* Printf.printf "attr target: %s\n" (Printer.node_to_str !_func 0); *)
         _name := attr_attr func
+        (* Printf.printf "attr name: %s\n" (Printer.node_to_str !_name 0) *)
       );
       let fun_ty = transform !_func state in
       let args_ty = List.map pos ~f:(fun x -> transform x state) in

@@ -225,7 +225,7 @@ let rec type_to_str ?show_bind:(show_bind=true) ty depth =
       print_table := false;
       let ret_str = type_to_str ~show_bind:show_bind info.ret_ty 0 in
       print_table := true;
-      Printf.sprintf "Func_ty: %s => %s" !defaults ret_str
+      Printf.sprintf " Fn %s => %s" !defaults ret_str
     )
   | _ -> "unkown_type"
 
@@ -245,7 +245,7 @@ and
                 | 0 -> str ^ "\n"
                 | _ -> "\n" ^ (k_space (2 * depth)) ^ str);
         ) else
-          res := !res ^ ty_str
+          res := !res ^ "&#013;" ^ name ^ ": " ^ ty_str
       )
     );
   !res

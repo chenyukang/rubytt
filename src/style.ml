@@ -92,7 +92,7 @@ let apply_tag applier source (t:tag) =
                  add (", xid='" ^ t.sty.id ^ "'"))
       | _ -> add ("<span class='" ^ to_css(t.sty) ^ "'"));
       (* if t.sty.msg <> "" then *)
-      add (Printf.sprintf ", title='type: %s'" t.sty.msg);
+      add (Printf.sprintf ", title='%s'" t.sty.msg);
       add ">"
     )
   | _ -> (
