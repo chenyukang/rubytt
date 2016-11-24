@@ -308,12 +308,12 @@ and
       let _name = ref nil_node in
       (* let func_str = Printer.node_to_str func 0 in *)
       (* Printf.printf "func_str: %s\n" func_str; *)
-      if is_attr func then (
-        _func := attr_target func;
+      (* if is_attr func then ( *)
+      (*   _func := attr_target func; *)
         (* Printf.printf "attr target: %s\n" (Printer.node_to_str !_func 0); *)
-        _name := attr_attr func
+        (* _name := attr_attr func *)
         (* Printf.printf "attr name: %s\n" (Printer.node_to_str !_name 0) *)
-      );
+      (* ); *)
       let fun_ty = transform !_func state in
       let args_ty = List.map pos ~f:(fun x -> transform x state) in
       let star_ty = transform star state in
