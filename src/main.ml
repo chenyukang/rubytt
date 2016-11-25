@@ -73,7 +73,7 @@ let command =
     Command.Spec.(
       empty
       +> flag "-s" (optional string) ~doc:"the source code directory"
-      +> flag "-t" (optional string) ~doc:"the analysis type, shoud in [class, db, model, type]"
+      +> flag "-t" (optional string) ~doc:"the analysis type, shoud in [class, db, model, type, check]"
       +> flag "-o" (optional string) ~doc:"the output directory or file"
     )
     (fun source_code analy_type output () ->
@@ -90,7 +90,7 @@ let command =
                ignore(load_dir source "/tmp/rubytt/");
                Class.dump_class_dot()
              )
-           | Some("unused") -> (
+           | Some("check") -> (
                load_checker source
              )
            | Some("db") -> load_db ~dump_db:true source output
@@ -107,4 +107,3 @@ let command =
     )
 
 let () = Command.run command
-
