@@ -449,6 +449,7 @@ let gen_lambda_name() =
 
 let make_func_node locator positional defaults kw_ks kw_vs
     after_rest block_arg body doc file s e =
+  Printf.printf "file: %s\n" file;
   let is_lambda = is_nil locator in
   let loc = if is_nil locator then
       let gen_name = gen_lambda_name() in

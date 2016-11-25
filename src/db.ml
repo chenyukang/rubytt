@@ -13,7 +13,8 @@ let analysis_model_ast ast proc_type =
     | Block(stmts) -> List.iter stmts ~f:(fun s -> iter s iter_func)
     | Class(n, _, body, _, _) -> (
       let name = Node.name_node_id n in
-      iter_func name body)
+      iter_func name body
+      )
     |_ -> ()
   and
     process_specify_table model_name node =
@@ -21,7 +22,7 @@ let analysis_model_ast ast proc_type =
     | Block(stmts) ->
       List.iter stmts ~f:(fun s ->
           (match s.ty with
-           | (Assign(target, value)) -> (
+           | Assign(target, value) -> (
                match target.ty with
                | Attribute(v, at) -> (
                    match (attr_id v), (attr_id at), value.ty with
