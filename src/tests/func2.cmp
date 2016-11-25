@@ -25,4 +25,4 @@
 
 ----------------------------------------
 
-bind: eat ty: Func_ty: [] => Str_ty
+bind: eat ty:  Fn [] => Str_ty

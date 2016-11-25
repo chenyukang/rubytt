@@ -25,5 +25,5 @@
 
 ----------------------------------------
 
-bind: max ty: Func_ty: [] => Int_ty
+bind: max ty:  Fn [] => Int_ty
 bind: res ty: Int_ty

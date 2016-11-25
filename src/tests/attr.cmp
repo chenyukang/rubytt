@@ -40,9 +40,9 @@
 
 ----------------------------------------
 
-bind: a ty: Inst_ty: Demo
+bind: a ty: Unkown_ty
 bind: Demo ty: Class_ty: Demo
-  bind: test ty: Func_ty: [Int_ty] => Unkown_ty
+  bind: test ty:  Fn [Int_ty] => Unkown_ty
   bind: b ty: Int_ty
   bind: attr ty: Int_ty
-  bind: initialize ty: Func_ty: [] => Int_ty
+  bind: initialize ty:  Fn [] => Int_ty

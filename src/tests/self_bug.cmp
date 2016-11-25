@@ -15,4 +15,4 @@
 ----------------------------------------
 
 bind: Demo ty: Module_ty: Demo
-  bind: self_func ty: Func_ty: [] => [Module_ty: Demo]
+  bind: self_func ty:  Fn [] => [Module_ty: Demo]

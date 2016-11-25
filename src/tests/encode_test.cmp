@@ -8,4 +8,4 @@
 
 ----------------------------------------
 
-bind: demo ty: Func_ty: [] => Int_ty
+bind: demo ty:  Fn [] => Int_ty

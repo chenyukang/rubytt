@@ -12,4 +12,4 @@
 
 ----------------------------------------
 
-bind: puts ty: Func_ty: [] => Nil_ty
+bind: puts ty:  Fn [] => Nil_ty

@@ -47,4 +47,4 @@
 
 ----------------------------------------
 
-bind: qsort ty: Func_ty: [] => [Unkown_ty]
+bind: qsort ty:  Fn [] => [Unkown_ty]
