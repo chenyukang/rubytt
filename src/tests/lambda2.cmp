@@ -18,5 +18,5 @@
 
 ----------------------------------------
 
-bind: twice ty: Func_ty: [] => Int_ty
-bind: lambda%1 ty: Func_ty: [] => Int_ty
+bind: twice ty:  Fn [] => Unkown_ty
+bind: lambda%1 ty:  Fn [] => Unkown_ty

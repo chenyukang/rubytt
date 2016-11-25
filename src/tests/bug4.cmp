@@ -92,16 +92,16 @@
 
 ----------------------------------------
 
-bind: hello ty: Int_ty
-bind: base ty: [Int_ty]
-bind: demo ty: Inst_ty: Demo
-bind: res ty: Str_ty
+bind: hello ty: Unkown_ty
+bind: base ty: Unkown_ty
+bind: demo ty: Unkown_ty
+bind: res ty: Unkown_ty
 bind: Base ty: Class_ty: Base
-  bind: base_base_func ty: Func_ty: [] => [Int_ty]
-  bind: initialize ty: Func_ty: [] => Int_ty
+  bind: base_base_func ty:  Fn [] => [Int_ty]
+  bind: initialize ty:  Fn [] => Int_ty
 bind: Hello ty: Class_ty: Hello
-  bind: base_func ty: Func_ty: [] => Str_ty
+  bind: base_func ty:  Fn [] => Str_ty
 bind: Demo ty: Class_ty: Demo
-  bind: hello ty: Func_ty: [] => Int_ty
-  bind: test ty: Func_ty: [] => Unkown_ty
-  bind: initialize ty: Func_ty: [] => Int_ty
+  bind: hello ty:  Fn [] => Int_ty
+  bind: test ty:  Fn [] => Unkown_ty
+  bind: initialize ty:  Fn [] => Int_ty

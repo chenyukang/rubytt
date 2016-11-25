@@ -23,4 +23,4 @@
 
 ----------------------------------------
 
-bind: cur ty: Func_ty: [] => Int_ty
+bind: cur ty:  Fn [] => Int_ty

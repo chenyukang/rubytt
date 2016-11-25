@@ -35,4 +35,4 @@
 ----------------------------------------
 
 bind: a ty: [Int_ty]
-bind: func ty: Func_ty: [] => Unkown_ty
+bind: func ty:  Fn [] => Unkown_ty

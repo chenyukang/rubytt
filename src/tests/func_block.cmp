@@ -28,5 +28,5 @@
 
 ----------------------------------------
 
-bind: lambda%1 ty: Func_ty: [] => Unkown_ty
-bind: contrived ty: Func_ty: [] => [Int_ty]
+bind: lambda%1 ty:  Fn [] => Unkown_ty
+bind: contrived ty:  Fn [] => [Int_ty]

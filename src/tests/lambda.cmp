@@ -23,4 +23,4 @@
 ----------------------------------------
 
 bind: a ty: [Int_ty]
-bind: lambda%1 ty: Func_ty: [] => Unkown_ty
+bind: lambda%1 ty:  Fn [] => Unkown_ty

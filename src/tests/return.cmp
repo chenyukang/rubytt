@@ -7,4 +7,4 @@
 
 ----------------------------------------
 
-bind: a ty: Func_ty: [] => Unkown_ty
+bind: a ty:  Fn [] => Unkown_ty

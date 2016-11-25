@@ -6,4 +6,4 @@
 
 ----------------------------------------
 
-bind: a ty: Func_ty: [] => Nil_ty
+bind: a ty:  Fn [] => Nil_ty
