@@ -40,8 +40,7 @@ let rec env_info env =
 
 let check_unused asts =
   let rec iter ast env =
-    let _iter ast =
-      iter ast env in
+    let _iter ast = iter ast env in
     let str = Printer.node_to_str ast 0 in
     Printf.printf "%s\n" str;
     match ast.ty with
