@@ -14,17 +14,20 @@ let run_dir dir =
 
   let jsons = Util.walk_directory_tree dir ".*\\.json" in
   List.filter ~f:(fun j ->
-      Global.clear();
-      Printf.printf "now run: %s\n" j;
+                  Global.clear();
+                  Checker.clear();
+                  Printf.printf "now run: %s\n" j;
       let base = Filename.chop_extension j in
       let ast = build_ast_from_json j in
       let _ = Trans.transform_expr ast Type.global_table in
       let ast_str = node_to_str ast 0 in
       let tys_str = table_to_str Type.global_table 0 true in
+      let _ = Checker.check_unused [ast] in
+      let check_str = Checker.check_result() in
       let sep_str = "\n\n" ^ (String.init 40 ~f:(fun _ -> '-')) ^ "\n\n" in
       let log = Printf.sprintf "%s.log" base in
       let cmp = Printf.sprintf "%s.cmp" base in
-      Out_channel.write_all log ~data: (ast_str ^ sep_str ^ tys_str);
+      Out_channel.write_all log ~data: (ast_str ^ sep_str ^ tys_str ^ check_str);
       Sys.command_exn (Printf.sprintf "rm %s" j);
       not(cmp_file cmp log)
     ) jsons

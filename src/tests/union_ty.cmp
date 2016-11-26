@@ -12,3 +12,5 @@
 ----------------------------------------
 
 bind: a ty: [{([Int_ty])|(Int_ty)|(Str_ty)}]
+
+unvisited variable /Users/kang/code/rubytt/src/tests/union_ty.rb(1) : a

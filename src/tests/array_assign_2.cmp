@@ -14,3 +14,5 @@
 
 bind: a ty: Str_ty
 bind: b ty: Int_ty
+
+unvisited variable /Users/kang/code/rubytt/src/tests/array_assign_2.rb(2) : a

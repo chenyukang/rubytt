@@ -13,13 +13,16 @@ let make_env () = {
     children = [];
   }
 
-let root_env = make_env();;
+let root_env = ref (make_env());;
 
 let new_child parent =
-  Printf.printf "new child .........\n";
   let child = make_env() in
   parent.children <- parent.children @ [child];
   child
+
+let clear () =
+  root_env := make_env()
+
 
 let add_variable env var =
   ignore(Hashtbl.add env.variables ~key:var ~data:true)
@@ -35,24 +38,35 @@ let line_no_from_file file node =
   let lines = String.split buf ~on:'\n' in
   while !line_no < (List.length lines) && !pos <= ss do
     let line = List.nth_exn lines !line_no in
-    pos := !pos + (String.length line);
+    pos := !pos + (String.length line) + 1;
     incr line_no
   done;
   !line_no
 
 let rec env_info env =
-  Printf.printf "print env .........\n";
+  let res = ref "" in
+  let env_visited name env =
+    (Hashtbl.find env.visited name) <> None in
+  let any_child_visited name =
+    List.find env.children ~f:(fun e -> env_visited name e) <> None in
   Hashtbl.iter env.variables
                ~f:(fun ~key:v ~data:_ ->
                    let name = name_node_id v in
-                   match Hashtbl.find env.visited name with
-                   | None ->
-                      (Printf.printf "unvisited variable %s(%d) : %s\n"
-                                     v.info.file
-                                     (line_no_from_file v.info.file v)
-                                     name)
-                   | _ -> ());
-  List.iter env.children ~f:(fun e -> env_info e)
+                   if (env_visited name env) = false &&
+                        (any_child_visited name) = false then
+                     res := !res ^ "\n" ^
+                              (Printf.sprintf "unvisited variable %s(%d) : %s\n"
+                                              v.info.file
+                                              (line_no_from_file v.info.file v)
+                                              name));
+  List.iter env.children ~f:(fun e -> res := !res ^ (env_info e));
+  !res
+
+let check_result () =
+  env_info !root_env
+
+let print_env_info env =
+  Printf.printf "%s" (env_info env)
 
 let check_unused asts =
   let rec iter ast env =
@@ -60,12 +74,17 @@ let check_unused asts =
     (* let str = Printer.node_to_str ast 0 in *)
     (* Printf.printf "%s\n" str; *)
     match ast.ty with
-    | Name(id, _) -> (Printf.printf "lookup: %s\n" id; visited_variable env id)
+    | Name(id, _) -> (
+      (* Printf.printf "lookup: %s\n" id; *)
+      visited_variable env id
+    )
     | Assign(target, value) -> (
       let _ = match target.ty with
-        | Name(s, _) -> (
-          Printf.printf "set variable: %s\n" s;
-          add_variable env target
+        | Name(_, t) -> (
+          (* Printf.printf "set variable: %s\n" s; *)
+          match t with
+          | Local -> add_variable env target
+          | _ -> ()
         )
         | _ -> () in _iter value
     )
@@ -75,7 +94,7 @@ let check_unused asts =
     | Undef(nodes) -> List.iter nodes ~f:_iter
     | BinOp(_, ln, rn) -> List.iter [ln; rn] ~f:_iter
     | UnaryOp(_, operand) -> _iter operand
-    | Attribute(target, value) -> _iter target
+    | Attribute(target, _) -> _iter target
     | Handler(_, _, handler, _else) -> List.iter [handler; _else] ~f:_iter
     | For(target, it, body) -> List.iter [target; it; body] ~f:_iter
     | If(test, body, _else) -> List.iter [test; body; _else] ~f:_iter
@@ -84,7 +103,8 @@ let check_unused asts =
     | Try(body, rescue, _else, final) -> List.iter [body; rescue; _else; final] ~f:_iter
     | Call(func, pos, _, block_arg) -> List.iter (([func] @ pos) @ [block_arg]) ~f:_iter
     | Array(elms) -> List.iter elms ~f:_iter
+    | Dict(ks, vs) -> List.iter (ks @ vs) ~f:_iter
     | Kwd(_, v) | Return(v) | Starred(v) | Yield(v) -> _iter v
     | _ -> () in
-  List.iter asts ~f:(fun ast -> iter ast root_env);
-  env_info root_env
+  List.iter asts ~f:(fun ast -> iter ast !root_env);
+  print_env_info !root_env

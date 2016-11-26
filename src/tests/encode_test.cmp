@@ -9,3 +9,5 @@
 ----------------------------------------
 
 bind: demo ty:  Fn [] => Int_ty
+
+unvisited variable /Users/kang/code/rubytt/src/tests/encode_test.rb(3) : a

@@ -21,3 +21,5 @@
 ----------------------------------------
 
 bind: a ty: Unkown_ty
+
+unvisited variable /Users/kang/code/rubytt/src/tests/dict.rb(1) : a
