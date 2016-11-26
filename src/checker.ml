@@ -54,7 +54,7 @@ let rec env_info env =
                    let name = name_node_id v in
                    if (env_visited name env) = false &&
                         (any_child_visited name) = false then
-                     res := !res ^ "\n" ^
+                     res := !res ^
                               (Printf.sprintf "unvisited variable %s(%d) : %s\n"
                                               v.info.file
                                               (line_no_from_file v.info.file v)
