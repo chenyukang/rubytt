@@ -30,11 +30,12 @@ let visited_variable env name =
 let line_no_from_file file node =
   let ss = node.info.ss in
   let buf = Util.read_file_to_str file in
-  let line_no = ref 0 in
   let pos = ref 0 in
+  let line_no = ref 0 in
   let lines = String.split buf ~on:'\n' in
   while !line_no < (List.length lines) && !pos <= ss do
-    pos := !pos + (String.length (List.nth_exn lines !line_no));
+    let line = List.nth_exn lines !line_no in
+    pos := !pos + (String.length line);
     incr line_no
   done;
   !line_no
