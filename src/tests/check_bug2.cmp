@@ -1,0 +1,21 @@
+(Block 
+ (Assign 
+  (Name a Local)
+  (Int 10))
+ (Func demo
+  (body: 
+   (Block 
+    (Assign 
+     (Name a Local)
+     (Int 2)))))
+ (Call demo)
+ (Call puts
+  (args: 
+   (Name a Local))))
+
+----------------------------------------
+
+bind: a ty: Int_ty
+bind: demo ty:  Fn [] => Int_ty
+
+unvisited variable /Users/kang/code/rubytt/src/tests/check_bug2.rb(4) : a
