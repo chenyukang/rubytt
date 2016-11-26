@@ -11,5 +11,4 @@
 
 bind: Test ty: Module_ty: Test
   bind: a ty: Int_ty
-
 unvisited variable /Users/kang/code/rubytt/src/tests/module.rb(2) : a

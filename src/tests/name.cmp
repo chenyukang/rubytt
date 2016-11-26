@@ -18,9 +18,6 @@
 bind: a ty: Int_ty
 bind: b ty: Str_ty
 bind: x ty: Bool_ty
-
 unvisited variable /Users/kang/code/rubytt/src/tests/name.rb(4) : x
-
 unvisited variable /Users/kang/code/rubytt/src/tests/name.rb(2) : b
-
 unvisited variable /Users/kang/code/rubytt/src/tests/name.rb(3) : b

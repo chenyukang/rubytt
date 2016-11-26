@@ -30,9 +30,6 @@ bind: Demo ty: Class_ty: Demo
   bind: a ty: Int_ty
   bind: foos ty: Int_ty
   bind: arr ty: [{([Int_ty])|(Int_ty)|(Str_ty)}]
-
 unvisited variable /Users/kang/code/rubytt/src/tests/base_class.rb(5) : arr
-
 unvisited variable /Users/kang/code/rubytt/src/tests/base_class.rb(4) : hello
-
 unvisited variable /Users/kang/code/rubytt/src/tests/base_class.rb(3) : a

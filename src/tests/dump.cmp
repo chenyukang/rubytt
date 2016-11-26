@@ -3537,11 +3537,7 @@ bind: $options ty: Unkown_ty
 bind: parse_dump ty:  Fn [] => Unkown_ty
 bind: lambda%12 ty:  Fn [] => Unkown_ty
 bind: banner ty:  Fn [] => Unkown_ty
-
 unvisited variable /Users/kang/code/rubytt/src/tests/dump.rb(172) : end_line
-
 unvisited variable /Users/kang/code/rubytt/src/tests/dump.rb(167) : start_line
-
 unvisited variable /Users/kang/code/rubytt/src/tests/dump.rb(160) : end_line
-
 unvisited variable /Users/kang/code/rubytt/src/tests/dump.rb(159) : start_line

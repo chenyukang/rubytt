@@ -13,7 +13,5 @@
 
 bind: a ty: Int_ty
 bind: demo ty:  Fn [] => Int_ty
-
 unvisited variable /Users/kang/code/rubytt/src/tests/check_bug1.rb(1) : a
-
 unvisited variable /Users/kang/code/rubytt/src/tests/check_bug1.rb(4) : a

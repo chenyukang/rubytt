@@ -25,5 +25,4 @@
 
 bind: a ty: Str_ty
 bind: index ty: Int_ty
-
 unvisited variable /Users/kang/code/rubytt/src/tests/while.rb(1) : a
