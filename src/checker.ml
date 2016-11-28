@@ -76,7 +76,11 @@ let check_result () =
   env_info !root_env
 
 let print_env_info env =
-  Printf.printf "%s" (env_info env)
+  let res = env_info env in
+  if res = "" then
+    Printf.printf "\nNo unsed variable issue found, ^_^\n"
+  else
+    Printf.printf "%s" (env_info env)
 
 let check_unused asts =
   let rec iter ast env =
