@@ -3545,7 +3545,3 @@ bind: banner ty:  Fn [] => Unkown_ty
 
 ----------------------------------------
 
-unvisited variable ./tests/dump.rb(172) : end_line
-unvisited variable ./tests/dump.rb(167) : start_line
-unvisited variable ./tests/dump.rb(159) : start_line
-unvisited variable ./tests/dump.rb(160) : end_line

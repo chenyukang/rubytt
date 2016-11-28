@@ -1,0 +1,13 @@
+
+def expect_days(ship)
+  config = {}
+  days = 1
+  config.each do |rule|
+      if flag
+        days = 2
+      end
+  end
+  days
+end
+
+

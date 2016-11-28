@@ -7,3 +7,4 @@ def func
 end
 
 puts func
+

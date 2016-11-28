@@ -82,27 +82,31 @@ let check_unused asts =
   let rec iter ast env =
     let _iter ast = iter ast env in
     (* let str = Printer.node_to_str ast 0 in *)
-    (* Printf.printf "%s\n" str; *)
+    (* Printf.printf "%s\n\n" str; *)
+    let try_add_variable env v =
+      match v.ty with
+      | Name(s, t) -> (
+          (* Printf.printf "set variable: %s\n" s; *)
+          match t with | Local | Global -> add_variable env v | _ -> ()
+        )
+      | _ -> () in
     match ast.ty with
     | Name(id, _) -> (
       (* Printf.printf "lookup: %s\n" id; *)
       visited_variable env id
     )
     | Assign(target, value) -> (
-      let _ = match target.ty with
-        | Name(s, t) -> (
-          (* Printf.printf "set variable: %s\n" s; *)
-          match t with
-          | Local | Global -> add_variable env target
-          | _ -> ()
-        )
-        | _ -> () in _iter value
+      let _ = match target.ty, value.ty with
+        | Name(s, t), _ -> try_add_variable env target
+        | Array(ls), Array(_) -> (
+            List.iter ls ~f:(fun e -> try_add_variable env e)
+          )
+        | _, _ -> (_iter target) in _iter value
     )
     | Func(info) -> (
-        let child_ty = match is_lambda ast with
-          | true -> "normal"
-          | _ -> "func" in
-        iter info.body (new_child ~ty:child_ty env)
+        let new_env = if (is_lambda ast) then env
+          else (new_child ~ty:"func" env) in
+        iter info.body new_env
       )
     | Class(_, _, body, _, _) | Module(_, _, body, _) ->  iter body (new_child env)
     | Block(stmts) -> List.iter stmts ~f:_iter
