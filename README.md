@@ -2,8 +2,8 @@
 
 Rubytt is an static Ruby code analyzer, especially for Rails app. 
 
-1. The basic ideas comes from [rubysonar](https://github.com/yinwang0/rubysonar), but with more the help of analyis on db/schema.rb, 
-we may get more types for the code annotation. 
+1. The basic ideas comes from [rubysonar](https://github.com/yinwang0/rubysonar), but with more the help of analysis of db/schema.rb, 
+we may get more accurate types for the code annotation. 
 
 2. I also add some visualizations for the class/db/model.
 
