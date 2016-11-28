@@ -7,7 +7,7 @@ we may get more types for the code annotation.
 
 2. I also add some visualizations for the class/db/model.
 
-3. The project is in experimental status. It's written in OCmal
+3. The project is in experimental status. It's written in OCaml
 
 to be finished ....
 
