@@ -29,8 +29,9 @@ Usage:
 
 ```shell
 ./main.byte -h   ## see the help messages
-./main.byte -s source_dir -t type -o result       ## anaysis type for source_dir, dump html in result directory
-./main.byte -s source_dir -t class -o result.png  ## anaysis class for source_dir, dump out result to result.png
-./main.byte -s source_dir -t db -o result.png     ## anaysis db for source_dir, dump out result to result.png
-./main.byte -s source_dir -t model -o result.png  ## anaysis model for source_dir, dump out result to result.png
+./main.byte -s source_dir -t type -o res       ## anaysis type for source_dir, dump html in re directory
+./main.byte -s source_dir -t class -o res.png  ## anaysis class for source_dir, dump out result to res.png
+./main.byte -s source_dir -t db -o res.png     ## anaysis db for source_dir, dump out result to res.png
+./main.byte -s source_dir -t model -o res.png  ## anaysis model for source_dir, dump out result to res.png
+./main.byte -s source_dir -t check             ## try find unused variable bugs
 ```
