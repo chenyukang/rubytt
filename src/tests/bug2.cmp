@@ -67,3 +67,7 @@
 
 bind: String ty: Class_ty: String
   bind: conv_to_valid ty:  Fn [] => Class_ty: String
+
+
+----------------------------------------
+

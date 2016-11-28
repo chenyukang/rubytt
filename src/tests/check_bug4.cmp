@@ -23,10 +23,16 @@
        (args: 
         (BinOp:Add 
          (String now: )
-         (Nil))))))))))
+         (StrEmb
+           (Block 
+            (Name a Local))))))))))))
 
 ----------------------------------------
 
 bind: a ty: Int_ty
 bind: b ty: [Int_ty]
 bind: lambda%1 ty:  Fn [] => Unkown_ty
+
+
+----------------------------------------
+

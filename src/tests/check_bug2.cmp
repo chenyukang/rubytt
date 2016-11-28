@@ -17,4 +17,8 @@
 
 bind: a ty: Int_ty
 bind: demo ty:  Fn [] => Int_ty
+
+
+----------------------------------------
+
 unvisited variable ./tests/check_bug2.rb(4) : a

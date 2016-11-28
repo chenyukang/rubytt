@@ -97,7 +97,6 @@ let check_unused asts =
         let child_ty = match is_lambda ast with
           | true -> "normal"
           | _ -> "func" in
-        Printf.printf "child_ty: %s\n" child_ty;
         iter info.body (new_child ~ty:child_ty env)
       )
     | Class(_, _, body, _, _) | Module(_, _, body, _) ->  iter body (new_child env)
@@ -106,6 +105,7 @@ let check_unused asts =
     | BinOp(_, ln, rn) -> List.iter [ln; rn] ~f:_iter
     | UnaryOp(_, operand) -> _iter operand
     | Attribute(target, _) -> _iter target
+    | StrEmbed(value) -> _iter value
     | Handler(_, _, handler, _else) -> List.iter [handler; _else] ~f:_iter
     | For(target, it, body) -> List.iter [target; it; body] ~f:_iter
     | If(test, body, _else) -> List.iter [test; body; _else] ~f:_iter

@@ -19,4 +19,8 @@
 
 bind: a ty: Int_ty
 bind: func ty:  Fn [] => Unkown_ty
+
+
+----------------------------------------
+
 unvisited variable ./tests/check_bug3.rb(2) : a

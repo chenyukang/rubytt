@@ -47,7 +47,9 @@
         (args: 
          (BinOp:Add 
           (String @a: )
-          (Nil)))))))
+          (StrEmb
+            (Block 
+             (Name a Instance)))))))))
     (Func hello
      (body: 
       (Block 
@@ -119,3 +121,7 @@ bind: Demo ty: Class_ty: Demo
   bind: a ty: Int_ty
   bind: test ty:  Fn [] => Unkown_ty
   bind: initialize ty:  Fn [] => Int_ty
+
+
+----------------------------------------
+

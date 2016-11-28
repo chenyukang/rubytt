@@ -52,4 +52,8 @@ bind: res ty: Unkown_ty
 bind: Demo ty: Class_ty: Demo
   bind: data ty:  Fn [] => Unkown_ty
   bind: now ty:  Fn [] =>  Fn [] => Unkown_ty
+
+
+----------------------------------------
+
 unvisited variable ./tests/bug3.rb(16) : res

@@ -1,0 +1,25 @@
+(Block 
+ (Assign 
+  (Name a Local)
+  (Int 2))
+ (Assign 
+  (Name c Local)
+  (Int 3))
+ (BinOp:Add 
+  (BinOp:Add 
+   (StrEmb
+     (Block 
+      (Name a Local)))
+   (String  ))
+  (StrEmb
+    (Block 
+     (Name c Local)))))
+
+----------------------------------------
+
+bind: a ty: Int_ty
+bind: c ty: Int_ty
+
+
+----------------------------------------
+

@@ -23,3 +23,7 @@
 bind: a ty: [{(Int_ty)|(Str_ty)}]
 bind: b ty: Int_ty
 bind: c ty: {(Int_ty)|(Str_ty)}
+
+
+----------------------------------------
+

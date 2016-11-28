@@ -16,3 +16,7 @@
 
 bind: Demo ty: Module_ty: Demo
   bind: self_func ty:  Fn [] => [Module_ty: Demo]
+
+
+----------------------------------------
+

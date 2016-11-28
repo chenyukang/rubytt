@@ -171,6 +171,9 @@ let rec node_to_str node depth =
 
       res := !res ^ nw (depth+1) ^ "(body: " ^ node_to_str info.body (depth+2) ^ ")";
       !res ^ ")"
+    | StrEmbed(value) ->
+      "(StrEmb" ^
+      node_to_str value (depth+2) ^ ")"
     | _ -> "other" in
   match depth with
   | 0 -> str | _ -> "\n" ^ (k_space depth) ^ str

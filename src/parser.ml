@@ -100,7 +100,7 @@ let rec convert json =
     let pat = convert_elem json "pattern" in
     let reg_end = convert_elem json "regexp_end" in
     make_regexp_node pat reg_end !ff ss ee
-  | "embexp" ->
+  | "string_embexpr" ->
     let value = convert_elem json "value" in
     make_strembed_node value !ff ss ee
   | "arg" ->

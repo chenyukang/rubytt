@@ -37,5 +37,9 @@ bind: a ty: Unkown_ty
 bind: Demo ty: Class_ty: Demo
   bind: XX ty: Str_ty
   bind: func ty:  Fn [] => Unkown_ty
+
+
+----------------------------------------
+
 unvisited variable ./tests/name_find_demo.rb(3) : XX
 unvisited variable ./tests/name_find_demo.rb(7) : b

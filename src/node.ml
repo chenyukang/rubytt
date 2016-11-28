@@ -482,7 +482,6 @@ let is_lambda node =
   match node.ty with
   | Func(info) -> (
       let name = func_node_name node in
-      Printf.printf "func name: %s\n" name;
       (String.substr_index name "lambda%") = Some(0)
     )
   | _ -> false

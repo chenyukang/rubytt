@@ -50,3 +50,7 @@ bind: Demo ty: Class_ty: Demo
   bind: class_func ty:  Fn [] => Str_ty
   bind: func_a ty:  Fn [] => Int_ty
   bind: func_b ty:  Fn [] => Unkown_ty
+
+
+----------------------------------------
+

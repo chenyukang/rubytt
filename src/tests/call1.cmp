@@ -27,3 +27,7 @@
 
 bind: max ty:  Fn [] => Int_ty
 bind: res ty: Int_ty
+
+
+----------------------------------------
+
