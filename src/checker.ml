@@ -48,22 +48,27 @@ let line_no_from_file file node =
 let rec env_info env =
   let cur_dir = Sys.getcwd () in
   let res = ref "" in
-  let env_visited name env =
-    (Hashtbl.find env.visited name) <> None in
-  let any_child_visited name =
-    List.find env.children
-      ~f:(fun e -> e.env_ty <> "func" && env_visited name e)
-    <> None in
+  let rec env_visited is_global name env =
+    ((Hashtbl.find env.visited name) <> None) ||
+    (List.find env.children
+       ~f:(fun e ->
+           (* global variable will check all scope *)
+           (* let is_glo_str = if is_global then "true" else "false" in *)
+           (* Printf.printf "check children in: %s %s\n" name is_glo_str; *)
+           if is_global then env_visited is_global name e
+           else (e.env_ty <> "func") && (env_visited is_global name e)
+         )
+     <> None) in
   Hashtbl.iter env.variables
-               ~f:(fun ~key:v ~data:_ ->
-                   let name = name_node_id v in
-                   if (env_visited name env) = false &&
-                        (any_child_visited name) = false then
-                     res := !res ^
-                            (Printf.sprintf "unvisited variable %s(%d) : %s\n"
-                               (Stringext.replace_all v.info.file ~pattern:cur_dir ~with_:".")
-                               (line_no_from_file v.info.file v)
-                               name));
+    ~f:(fun ~key:v ~data:_ ->
+        let name = name_node_id v in
+        let is_global = name_is_global v in
+        if (env_visited is_global name env) = false then
+          res := !res ^
+                 (Printf.sprintf "unvisited variable %s(%d) : %s\n"
+                    (Stringext.replace_all v.info.file ~pattern:cur_dir ~with_:".")
+                    (line_no_from_file v.info.file v)
+                    name));
   List.iter env.children ~f:(fun e -> res := !res ^ (env_info e));
   !res
 
@@ -85,10 +90,10 @@ let check_unused asts =
     )
     | Assign(target, value) -> (
       let _ = match target.ty with
-        | Name(_, t) -> (
+        | Name(s, t) -> (
           (* Printf.printf "set variable: %s\n" s; *)
           match t with
-          | Local -> add_variable env target
+          | Local | Global -> add_variable env target
           | _ -> ()
         )
         | _ -> () in _iter value

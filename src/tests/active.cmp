@@ -1,18 +1,18 @@
 (Block 
  (Module 
-  (Name ActiveRecord Local)
+  (Name ActiveRecord Global)
    (Block 
     (Void)
     (Class static: false
-     (Name Base Local)
+     (Name Base Global)
      (Nil)
       (Block 
        (Void)))))
  (Class static: false
-  (Name Order Local)
+  (Name Order Global)
   (Attribute 
-   (Name ActiveRecord Local)
-   (Name Base Local))
+   (Name ActiveRecord Global)
+   (Name Base Global))
    (Block 
     (Void))))
 

@@ -1,6 +1,6 @@
 (Block 
  (Class static: false
-  (Name Demo Local)
+  (Name Demo Global)
   (Nil)
    (Block 
     (Func func_a
@@ -24,7 +24,7 @@
         (Name b Local)
         (Call 
          (Attribute 
-          (Name Demo Local)
+          (Name Demo Global)
           (Name class_func Local))))
        (Call puts
         (args: 
@@ -36,7 +36,7 @@
   (Name a Local)
   (Call 
    (Attribute 
-    (Name Demo Local)
+    (Name Demo Global)
     (Name new Local))))
  (Call 
   (Attribute 

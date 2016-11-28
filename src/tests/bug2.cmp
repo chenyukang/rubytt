@@ -1,6 +1,6 @@
 (Block 
  (Class static: false
-  (Name String Local)
+  (Name String Global)
   (Nil)
    (Block 
     (Func conv_to_valid
@@ -11,8 +11,8 @@
          (Call 
           (Attribute 
            (Attribute 
-            (Name ActiveSupport Local)
-            (Name Inflector Local))
+            (Name ActiveSupport Global)
+            (Name Inflector Global))
            (Name transliterate Local))
           (args: 
            (Name self Local)))
@@ -25,8 +25,8 @@
           (Call 
            (Attribute 
             (Attribute 
-             (Name ActiveSupport Local)
-             (Name Inflector Local))
+             (Name ActiveSupport Global)
+             (Name Inflector Global))
             (Name transliterate Local))
            (args: 
             (Name self Local))))

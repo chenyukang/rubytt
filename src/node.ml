@@ -222,6 +222,11 @@ let make_name_node id ty file s e =
 let is_name node =
   match node.ty with | Name(_) -> true | _ -> false
 
+let name_is_global node =
+  match node.ty with
+  | Name(_, Global) -> true
+  | _ -> false
+
 let is_instance_var node =
   match node.ty with
   | Name(_, k) -> k = Instance

@@ -1,6 +1,6 @@
 (Block 
  (Class static: false
-  (Name Base Local)
+  (Name Base Global)
   (Nil)
    (Block 
     (Func initialize
@@ -17,16 +17,16 @@
         (Int 2)
         (Int 3)))))))
  (Class static: false
-  (Name Hello Local)
-  (Name Base Local)
+  (Name Hello Global)
+  (Name Base Global)
    (Block 
     (Func base_func
      (body: 
       (Block 
        (String here))))))
  (Class static: false
-  (Name Demo Local)
-  (Name Hello Local)
+  (Name Demo Global)
+  (Name Hello Global)
    (Block 
     (Func initialize
      (body: 
@@ -55,20 +55,20 @@
       (Block 
        (Int 1))))))
  (Class static: false
-  (Name Drive Local)
-  (Name Base Local)
+  (Name Drive Global)
+  (Name Base Global)
    (Block 
     (Void)))
  (Class static: false
-  (Name Haha Local)
-  (Name Base Local)
+  (Name Haha Global)
+  (Name Base Global)
    (Block 
     (Void)))
  (Assign 
   (Name demo Local)
   (Call 
    (Attribute 
-    (Name Demo Local)
+    (Name Demo Global)
     (Name new Local))))
  (Call 
   (Attribute 

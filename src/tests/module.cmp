@@ -1,6 +1,6 @@
 (Block 
  (Module 
-  (Name Test Local)
+  (Name Test Global)
    (Block 
     (Void)
     (Assign 

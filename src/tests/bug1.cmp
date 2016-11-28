@@ -1,6 +1,6 @@
 (Block 
  (Class static: false
-  (Name Order Local)
+  (Name Order Global)
   (Nil)
    (Block 
     (Func order_gateway
@@ -15,7 +15,7 @@
   (Name a Local)
   (Call 
    (Attribute 
-    (Name Order Local)
+    (Name Order Global)
     (Name new Local))))
  (Call puts
   (args: 

@@ -1,50 +1,50 @@
 (Block 
  (Assign 
-  (Name C Local)
+  (Name C Global)
   (Int 1))
  (Module 
-  (Name A Local)
+  (Name A Global)
    (Block 
     (Void)
     (Assign 
-     (Name C Local)
+     (Name C Global)
      (String In A))))
  (Module 
-  (Name A Local)
+  (Name A Global)
    (Block 
     (Void)
     (Module 
-     (Name B Local)
+     (Name B Global)
       (Block 
        (Void)
        (Call puts
         (args: 
          (Call 
           (Attribute 
-           (Name Module Local)
+           (Name Module Global)
            (Name nesting Local)))))
        (Call puts
         (args: 
-         (Name C Local)))
+         (Name C Global)))
        (Assign 
         (Name a Local)
-        (Name C Local))))))
+        (Name C Global))))))
  (Module 
-  (Name B Local)
+  (Name B Global)
    (Block 
     (Void)
     (Call puts
      (args: 
       (Call 
        (Attribute 
-        (Name Module Local)
+        (Name Module Global)
         (Name nesting Local)))))
     (Call puts
      (args: 
-      (Name C Local)))
+      (Name C Global)))
     (Assign 
      (Name a Local)
-     (Name C Local)))))
+     (Name C Global)))))
 
 ----------------------------------------
 

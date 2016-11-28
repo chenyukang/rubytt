@@ -1,6 +1,6 @@
 (Block 
  (Class static: false
-  (Name Demo Local)
+  (Name Demo Global)
   (Nil)
    (Block 
     (Class static: true

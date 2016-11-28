@@ -1,6 +1,6 @@
 (Block 
  (Class static: false
-  (Name AstSimplifier Local)
+  (Name AstSimplifier Global)
   (Nil)
    (Block 
     (Func initialize

@@ -297,8 +297,14 @@ class AstSimplifier
               :id => exp[1][1..-1],
               :location => exp[2]
           }
-        when :@const, :@kw, :@backtick
-          #:@const and :@kw are just names
+        when :@const
+          {
+            :type => 'gvar',
+            :id => exp[1],
+            :location => exp[2]
+          }
+        when :@kw, :@backtick
+          #:@kw are just names
           {
               :type => :name,
               :id => exp[1],

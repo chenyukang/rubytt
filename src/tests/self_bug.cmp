@@ -1,6 +1,6 @@
 (Block 
  (Module 
-  (Name Demo Local)
+  (Name Demo Global)
    (Block 
     (Void)
     (Func self_func

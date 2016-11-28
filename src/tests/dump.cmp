@@ -26,7 +26,7 @@
            (Name s Local))))
        (String :\033[0m)))))))
  (Class static: false
-  (Name AstSimplifier Local)
+  (Name AstSimplifier Global)
   (Nil)
    (Block 
     (Func initialize
@@ -41,7 +41,7 @@
         (Name f Local)
         (Call 
          (Attribute 
-          (Name File Local)
+          (Name File Global)
           (Name open Local))
          (args: 
           (Name filename Local)
@@ -383,8 +383,8 @@
           (Call 
            (Attribute 
             (Attribute 
-             (Name Ripper Local)
-             (Name SexpBuilder Local))
+             (Name Ripper Global)
+             (Name SexpBuilder Global))
             (Name new Local))
            (args: 
             (Name src Instance)))
@@ -440,7 +440,7 @@
              (Name obj Local)
              (Name is_a? Local))
             (args: 
-             (Name Hash Local)))
+             (Name Hash Global)))
            (Block 
             (Assign 
              (Name ret Local)
@@ -734,7 +734,7 @@
               (Name obj Local)
               (Name is_a? Local))
              (args: 
-              (Name Array Local)))
+              (Name Array Global)))
             (Block 
              (Assign 
               (Name ret Local)
@@ -2342,7 +2342,7 @@
                                                              (Int 0))
                                                             (Name is_a? Local))
                                                            (args: 
-                                                            (Name Array Local)))
+                                                            (Name Array Global)))
                                                           (Block 
                                                            (Assign 
                                                             (Subscript 
@@ -3319,7 +3319,7 @@
        (Name hash Local)
        (Name is_a? Local))
       (args: 
-       (Name Array Local)))
+       (Name Array Global)))
      (Block 
       (BinOp:Add 
        (Call 
@@ -3351,7 +3351,7 @@
         (Name hash Local)
         (Name is_a? Local))
        (args: 
-        (Name Hash Local)))
+        (Name Hash Global)))
       (Block 
        (BinOp:Add 
         (Call 
@@ -3395,7 +3395,7 @@
        (Name simplifier Local)
        (Call 
         (Attribute 
-         (Name AstSimplifier Local)
+         (Name AstSimplifier Global)
          (Name new Local))
         (args: 
          (Name input Local))))
@@ -3409,7 +3409,7 @@
        (Name json_string Local)
        (Call 
         (Attribute 
-         (Name JSON Local)
+         (Name JSON Global)
          (Name pretty_generate Local))
         (args: 
          (Name hash Local)
@@ -3422,7 +3422,7 @@
        (Name out Local)
        (Call 
         (Attribute 
-         (Name File Local)
+         (Name File Global)
          (Name open Local))
         (args: 
          (Name output Local)
@@ -3444,7 +3444,7 @@
        (Name end_file Local)
        (Call 
         (Attribute 
-         (Name File Local)
+         (Name File Global)
          (Name open Local))
         (args: 
          (Name endmark Local)
@@ -3460,7 +3460,7 @@
   (Attribute 
    (Call 
     (Attribute 
-     (Name OptionParser Local)
+     (Name OptionParser Global)
      (Name new Local))
     (block_arg: 
      (Func lambda%12
@@ -3497,20 +3497,20 @@
   (BinOp:Gt 
    (Call 
     (Attribute 
-     (Name ARGV Local)
+     (Name ARGV Global)
      (Name length Local)))
    (Int 0))
   (Block 
    (Call parse_dump
     (args: 
      (Subscript 
-      (Name ARGV Local)
+      (Name ARGV Global)
       (Int 0))
      (Subscript 
-      (Name ARGV Local)
+      (Name ARGV Global)
       (Int 1))
      (Subscript 
-      (Name ARGV Local)
+      (Name ARGV Global)
       (Int 2)))))
   (Nil)))
 

@@ -1,7 +1,7 @@
 (Block 
  (Class static: false
-  (Name Order Local)
-  (Name Base Local)
+  (Name Order Global)
+  (Name Base Global)
    (Block 
     (Void))))
 
