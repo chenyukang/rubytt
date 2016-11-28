@@ -22,7 +22,7 @@ opam install core yojson alcotest ounit stringext
 eval `opam config env`
 
 cd rubytt/src;
-make 
+make  ## or use: make native 
 ```
 
 Usage:
