@@ -52,4 +52,4 @@ bind: res ty: Unkown_ty
 bind: Demo ty: Class_ty: Demo
   bind: data ty:  Fn [] => Unkown_ty
   bind: now ty:  Fn [] =>  Fn [] => Unkown_ty
-unvisited variable /Users/kang/code/rubytt/src/tests/bug3.rb(16) : res
+unvisited variable ./tests/bug3.rb(16) : res

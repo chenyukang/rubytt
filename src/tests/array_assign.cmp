@@ -36,5 +36,5 @@
 
 bind: a ty: [Int_ty]
 bind: func ty:  Fn [] => Unkown_ty
-unvisited variable /Users/kang/code/rubytt/src/tests/array_assign.rb(9) : a
-unvisited variable /Users/kang/code/rubytt/src/tests/array_assign.rb(8) : a
+unvisited variable ./tests/array_assign.rb(8) : a
+unvisited variable ./tests/array_assign.rb(9) : a

@@ -44,6 +44,7 @@ let line_no_from_file file node =
   !line_no
 
 let rec env_info env =
+  let cur_dir = Sys.getcwd () in
   let res = ref "" in
   let env_visited name env =
     (Hashtbl.find env.visited name) <> None in
@@ -55,10 +56,10 @@ let rec env_info env =
                    if (env_visited name env) = false &&
                         (any_child_visited name) = false then
                      res := !res ^
-                              (Printf.sprintf "unvisited variable %s(%d) : %s\n"
-                                              v.info.file
-                                              (line_no_from_file v.info.file v)
-                                              name));
+                            (Printf.sprintf "unvisited variable %s(%d) : %s\n"
+                               (Stringext.replace_all v.info.file ~pattern:cur_dir ~with_:".")
+                               (line_no_from_file v.info.file v)
+                               name));
   List.iter env.children ~f:(fun e -> res := !res ^ (env_info e));
   !res
 

@@ -1,0 +1,60 @@
+(Block 
+ (Assign 
+  (Name C Local)
+  (Int 1))
+ (Module 
+  (Name A Local)
+   (Block 
+    (Void)
+    (Assign 
+     (Name C Local)
+     (String In A))))
+ (Module 
+  (Name A Local)
+   (Block 
+    (Void)
+    (Module 
+     (Name B Local)
+      (Block 
+       (Void)
+       (Call puts
+        (args: 
+         (Call 
+          (Attribute 
+           (Name Module Local)
+           (Name nesting Local)))))
+       (Call puts
+        (args: 
+         (Name C Local)))
+       (Assign 
+        (Name a Local)
+        (Name C Local))))))
+ (Module 
+  (Name B Local)
+   (Block 
+    (Void)
+    (Call puts
+     (args: 
+      (Call 
+       (Attribute 
+        (Name Module Local)
+        (Name nesting Local)))))
+    (Call puts
+     (args: 
+      (Name C Local)))
+    (Assign 
+     (Name a Local)
+     (Name C Local)))))
+
+----------------------------------------
+
+bind: A ty: Module_ty: A
+  bind: C ty: Str_ty
+  bind: B ty: Module_ty: B
+    bind: a ty: Str_ty
+bind: C ty: Int_ty
+bind: B ty: Module_ty: B
+  bind: a ty: Str_ty
+unvisited variable ./tests/module_bug.rb(4) : C
+unvisited variable ./tests/module_bug.rb(11) : a
+unvisited variable ./tests/module_bug.rb(18) : a

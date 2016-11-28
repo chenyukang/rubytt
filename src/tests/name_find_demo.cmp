@@ -1,0 +1,41 @@
+(Block 
+ (Class static: false
+  (Name Demo Local)
+  (Nil)
+   (Block 
+    (Assign 
+     (Name XX Local)
+     (String hello))
+    (Func func
+     (body: 
+      (Block 
+       (Assign 
+        (Name a Local)
+        (Int 1))
+       (Assign 
+        (Name b Local)
+        (Name a Local))
+       (Call puts
+        (args: 
+         (Attribute 
+          (Name Demo Local)
+          (Name XX Local)))))))))
+ (Assign 
+  (Name a Local)
+  (Call 
+   (Attribute 
+    (Name Demo Local)
+    (Name new Local))))
+ (Call 
+  (Attribute 
+   (Name a Local)
+   (Name func Local))))
+
+----------------------------------------
+
+bind: a ty: Unkown_ty
+bind: Demo ty: Class_ty: Demo
+  bind: XX ty: Str_ty
+  bind: func ty:  Fn [] => Unkown_ty
+unvisited variable ./tests/name_find_demo.rb(3) : XX
+unvisited variable ./tests/name_find_demo.rb(7) : b
