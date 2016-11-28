@@ -9,7 +9,7 @@ we may get more types for the code annotation.
 
 3. Check the unused variable, this may reported out some bugs, [ruby-lint](https://github.com/YorickPeterse/ruby-lint) seems can report out these errors, but it's too slow.
 
-4. The project is in experimental status. It's written in OCmal
+4. The project is in experimental status. It's written in OCaml
 
 to be finished ....
 
