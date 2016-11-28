@@ -1,0 +1,23 @@
+(Block 
+ (Assign 
+  (Name a Local)
+  (Int 12))
+ (Call puts
+  (args: 
+   (Name a Local)))
+ (Assign 
+  (Name b Local)
+  (UnaryOp:Sub 
+   (Float 1.)))
+ (Call puts
+  (args: 
+   (Name b Local))))
+
+----------------------------------------
+
+bind: a ty: Int_ty
+bind: b ty: unkown_type
+
+
+----------------------------------------
+
