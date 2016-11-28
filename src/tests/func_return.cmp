@@ -45,7 +45,10 @@
      (Block 
       (Call x))
      (Block 
-      (Call y)))))))
+      (Call y))))))
+ (Call hah
+  (args: 
+   (Int 1))))
 
 ----------------------------------------
 
@@ -54,3 +57,5 @@ bind: demo ty:  Fn [] => Int_ty
 bind: hah ty:  Fn [Int_ty] => Unkown_ty
 bind: y ty: Int_ty
 bind: x ty: Int_ty
+unvisited variable ./tests/func_return.rb(20) : y
+unvisited variable ./tests/func_return.rb(19) : x

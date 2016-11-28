@@ -2,12 +2,15 @@ open Core.Std
 open Node
 
 type env = {
-    mutable visited: (string, bool) Hashtbl.t;
-    mutable variables: (Node.node_t, bool) Hashtbl.t;
-    mutable children: env list;
-  }
+  env_ty : string;
+  mutable visited: (string, bool) Hashtbl.t;
+  mutable variables: (Node.node_t, bool) Hashtbl.t;
+  mutable children: env list;
+}
 
-let make_env () = {
+let make_env ?ty:(ty="normal") ()=
+  {
+    env_ty = ty;
     visited = Hashtbl.Poly.create();
     variables = Hashtbl.Poly.create();
     children = [];
@@ -15,14 +18,13 @@ let make_env () = {
 
 let root_env = ref (make_env());;
 
-let new_child parent =
-  let child = make_env() in
+let new_child ?ty:(ty="normal") parent =
+  let child = (make_env ~ty:ty ()) in
   parent.children <- parent.children @ [child];
   child
 
 let clear () =
   root_env := make_env()
-
 
 let add_variable env var =
   ignore(Hashtbl.add env.variables ~key:var ~data:true)
@@ -34,14 +36,14 @@ let line_no_from_file file node =
   let ss = node.info.ss in
   let buf = Util.read_file_to_str file in
   let pos = ref 0 in
-  let line_no = ref 0 in
+  let num = ref 0 in
   let lines = String.split buf ~on:'\n' in
-  while !line_no < (List.length lines) && !pos <= ss do
-    let line = List.nth_exn lines !line_no in
+  while !num < (List.length lines) && !pos <= ss do
+    let line = List.nth_exn lines !num in
     pos := !pos + (String.length line) + 1;
-    incr line_no
+    incr num
   done;
-  !line_no
+  !num
 
 let rec env_info env =
   let cur_dir = Sys.getcwd () in
@@ -49,7 +51,9 @@ let rec env_info env =
   let env_visited name env =
     (Hashtbl.find env.visited name) <> None in
   let any_child_visited name =
-    List.find env.children ~f:(fun e -> env_visited name e) <> None in
+    List.find env.children
+      ~f:(fun e -> e.env_ty <> "func" && env_visited name e)
+    <> None in
   Hashtbl.iter env.variables
                ~f:(fun ~key:v ~data:_ ->
                    let name = name_node_id v in
@@ -89,7 +93,13 @@ let check_unused asts =
         )
         | _ -> () in _iter value
     )
-    | Func(info) -> iter info.body (new_child env)
+    | Func(info) -> (
+        let child_ty = match is_lambda ast with
+          | true -> "normal"
+          | _ -> "func" in
+        Printf.printf "child_ty: %s\n" child_ty;
+        iter info.body (new_child ~ty:child_ty env)
+      )
     | Class(_, _, body, _, _) | Module(_, _, body, _) ->  iter body (new_child env)
     | Block(stmts) -> List.iter stmts ~f:_iter
     | Undef(nodes) -> List.iter nodes ~f:_iter

@@ -478,6 +478,15 @@ let func_node_info node =
   | Func(info) -> info
   | _ -> failwith "func_node_info error type"
 
+let is_lambda node =
+  match node.ty with
+  | Func(info) -> (
+      let name = func_node_name node in
+      Printf.printf "func name: %s\n" name;
+      (String.substr_index name "lambda%") = Some(0)
+    )
+  | _ -> false
+
 let make_call_node func pos star block_arg file s e =
   let node = {
     info = {path=""; file = file; ss = s; ee = e };

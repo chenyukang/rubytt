@@ -26,3 +26,5 @@ def hah a = 1
     y
   end
 end
+
+hah 1
