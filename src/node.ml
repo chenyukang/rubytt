@@ -157,7 +157,7 @@ let make_unary_node op operand file s e =
   }
 
 let make_int_node value file s e =
-  let v = Int.of_string value in
+  let v = Util.string_to_int value in
   {
     info = {path=""; file = file; ss = s; ee = e};
     ty = Int(v);
@@ -166,6 +166,7 @@ let make_int_node value file s e =
 
 let make_float_node value file s e =
   let v = Float.of_string value in
+  let v = Util.string_to_float value in 
   {
     info = {path=""; file = file; ss = s; ee = e};
     ty = Float(v);

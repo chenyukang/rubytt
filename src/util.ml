@@ -73,6 +73,24 @@ let make_tag_id id tag =
 let contains search target =
   String.substr_index search target <> None
 
+let string_to_int str =
+  if String.length str = 0 then 0
+  else (
+    match String.get str 0 with
+    | '-' -> -(Int.of_string (String.substr_replace_first str ~pattern:"-" ~with_:""))
+    | '+' -> (Int.of_string (String.substr_replace_first str ~pattern:"+" ~with_:""))
+    | _ -> Int.of_string str
+  )
+
+let string_to_float str =
+  if String.length str = 0 then 0.0
+  else (
+    match String.get str 0 with
+    | '-' -> -.(Float.of_string (String.substr_replace_first str ~pattern:"-" ~with_:""))
+    | '+' -> (Float.of_string (String.substr_replace_first str ~pattern:"+" ~with_:""))
+    | _ -> Float.of_string str
+  )
+
 (* rails pluralize class name to table_name *)
 let rules =
   List.map ~f:(fun x -> (Str.regexp (fst x)),(snd x))
