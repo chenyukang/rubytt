@@ -69,7 +69,7 @@ let load_checker input =
 
 let command =
   Command.basic
-    ~summary: "rubytt an Ruby analyser"
+    ~summary: "rubytt: an Ruby analyzer"
     Command.Spec.(
       empty
       +> flag "-s" (optional string) ~doc:"the source code directory"
