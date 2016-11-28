@@ -21,6 +21,8 @@ brew install opam
 opam install core yojson alcotest ounit stringext
 eval `opam config env`
 
+brew install graphviz ## ignore it if installed
+
 cd rubytt/src;
 make  ## or use: make native 
 ```
