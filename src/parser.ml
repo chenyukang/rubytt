@@ -24,8 +24,7 @@ let rec convert json =
   let ss = convert_to_i json "start" in
   let ee = convert_to_i json "end" in
   let _filename = convert_to_s json "filename" in
-  if !ff = "" then
-    ff := _filename;
+  if !ff = "" then ff := _filename;
   match ty with
   | "program" ->
     convert_elem json "body"
