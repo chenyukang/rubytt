@@ -57,13 +57,23 @@ let load_db ?dump_db:(dump_db=false) input_dir output =
   )
 
 
+let load_checker input =
+  let asts = match Sys.is_file input with
+    | `Yes -> [(parse_to_ast ~need_trans:false input)]
+    | _ -> (
+        match Sys.is_directory input with
+        | `Yes -> load_dir ~need_trans:false input "/tmp/rubytt/checker"
+        | _ -> failwith "Cound not found: %s" input
+      ) in
+  Checker.check_unused asts
+
 let command =
   Command.basic
     ~summary: "rubytt an Ruby analyser"
     Command.Spec.(
       empty
       +> flag "-s" (optional string) ~doc:"the source code directory"
-      +> flag "-t" (optional string) ~doc:"the analysis type, shoud in [class, db, model, type]"
+      +> flag "-t" (optional string) ~doc:"the analysis type, shoud in [class, db, model, type, check]"
       +> flag "-o" (optional string) ~doc:"the output directory or file"
     )
     (fun source_code analy_type output () ->
@@ -80,6 +90,9 @@ let command =
                ignore(load_dir source "/tmp/rubytt/");
                Class.dump_class_dot()
              )
+           | Some("check") -> (
+               load_checker source
+             )
            | Some("db") -> load_db ~dump_db:true source output
            | Some("model") -> load_db ~dump_db:false source output
            | Some("type") -> (
@@ -94,4 +107,3 @@ let command =
     )
 
 let () = Command.run command
-

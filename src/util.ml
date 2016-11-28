@@ -85,16 +85,15 @@ let rules =
      "[sx]$","\\0es";
      "non","na"];;
 
-let f w x =
-  ignore(Str.search_forward (fst x) w 0);
-  Str.replace_first (fst x) (snd x) w;;
-
-let rec exn_map ex fn1 fn2 l =
-  match l with
-    [] -> fn2
-  | h::t -> try (fn1 h) with ex -> exn_map ex fn1 fn2 t;;
 
 let pluralize x = (* "wish" in *)
+  let f w x =
+  ignore(Str.search_forward (fst x) w 0);
+  Str.replace_first (fst x) (snd x) w in
+  let rec exn_map ex fn1 fn2 l =
+    match l with
+      [] -> fn2
+    | h::t -> try (fn1 h) with ex -> exn_map ex fn1 fn2 t in
   exn_map Not_found (f x) (x ^ "s") rules;;
 
 let uncapitalize_class_name class_name =

@@ -46,3 +46,4 @@ bind: Demo ty: Class_ty: Demo
   bind: b ty: Int_ty
   bind: attr ty: Int_ty
   bind: initialize ty:  Fn [] => Int_ty
+unvisited variable ./tests/attr.rb(2) : b

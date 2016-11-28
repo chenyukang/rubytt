@@ -16,7 +16,7 @@ Compile it:
 ```shell
 brew install ocaml 
 brew install opam
-opam install core yojson alcotest ounit
+opam install core yojson alcotest ounit stringext
 eval `opam config env`
 
 cd rubytt/src;

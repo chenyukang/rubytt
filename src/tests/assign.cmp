@@ -38,3 +38,4 @@
 
 bind: a ty: Int_ty
 bind: arr ty: [Int_ty]
+unvisited variable ./tests/assign.rb(1) : a
