@@ -23,6 +23,7 @@ Compile it:
 ```shell
 brew install opam
 eval `opam config env`
+opam update
 opam switch 4.02.1
 opam install core yojson alcotest ounit stringext
 
