@@ -210,6 +210,7 @@ let gen_id model =
 
 let db_to_dot_str() =
   let content = ref "" in
+  let cached = Hashtbl.Poly.create() in
   Hashtbl.iter tables ~f:(fun ~key:k ~data:v ->
       content := !content ^ (
           "\n    " ^ (gen_id k) ^ "[label=\"{{" ^ k ^ "}" ^
@@ -219,11 +220,20 @@ let db_to_dot_str() =
           "}\",  color=blue, fontcolor=blue]\n"
         )
     );
+  let need_output k v color =
+    if k = v then false
+    else (
+      let s = Printf.sprintf "%s_%s_%s" k v color in
+      match Hashtbl.find cached s with
+      | Some(_) -> false
+      | _ -> (Hashtbl.add_exn cached ~key:s ~data:true; true)) in
+
   Hashtbl.iter has_one_table ~f:(fun ~key:k ~data:vals ->
       List.iter vals ~f:(fun v ->
-          content := !content ^ (
-              Printf.sprintf "M_%s -> M_%s [color=\"red\"]\n" k v
-            )
+          if need_output k v "red" then
+            content := !content ^ (
+                Printf.sprintf "M_%s -> M_%s [color=\"red\"]\n" k v
+              )
         );
     );
   Hashtbl.iter belongs_table ~f:(fun ~key:k ~data:vals ->
@@ -231,17 +241,21 @@ let db_to_dot_str() =
           match Hashtbl.find has_one_table v with
           | Some(k) -> ()
           | _ -> (
-              content := !content ^ (
-                  Printf.sprintf "M_%s -> M_%s [color=\"red\"]\n" k v
-                )
+              if need_output k v "red" then (
+                content := !content ^ (
+                    Printf.sprintf "M_%s -> M_%s [color=\"red\"]\n" k v
+                  )
+              )
             )
         );
     );
   Hashtbl.iter has_many_table ~f:(fun ~key:k ~data:vals ->
       List.iter vals ~f:(fun v ->
-          content := !content ^ (
-              Printf.sprintf "M_%s -> M_%s [color=\"orange\"]\n" k v
-            )
+          if need_output k v "orange" then (
+            content := !content ^ (
+                Printf.sprintf "M_%s -> M_%s [color=\"orange\"]\n" k v
+              )
+          )
         );
     );
   wrapper !content
