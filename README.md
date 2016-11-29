@@ -21,10 +21,10 @@ to be finished ....
 Compile it:
 
 ```shell
-brew install ocaml 
 brew install opam
-opam install core yojson alcotest ounit stringext
 eval `opam config env`
+opam switch 4.02.1
+opam install core yojson alcotest ounit stringext
 
 brew install graphviz ## ignore it if installed
 

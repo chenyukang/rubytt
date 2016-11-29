@@ -7,7 +7,7 @@ SOURCES = \
 
 OCAMLBUILD = corebuild -use-ocamlfind -pkg yojson -pkg alcotest -pkg ounit -pkg str -pkg stringext -cflags -w,-45,-w,-11
 
-default: native
+default: byte
 
 all: byte native test dot
 
