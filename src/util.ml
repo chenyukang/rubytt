@@ -115,12 +115,13 @@ let pluralize x = (* "wish" in *)
   exn_map Not_found (f x) (x ^ "s") rules;;
 
 let uncapitalize_class_name class_name =
-  String.foldi class_name ~init:"" ~f:(fun i acc c ->
+  let res = String.foldi class_name ~init:"" ~f:(fun i acc c ->
       if i <> 0 && Char.is_uppercase c then
         acc ^ (Printf.sprintf "_%c" (Char.lowercase c))
       else
         acc ^ (Char.to_string (Char.lowercase c))
-    )
+    ) in
+  (String.substr_replace_first res ~pattern:"::" ~with_:"")
 
 let class_to_table_name class_name =
   pluralize (uncapitalize_class_name class_name)
