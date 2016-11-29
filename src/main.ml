@@ -82,21 +82,21 @@ let command =
            Printf.printf "source: %s\n" source;
            if not(Sys.is_directory_exn source) then
              failwith (Printf.sprintf "%s is not an directory\n" source);
-           let out_dir () =
+           let output () =
              match output with
              |Some(s) -> s
              |_ -> failwith "Please set output directory or file\n" in
            match analy_type with
            | Some("class") -> (
                ignore(load_dir source "/tmp/rubytt/");
-               Class.dump_class_dot()
+               Class.dump_class_dot(output())
              )
            | Some("check") -> load_checker source
-           | Some("db") -> load_db ~dump_db:true source (out_dir())
-           | Some("model") -> load_db ~dump_db:false source (out_dir())
+           | Some("db") -> load_db ~dump_db:true source (output())
+           | Some("model") -> load_db ~dump_db:false source (output())
            | Some("type") -> (
-               ignore(load_dir source (out_dir()));
-               Html.dump_html source (out_dir())
+               ignore(load_dir source (output()));
+               Html.dump_html source (output())
              )
            | _ -> failwith "Invalid option"
          )
