@@ -1,0 +1,35 @@
+(Block 
+ (Assign 
+  (Name $gvar Global)
+  (String I'm a global!))
+ (Class static: false
+  (Name C Global)
+  (Nil)
+   (Block 
+    (Func examine_global
+     (body: 
+      (Block 
+       (Call puts
+        (args: 
+         (Name $gvar Global))))))))
+ (Assign 
+  (Name c Local)
+  (Call 
+   (Attribute 
+    (Name C Global)
+    (Name new Local))))
+ (Call 
+  (Attribute 
+   (Name c Local)
+   (Name examine_global Local))))
+
+----------------------------------------
+
+bind: $gvar ty: Str_ty
+bind: c ty: Unkown_ty
+bind: C ty: Class_ty: C
+  bind: examine_global ty:  Fn [] => Unkown_ty
+
+
+----------------------------------------
+

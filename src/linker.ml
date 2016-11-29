@@ -47,13 +47,18 @@ let process_ref ref_node bindings =
   let hash = Node.node_t_hash ref_node in
   let style = Style.new_style Style.LINK info.ss info.ee in
   let msg =
-    List.fold_left bindings
+    List.foldi bindings
       ~init:""
-      ~f:(fun acc bind -> acc ^ "|" ^ (Printer.type_to_str ~show_bind:false bind.bind_ty 0)) in
+      ~f:(fun i acc bind ->
+          let s = (Printer.type_to_str ~show_bind:false bind.bind_ty 0) in
+          if i = 0 then s else acc ^ "|" ^ s
+        ) in
   style.msg <- msg;
   (* FIXME *)
   (match List.find bindings ~f:(fun bind -> bind.qname <> "") with
-   | Some(b) -> style.url <- b.qname; style.id <- b.qname
+   | Some(b) -> (
+       style.url <- b.qname; style.id <- b.qname
+     )
    | _ -> ());
   (* Printf.printf "process_ref: bind_name: %s ss:%d ee:%d\n%!" *)
   (*   style.id info.ss info.ee; *)

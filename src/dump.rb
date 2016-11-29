@@ -108,7 +108,7 @@ class AstSimplifier
          ((cur >= 'a'.ord && cur <= 'z'.ord) ||
           (cur >= 'A'.ord && cur <= 'Z'.ord) ||
           (cur >= '0'.ord && cur <= '9'.ord) ||
-          (cur == '_'.ord || cur == '?'.ord))
+          (['_', '?', '$'].map(&:ord).include? cur))
       idx += 1
       cur = @bytes[idx]
     end
