@@ -1,0 +1,20 @@
+(Block 
+ (Func perform
+  (body: 
+   (Block 
+    (Assign 
+     (Name w Local)
+     (Int 1))
+    (Block 
+     (Name w Local)))))
+ (Call puts
+  (args: 
+   (Call perform))))
+
+----------------------------------------
+
+bind: perform ty:  Fn [] => Int_ty
+
+
+----------------------------------------
+

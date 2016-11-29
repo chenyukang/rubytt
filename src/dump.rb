@@ -118,7 +118,7 @@ class AstSimplifier
 
   def simplify
     tree = Ripper::SexpBuilder.new(@src).parse
-
+    #pp tree
     if $options[:debug]
       banner 'sexp'
       pp tree
@@ -633,9 +633,11 @@ class AstSimplifier
           block
         when :bodystmt
           block = convert(exp[1])
-          if exp[2]
-            res = convert(exp[2])
-            block[:stmts].push(res)
+          for x in 2..4 do
+            if exp[x]
+              res = convert(exp[x])
+              block[:stmts].push(res)
+            end
           end
           block
         when :binary
