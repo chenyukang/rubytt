@@ -809,9 +809,10 @@ class AstSimplifier
           # superflous wrappers that contains one object, just remove it
           convert(exp[1])
         else
-          banner('unknown')
-          puts "#{exp}"
-          exp
+          # banner('unknown')
+          # puts "#{exp}"
+          # exp
+          {}
       end
     end
   end
