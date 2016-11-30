@@ -129,7 +129,6 @@ let rec convert json =
       let name = convert_elem json "name" in
       let body = convert_elem json "body" in
       let doc  = convert_to_s json "doc" in
-      (* Printf.printf "doc: %s\n" doc; *)
       make_module_node name body doc !ff ss ee
     | "subscript" ->
       let value = convert_elem json "value" in
