@@ -24,6 +24,7 @@ Compile it:
 brew install opam
 eval `opam config env`
 opam update
+opam switch 4.02.1
 opam install core yojson alcotest ounit stringext -y
 
 brew install graphviz ## ignore it if installed
