@@ -45,16 +45,13 @@ let line_no_from_file file node =
   done;
   !num
 
-let rec env_info env =
+let rec env_info ?check_global:(check_global=false) env =
   let cur_dir = Sys.getcwd () in
   let res = ref [] in
   let rec env_visited is_global name env =
     ((Hashtbl.find env.visited name) <> None) ||
     (List.find env.children
        ~f:(fun e ->
-           (* global variable will check all scope *)
-           (* let is_glo_str = if is_global then "true" else "false" in *)
-           (* Printf.printf "check children in: %s %s\n" name is_glo_str; *)
            if is_global then env_visited is_global name e
            else (e.env_ty <> "func") && (env_visited is_global name e)
          )
@@ -63,16 +60,17 @@ let rec env_info env =
     ~f:(fun ~key:v ~data:_ ->
         let name = name_node_id v in
         let is_global = name_is_global v in
-        if (env_visited is_global name env) = false then
+        if ((is_global = false) || check_global) &&
+           (env_visited is_global name env) = false then
           res := !res @ [
               ((Stringext.replace_all v.info.file ~pattern:cur_dir ~with_:"."),
                (line_no_from_file v.info.file v), name)]
       );
-  List.iter env.children ~f:(fun e -> res := !res @ (env_info e));
+  List.iter env.children ~f:(fun e -> res := !res @ (env_info ~check_global:check_global e));
   !res
 
-let check_result () =
-  let res = env_info !root_env in
+let check_result ?check_global:(check_global=false) () =
+  let res = env_info !root_env ~check_global:check_global in
   if List.length res = 0 then
     "\nNo unsed variable issue found, ^_^\n"
   else
