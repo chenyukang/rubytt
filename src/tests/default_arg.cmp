@@ -17,3 +17,5 @@ bind: demo ty:  Fn [Int_ty Str_ty Int_ty] => Unkown_ty
 
 ----------------------------------------
 
+
+No unsed variable issue found, ^_^

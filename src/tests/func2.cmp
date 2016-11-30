@@ -30,3 +30,5 @@ bind: eat ty:  Fn [] => Str_ty
 
 ----------------------------------------
 
+
+No unsed variable issue found, ^_^

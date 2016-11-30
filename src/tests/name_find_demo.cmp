@@ -41,5 +41,6 @@ bind: Demo ty: Class_ty: Demo
 
 ----------------------------------------
 
+
 unvisited variable ./tests/name_find_demo.rb(3) : XX
 unvisited variable ./tests/name_find_demo.rb(7) : b

@@ -47,7 +47,7 @@ let line_no_from_file file node =
 
 let rec env_info env =
   let cur_dir = Sys.getcwd () in
-  let res = ref "" in
+  let res = ref [] in
   let rec env_visited is_global name env =
     ((Hashtbl.find env.visited name) <> None) ||
     (List.find env.children
@@ -64,23 +64,30 @@ let rec env_info env =
         let name = name_node_id v in
         let is_global = name_is_global v in
         if (env_visited is_global name env) = false then
-          res := !res ^
-                 (Printf.sprintf "unvisited variable %s(%d) : %s\n"
-                    (Stringext.replace_all v.info.file ~pattern:cur_dir ~with_:".")
-                    (line_no_from_file v.info.file v)
-                    name));
-  List.iter env.children ~f:(fun e -> res := !res ^ (env_info e));
+          res := !res @ [
+              ((Stringext.replace_all v.info.file ~pattern:cur_dir ~with_:"."),
+               (line_no_from_file v.info.file v), name)]
+      );
+  List.iter env.children ~f:(fun e -> res := !res @ (env_info e));
   !res
 
 let check_result () =
-  env_info !root_env
+  let res = env_info !root_env in
+  if List.length res = 0 then
+    "\nNo unsed variable issue found, ^_^\n"
+  else
+    let infos = List.sort res ~cmp:(fun (f1, l1, v1) (f2, l2, v2) ->
+        let r = String.compare f1 f2 in
+        if r <> 0 then r else (
+          if l1 <> l2 then (l1 - l2) else String.compare v1 v2
+        )
+      )
+    in
+    List.fold infos  ~init:"" ~f:(fun acc (f, l, v) ->
+        acc ^ "\n" ^ (Printf.sprintf "unvisited variable %s(%d) : %s" f l v))
 
 let print_env_info env =
-  let res = env_info env in
-  if res = "" then
-    Printf.printf "\nNo unsed variable issue found, ^_^\n"
-  else
-    Printf.printf "%s" (env_info env)
+  Printf.printf "%s\n" (check_result())
 
 let check_unused asts =
   let rec iter ast env =

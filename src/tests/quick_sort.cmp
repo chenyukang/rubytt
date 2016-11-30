@@ -52,3 +52,5 @@ bind: qsort ty:  Fn [] => [Unkown_ty]
 
 ----------------------------------------
 
+
+No unsed variable issue found, ^_^

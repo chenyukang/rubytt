@@ -17,5 +17,6 @@ bind: demo ty:  Fn [] => Int_ty
 
 ----------------------------------------
 
+
 unvisited variable ./tests/check_bug1.rb(1) : a
 unvisited variable ./tests/check_bug1.rb(4) : a

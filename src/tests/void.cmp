@@ -11,3 +11,5 @@ bind: a ty:  Fn [] => Nil_ty
 
 ----------------------------------------
 
+
+No unsed variable issue found, ^_^

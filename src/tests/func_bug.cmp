@@ -40,3 +40,5 @@ bind: AstSimplifier ty: Class_ty: AstSimplifier
 
 ----------------------------------------
 
+
+No unsed variable issue found, ^_^

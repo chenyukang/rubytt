@@ -50,4 +50,5 @@ bind: Demo ty: Class_ty: Demo
 
 ----------------------------------------
 
+
 unvisited variable ./tests/attr.rb(2) : b

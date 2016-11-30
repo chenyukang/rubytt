@@ -34,6 +34,7 @@ bind: Demo ty: Class_ty: Demo
 
 ----------------------------------------
 
+
 unvisited variable ./tests/base_class.rb(3) : a
-unvisited variable ./tests/base_class.rb(5) : arr
 unvisited variable ./tests/base_class.rb(4) : hello
+unvisited variable ./tests/base_class.rb(5) : arr

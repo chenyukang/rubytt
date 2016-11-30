@@ -15,4 +15,5 @@ bind: Test ty: Module_ty: Test
 
 ----------------------------------------
 
+
 unvisited variable ./tests/module.rb(2) : a
