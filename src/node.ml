@@ -321,6 +321,7 @@ let make_strembed_node value file s e =
   }
 
 let make_starred_node value file s e =
+  Printf.printf "now make_star_node: %s\n" file;
   let node = {
     info = {path = ""; file = file; ss = s; ee = e};
     ty = Starred(value);

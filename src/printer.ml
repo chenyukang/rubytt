@@ -119,7 +119,7 @@ let rec node_to_str node depth =
       node_to_str n1 (depth+1) ^
       node_to_str n2 (depth+1) ^
       node_to_str n3 (depth+2) ^ ")"
-    | Call(name, pos, _, block_arg) ->
+    | Call(name, pos, star, block_arg) ->
       let res = ref "(Call " in (
       match name.ty with
       | Name(s, _) -> res := !res ^ s
@@ -131,6 +131,10 @@ let rec node_to_str node depth =
             res := !res ^ a;
           );
         res := !res ^ ")";
+      );
+      if (Node.is_nil star) = false then (
+        res := !res ^ nw (depth+1) ^ "(star: ";
+        res := !res ^ (node_to_str star (depth+2))
       );
       if (Node.is_nil block_arg) = false then (
         res := !res ^ nw (depth+1) ^ "(block_arg: ";

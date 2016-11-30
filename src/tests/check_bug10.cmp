@@ -1,0 +1,25 @@
+(Block 
+ (Assign 
+  (Name a Local)
+  (Array 
+   (Int 1)
+   (Int 2)))
+ (Func demo_func
+  (args: 
+   (Name a Local)
+   (Name b Local))
+  (body: 
+   (Block 
+    (Void))))
+ (Call demo_func
+  (star: 
+   (Name a Local)))
+
+----------------------------------------
+
+bind: a ty: [Int_ty]
+bind: demo_func ty:  Fn [] => Nil_ty
+
+
+----------------------------------------
+

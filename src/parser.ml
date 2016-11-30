@@ -170,6 +170,7 @@ let rec convert json =
         | _ -> (
             let pos = convert_list (args |> member "positional") in
             let star = convert_elem args "star" in
+            let s = Printer.node_to_str star 0 in
             let block_arg = convert_elem args "blockarg" in
             make_call_node func pos star block_arg !ff ss ee
           )

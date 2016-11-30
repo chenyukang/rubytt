@@ -125,7 +125,7 @@ let check_unused asts =
     | While(test, body) -> List.iter [test; body] ~f:_iter
     | Subscript(value, slices) -> List.iter ([value] @ slices) ~f:_iter
     | Try(body, rescue, _else, final) -> List.iter [body; rescue; _else; final] ~f:_iter
-    | Call(func, pos, _, block_arg) -> List.iter (([func] @ pos) @ [block_arg]) ~f:_iter
+    | Call(func, pos, star, block_arg) -> List.iter (([func] @ [star] @ pos) @ [block_arg]) ~f:_iter
     | Array(elms) -> List.iter elms ~f:_iter
     | Dict(ks, vs) -> List.iter (ks @ vs) ~f:_iter
     | Kwd(_, v) | Return(v) | Starred(v) | Yield(v) -> _iter v
