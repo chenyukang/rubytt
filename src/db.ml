@@ -28,7 +28,7 @@ let analysis_model_ast ast proc_type =
                    match (attr_id v), (attr_id at), value.ty with
                    | "self", "table_name", String(n) -> (
                        Printf.printf "model_name: %s db_name: %s\n" model_name n;
-                       Hashtbl.add_exn model_db_name model_name n
+                       Hashtbl.add_exn model_db_name ~key:model_name ~data:n
                      )
                    | _ -> ()
                  )
