@@ -89,7 +89,7 @@ let check_unused asts =
     (* Printf.printf "%s\n\n" str; *)
     let try_add_variable env v =
       match v.ty with
-      | Name(s, t) -> (
+      | Name(_, t) -> (
           (* Printf.printf "set variable: %s\n" s; *)
           match t with | Local | Global -> add_variable env v | _ -> ()
         )
@@ -101,7 +101,7 @@ let check_unused asts =
     )
     | Assign(target, value) -> (
       let _ = match target.ty, value.ty with
-        | Name(s, t), _ -> try_add_variable env target
+        | Name(_, _), _ -> try_add_variable env target
         | Array(ls), Array(_) -> (
             List.iter ls ~f:(fun e -> try_add_variable env e)
           )

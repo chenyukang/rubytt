@@ -8,14 +8,12 @@ open Node
 let convert_to_s json mem =
   let r = json |> member mem in
   match r with
-  | `String(str) -> str
-  | _ -> ""
+  | `String(str) -> str | _ -> ""
 
 let convert_to_i json mem =
   let elem = json |> member mem in
   match elem with
-  | `Int(v) -> v
-  | _ -> 0
+  | `Int(v) -> v | _ -> 0
 
 let ff = ref "";;
 
@@ -169,7 +167,6 @@ let rec convert json =
         | _ -> (
             let pos = convert_list (args |> member "positional") in
             let star = convert_elem args "star" in
-            let s = Printer.node_to_str star 0 in
             let block_arg = convert_elem args "blockarg" in
             make_call_node func pos star block_arg !ff ss ee
           )
@@ -241,8 +238,7 @@ and
   | _ -> failwith "type error in convert_list\n"
 and
   convert_op op =
-  let o = convert_to_s op "name" in
-  match o with
+  match convert_to_s op "name" with
   | "+" | "+@" -> Node.Add
   | "-" | "-@" -> Node.Sub
   | "<=>" -> Node.Cmp

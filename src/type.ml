@@ -455,10 +455,10 @@ let compare_type_t t1 t2 =
     )
   | _, _  -> 0
 
-let type_t_of_sexp s =
+let type_t_of_sexp _ =
   unkown_ty
 
-let sexp_of_type_t ty =
+let sexp_of_type_t _ =
   Int.sexp_of_t 1
 
 let ty_of_state state =

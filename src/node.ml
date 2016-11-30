@@ -165,8 +165,7 @@ let make_int_node value file s e =
   }
 
 let make_float_node value file s e =
-  let v = Float.of_string value in
-  let v = Util.string_to_float value in 
+  let v = Util.string_to_float value in
   {
     info = {path=""; file = file; ss = s; ee = e};
     ty = Float(v);
@@ -429,26 +428,6 @@ let make_dict_node keys vals file s e =
   add_children node (keys @ vals);
   node
 
-let dict_node_get node key =
-  match node.ty with
-  | Dict(keys, values) -> (
-      let nth = List.findi keys ~f:(fun i a ->
-          match a.ty with
-          | Name(key, _) -> true
-          | _ -> false
-        ) in
-      match nth with
-      | Some(pos, _) -> (
-          let v = List.nth_exn values pos in
-          match v.ty with
-          | String(s) -> Some(s)
-          | _ -> None
-        )
-      | _ -> None
-    )
-  | _ -> None
-
-
 let lambda_counter = ref 0;;
 let gen_lambda_name() =
   incr lambda_counter;
@@ -487,9 +466,9 @@ let func_node_info node =
 
 let is_lambda node =
   match node.ty with
-  | Func(info) -> (
+  | Func(_) -> (
       let name = func_node_name node in
-      (String.substr_index name "lambda%") = Some(0)
+      (String.substr_index name ~pattern:"lambda%") = Some(0)
     )
   | _ -> false
 
@@ -513,10 +492,10 @@ let compare_node_t n1 n2 =
     else Int.compare f1.ee f2.ee
   )
 
-let node_t_of_sexp s =
+let node_t_of_sexp _ =
   nil_node
 
-let sexp_of_node_t ty =
+let sexp_of_node_t _ =
   Int.sexp_of_t 1
 
 let node_t_hash node =

@@ -65,13 +65,13 @@ let is_synthetic_name name =
   name = "self" || name = "#this"
 
 let is_global_name name =
-  String.substr_index name "$" = Some(0)
+  String.substr_index name ~pattern:"$" = Some(0)
 
 let make_tag_id id tag =
   id ^ "^" ^ tag
 
 let contains search target =
-  String.substr_index search target <> None
+  String.substr_index search ~pattern:target <> None
 
 let string_to_int str =
   if String.length str = 0 then 0
@@ -111,7 +111,7 @@ let pluralize x = (* "wish" in *)
   let rec exn_map ex fn1 fn2 l =
     match l with
       [] -> fn2
-    | h::t -> try (fn1 h) with ex -> exn_map ex fn1 fn2 t in
+    | h::t -> try (fn1 h) with _ex -> exn_map ex fn1 fn2 t in
   exn_map Not_found (f x) (x ^ "s") rules;;
 
 let uncapitalize_class_name class_name =

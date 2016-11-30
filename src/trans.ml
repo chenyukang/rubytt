@@ -74,7 +74,7 @@ let rec lookup_attr_ty state id =
       | Some(super) -> lookup_attr_ty super id
       | _ -> unkown_ty)
 
-let rec lookup_ty state id =
+let lookup_ty state id =
   let bs = state_lookup state id in
   match bs with
   | Some(_bs) -> make_unions_from_bs _bs
@@ -412,7 +412,7 @@ and apply_func fun_ty args_ty star_ty block_arg_ty call =
     Type.unkown_ty
 
 let apply_uncalled () =
-  TypeSet.Set.iter !Global.uncalled (fun fun_ty ->
+  TypeSet.Set.iter !Global.uncalled ~f:(fun fun_ty ->
       let info = Type.fun_ty_info fun_ty in
       let node_info = func_node_info info.fun_node in
       let id = name_node_id node_info.name in
