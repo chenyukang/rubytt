@@ -30,7 +30,7 @@ let clear () =
   root_env := make_env()
 
 let add_variable env var =
-  if (is_instance_var var) && env.env_ty <> "module" then (
+  if is_instance_var var then (
     let cur = ref env in
     let finished = ref false in
     while !finished = false && !cur.env_ty <> "module" do

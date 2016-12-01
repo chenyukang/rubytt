@@ -1,0 +1,38 @@
+(Block 
+ (Class static: false
+  (Name Demo Global)
+  (Nil)
+   (Block 
+    (Func func
+     (body: 
+      (Block 
+       (Assign 
+        (Name a Instance)
+        (Int 1)))))))
+ (Assign 
+  (Name d Local)
+  (Call 
+   (Attribute 
+    (Name Demo Global)
+    (Name new Local))))
+ (Call 
+  (Attribute 
+   (Name d Local)
+   (Name func Local)))
+ (Call 
+  (Attribute 
+   (Name d Local)
+   (Name print Local))))
+
+----------------------------------------
+
+bind: d ty: Unkown_ty
+bind: Demo ty: Class_ty: Demo
+  bind: func ty:  Fn [] => Int_ty
+  bind: @a ty: Int_ty
+
+
+----------------------------------------
+
+
+unvisited variable ./tests/check_bug11.rb(4) : @a
