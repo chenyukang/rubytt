@@ -44,7 +44,7 @@ bind: a ty: Unkown_ty
 bind: Demo ty: Class_ty: Demo
   bind: test ty:  Fn [Int_ty] => Unkown_ty
   bind: b ty: Int_ty
-  bind: attr ty: Int_ty
+  bind: @attr ty: Int_ty
   bind: initialize ty:  Fn [] => Int_ty
 
 
@@ -52,3 +52,4 @@ bind: Demo ty: Class_ty: Demo
 
 
 unvisited variable ./tests/attr.rb(2) : b
+unvisited variable ./tests/attr.rb(5) : @attr

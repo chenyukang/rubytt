@@ -110,20 +110,20 @@ bind: base ty: Unkown_ty
 bind: demo ty: Unkown_ty
 bind: res ty: Unkown_ty
 bind: Base ty: Class_ty: Base
-  bind: a ty: Int_ty
   bind: base_base_func ty:  Fn [] => [Int_ty]
   bind: initialize ty:  Fn [] => Int_ty
+  bind: @a ty: Int_ty
 bind: Haha ty: Class_ty: Haha
 bind: Hello ty: Class_ty: Hello
   bind: base_func ty:  Fn [] => Str_ty
 bind: Demo ty: Class_ty: Demo
   bind: hello ty:  Fn [] => Int_ty
-  bind: a ty: Int_ty
   bind: test ty:  Fn [] => Unkown_ty
   bind: initialize ty:  Fn [] => Int_ty
+  bind: @a ty: Int_ty
 
 
 ----------------------------------------
 
 
-No unsed variable issue found, ^_^
+unvisited variable ./tests/class_func.rb(4) : @a

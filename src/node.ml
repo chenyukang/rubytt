@@ -229,12 +229,16 @@ let name_is_global node =
 
 let is_instance_var node =
   match node.ty with
-  | Name(_, k) -> k = Instance
+  | Name(_, Instance) -> true
   | _ -> false
 
 let name_node_id n =
   match n.ty with
-  | Name(s, _) -> s
+  | Name(s, ty) ->(
+    match ty with
+    | Instance -> "@" ^ s
+    | _ -> s
+    )
   | _ -> (* failwith "error node type for name_id" *) "unkown_name_id"
 
 let name_node_is_globalvar n =

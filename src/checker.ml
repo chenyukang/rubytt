@@ -3,14 +3,16 @@ open Node
 
 type env = {
   env_ty : string;
+  mutable parent: env option;
   mutable visited: (string, bool) Hashtbl.t;
   mutable variables: (Node.node_t, bool) Hashtbl.t;
   mutable children: env list;
 }
 
-let make_env ?ty:(ty="normal") ()=
+let make_env ?ty:(ty="top") ()=
   {
     env_ty = ty;
+    parent = None;
     visited = Hashtbl.Poly.create();
     variables = Hashtbl.Poly.create();
     children = [];
@@ -18,16 +20,29 @@ let make_env ?ty:(ty="normal") ()=
 
 let root_env = ref (make_env());;
 
-let new_child ?ty:(ty="normal") parent =
+let new_child ?ty:(ty="module") parent =
   let child = (make_env ~ty:ty ()) in
   parent.children <- parent.children @ [child];
+  child.parent <- Some(parent);
   child
 
 let clear () =
   root_env := make_env()
 
 let add_variable env var =
-  ignore(Hashtbl.add env.variables ~key:var ~data:true)
+  if (is_instance_var var) && env.env_ty <> "module" then (
+    let cur = ref env in
+    let finished = ref false in
+    while !finished = false && !cur.env_ty <> "module" do
+      match !cur.parent with
+      | Some(p) -> cur := p
+      | None -> finished := true
+    done;
+    if !cur.env_ty = "module" then
+      ignore(Hashtbl.add !cur.variables ~key:var ~data:true)
+  )
+  else
+    ignore(Hashtbl.add env.variables ~key:var ~data:true)
 
 let visited_variable env name =
   ignore(Hashtbl.add env.visited ~key:name ~data:true)
@@ -48,24 +63,31 @@ let line_no_from_file file node =
 let rec env_info ?check_global:(check_global=false) env =
   let cur_dir = Sys.getcwd () in
   let res = ref [] in
-  let rec env_visited is_global name env =
+  let add_unused_var v =
+    res := !res @ [
+        ((Stringext.replace_all v.info.file ~pattern:cur_dir ~with_:"."),
+         (line_no_from_file v.info.file v), (name_node_id v))] in
+
+  let rec env_visited var env =
+    let name = name_node_id var in
+    (* Printf.printf "check now: %s\n" name; *)
     ((Hashtbl.find env.visited name) <> None) ||
     (List.find env.children
        ~f:(fun e ->
-           if is_global then env_visited is_global name e
-           else (e.env_ty <> "func") && (env_visited is_global name e)
+           match var.ty with
+           | Name(_, Global) | Name(_, Instance) -> env_visited var e
+           | _ -> (e.env_ty <> "func") && (env_visited var e)
          )
      <> None) in
   Hashtbl.iter env.variables
     ~f:(fun ~key:v ~data:_ ->
-        let name = name_node_id v in
-        let is_global = name_is_global v in
-        if ((is_global = false) || check_global) &&
-           (env_visited is_global name env) = false then
-          res := !res @ [
-              ((Stringext.replace_all v.info.file ~pattern:cur_dir ~with_:"."),
-               (line_no_from_file v.info.file v), name)]
+        if not (match v.ty with
+            | Name(_, Global) -> check_global && (env_visited v env)
+            | Name(_, Local) | Name(_, Instance) -> env_visited v env
+            | _ -> true) then
+          add_unused_var v
       );
+
   List.iter env.children ~f:(fun e -> res := !res @ (env_info ~check_global:check_global e));
   !res
 
@@ -95,15 +117,18 @@ let check_unused asts =
     let try_add_variable env v =
       match v.ty with
       | Name(_, t) -> (
-          (* Printf.printf "set variable: %s\n" s; *)
-          match t with | Local | Global -> add_variable env v | _ -> ()
+          (* Printf.printf "set variable: %s\n" (name_node_id v); *)
+          match t with
+          | Local | Global | Instance -> add_variable env v
+          | _ -> ()
         )
       | _ -> () in
     match ast.ty with
     | Name(id, _) -> (
-      (* Printf.printf "lookup: %s\n" id; *)
-      visited_variable env id
-    )
+        let name = name_node_id ast in
+        (* Printf.printf "lookup: %s\n" name; *)
+        visited_variable env name
+      )
     | Assign(target, value) -> (
       let _ = match target.ty, value.ty with
         | Name(_, _), _ -> try_add_variable env target
