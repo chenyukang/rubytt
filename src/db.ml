@@ -180,8 +180,7 @@ let analysis_db_ast ast =
   and
     string_of_attr attr =
     match attr.ty with
-    | Attribute(_, v) ->
-      (name_node_id v)
+    | Attribute(_, v) -> (name_node_id v)
     | _ -> failwith "invalid type in string_of_attr"
   in
   iter ast

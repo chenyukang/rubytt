@@ -59,8 +59,8 @@ let rec lookup_attr state id =
       | _ -> (
           Hashtbl.add_exn looked ~key:state ~data:true;
           let res = match State.parent state with
-          | Some(p) -> lookup_attr p id
-          | _ -> None in
+            | Some(p) -> lookup_attr p id
+            | _ -> None in
           Hashtbl.remove looked state;
           res)
     )
@@ -337,6 +337,7 @@ and
       let class_ty = new_class_type id parent ~super:(Some super_ty) () in
       bind state name class_ty Type.ClassK;
       state_insert class_ty.info.table "self" name class_ty Type.ScopeK;
+      add_inst_type_from_db class_ty;
       ignore(transform body class_ty.info.table);
       Type.cont_ty
     )
