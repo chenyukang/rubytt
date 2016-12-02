@@ -24,4 +24,5 @@ bind: demo_func ty:  Fn [] => Nil_ty
 ----------------------------------------
 
 
-No unsed variable issue found, ^_^
+unvisited variable ./tests/check_bug10.rb(4) : a
+unvisited variable ./tests/check_bug10.rb(4) : b

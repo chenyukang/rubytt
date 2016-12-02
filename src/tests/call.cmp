@@ -18,4 +18,4 @@ bind: puts ty:  Fn [] => Nil_ty
 ----------------------------------------
 
 
-No unsed variable issue found, ^_^
+unvisited variable ./tests/call.rb(1) : a

@@ -41,4 +41,4 @@ bind: AstSimplifier ty: Class_ty: AstSimplifier
 ----------------------------------------
 
 
-No unsed variable issue found, ^_^
+unvisited variable ./tests/func_bug.rb(4) : filename

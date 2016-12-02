@@ -36,4 +36,4 @@ bind: add ty:  Fn [] => Unkown_ty
 ----------------------------------------
 
 
-No unsed variable issue found, ^_^
+unvisited variable ./tests/func3.rb(1) : d

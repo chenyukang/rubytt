@@ -60,7 +60,7 @@ let line_no_from_file file node =
   done;
   !num
 
-let rec env_info ?check_global:(check_global=false) env =
+let rec env_info ?check_global:(check_global=false) ?check_inst:(check_inst=false) env =
   let cur_dir = Sys.getcwd () in
   let res = ref [] in
   let add_unused_var v =
@@ -81,18 +81,20 @@ let rec env_info ?check_global:(check_global=false) env =
      <> None) in
   Hashtbl.iter env.variables
     ~f:(fun ~key:v ~data:_ ->
-        if not (match v.ty with
-            | Name(_, Global) -> check_global && (env_visited v env)
-            | Name(_, Local) | Name(_, Instance) -> env_visited v env
-            | _ -> true) then
+        if (match v.ty with
+            | Name(_, Global) -> check_global && (not (env_visited v env))
+            | Name(_, Instance) -> check_inst && (not (env_visited v env))
+            | Name(_, Local) -> not (env_visited v env)
+            | _ -> false) then
           add_unused_var v
       );
 
-  List.iter env.children ~f:(fun e -> res := !res @ (env_info ~check_global:check_global e));
+  List.iter env.children
+            ~f:(fun e -> res := !res @ (env_info ~check_global:check_global ~check_inst:check_inst e));
   !res
 
-let check_result ?check_global:(check_global=false) () =
-  let res = env_info !root_env ~check_global:check_global in
+let check_result ?check_global:(check_global=false) ?check_inst:(check_inst=false) () =
+  let res = env_info !root_env ~check_global:check_global ~check_inst:check_inst in
   if List.length res = 0 then
     "\nNo unsed variable issue found, ^_^\n"
   else
@@ -116,12 +118,14 @@ let check_unused asts =
     (* Printf.printf "%s\n\n" str; *)
     let try_add_variable env v =
       match v.ty with
-      | Name(_, t) -> (
-          (* Printf.printf "set variable: %s\n" (name_node_id v); *)
+      | Name(s, t) -> (
+        (* Printf.printf "set variable: %s\n" (name_node_id v); *)
+        if String.get s 0 <> '_' then (
           match t with
           | Local | Global | Instance -> add_variable env v
           | _ -> ()
         )
+      )
       | _ -> () in
     match ast.ty with
     | Name(id, _) -> (
@@ -139,7 +143,12 @@ let check_unused asts =
     )
     | Func(info) -> (
         let new_env = if (is_lambda ast) then env
-          else (new_child ~ty:"func" env) in
+                      else (new_child ~ty:"func" env) in
+        List.iter info.args ~f:(fun arg ->
+                                match arg.ty with
+                                | Name(_, _) -> try_add_variable new_env arg
+                                | _ -> ()
+                               );
         iter info.body new_env
       )
     | Class(_, _, body, _, _) | Module(_, _, body, _) ->  iter body (new_child env)

@@ -32,4 +32,4 @@ bind: lambda%1 ty:  Fn [] => Unkown_ty
 ----------------------------------------
 
 
-No unsed variable issue found, ^_^
+unvisited variable ./tests/check_bug8.rb(5) : se

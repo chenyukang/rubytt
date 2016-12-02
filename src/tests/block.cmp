@@ -34,4 +34,5 @@ bind: AstSimplifier ty: Class_ty: AstSimplifier
 ----------------------------------------
 
 
-No unsed variable issue found, ^_^
+unvisited variable ./tests/block.rb(3) : filename
+unvisited variable ./tests/block.rb(8) : line
