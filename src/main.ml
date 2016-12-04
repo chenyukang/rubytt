@@ -17,16 +17,23 @@ let load_dir ?need_trans:(need_trans=true) input_dir output_dir =
   Unix.mkdir_p output_dir;
   Sys.command_exn (Printf.sprintf "ruby dump.rb %s %s" input_dir output_dir);
   let rb_files = Util.walk_directory_tree input_dir ".*\\.rb" in
+  (* skpe specs dir and migrate directories *)
   let rb_files = List.filter
-      ~f:(fun rb -> not((Util.contains rb "/spec/") ||
-                        (Util.contains rb "/migrate/"))
-         ) rb_files in
-  (* List.iter rb_files ~f:(fun x -> Printf.printf "now processing: %s\n" x); *)
+      ~f:(fun rb -> not((Util.contains rb "/spec/") || (Util.contains rb "/migrate/")))
+      rb_files in
+  let db_schema = input_dir ^ "/db/schema.rb" in
+  if Sys.is_file_exn db_schema then (
+    Printf.printf "analysising db schema\n";
+    let db_ast = parse_to_ast db_schema in
+    Db.analysis_db_ast db_ast
+  );
   List.iter rb_files ~f:(fun x -> Global.set_load_file x);
   let jsons = Util.walk_directory_tree output_dir ".*\\.json" in
   let asts = List.map jsons ~f:(fun x ->
       let ast = Parser.build_ast_from_json x in
       if need_trans then (
+        if Util.contains x "app/models/" then
+          Db.analysis_model_ast ast "specify_table";
         Analyzer.trans ast;
         let res = gen_ast_str ast in
         let ty_file = Printf.sprintf "%s.ty" (Filename.chop_extension x) in
@@ -79,7 +86,7 @@ let command =
     (fun source_code analy_type output () ->
        match source_code with
        | Some(source) -> (
-           Printf.printf "source: %s\n" source;
+           Printf.printf "Source dir: %s\n" source;
            if not(Sys.is_directory_exn source) then
              failwith (Printf.sprintf "%s is not an directory\n" source);
            let output () =

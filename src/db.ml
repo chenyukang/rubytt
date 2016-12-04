@@ -7,6 +7,11 @@ let has_one_table = Hashtbl.Poly.create();;
 let has_many_table = Hashtbl.Poly.create();;
 let model_db_name = Hashtbl.Poly.create();;
 
+let match_db_for_model model_name =
+  match Hashtbl.find model_db_name model_name with
+  | Some(db) -> db
+  | _ -> Util.class_to_table_name model_name
+
 let analysis_model_ast ast proc_type =
   let rec iter ast iter_func =
     match ast.ty with
@@ -62,11 +67,6 @@ let analysis_model_ast ast proc_type =
            )
         )
     | _ -> ()
-  and
-    match_db_for_model model_name =
-    match Hashtbl.find model_db_name model_name with
-    | Some(db) -> db
-    | _ -> Util.class_to_table_name model_name
   and
     match_table key =
     match key with
@@ -180,8 +180,7 @@ let analysis_db_ast ast =
   and
     string_of_attr attr =
     match attr.ty with
-    | Attribute(_, v) ->
-      (name_node_id v)
+    | Attribute(_, v) -> (name_node_id v)
     | _ -> failwith "invalid type in string_of_attr"
   in
   iter ast
