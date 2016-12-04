@@ -412,6 +412,26 @@ and apply_func fun_ty args_ty star_ty block_arg_ty call =
   else
     Type.unkown_ty
 
+(* add types which analyzed from scheme.rb *)
+and add_inst_type_from_db class_ty =
+  let class_name = classty_get_name class_ty in
+  let table = class_ty.info.table in
+  let db_name = Db.match_db_for_model class_name in
+  let columns = match Hashtbl.find Db.tables db_name with
+    | Some(cols) -> cols
+    | _ -> [] in
+  List.iter columns ~f:(fun col ->
+                        let name = col.(0) in
+                        let ty_str = col.(1) in
+                        (* Printf.printf "name: %s type: %s\n" name ty_str; *)
+                        let ty = match ty_str with
+                          | "string" -> new_str_type()
+                          | "integer" -> new_int_type()
+                          | _ -> unkown_ty in
+                        state_insert table name nil_node ty Type.ScopeK;
+                       );
+  ()
+
 let apply_uncalled () =
   TypeSet.Set.iter !Global.uncalled ~f:(fun fun_ty ->
       let info = Type.fun_ty_info fun_ty in

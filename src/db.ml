@@ -7,6 +7,11 @@ let has_one_table = Hashtbl.Poly.create();;
 let has_many_table = Hashtbl.Poly.create();;
 let model_db_name = Hashtbl.Poly.create();;
 
+let match_db_for_model model_name =
+  match Hashtbl.find model_db_name model_name with
+  | Some(db) -> db
+  | _ -> Util.class_to_table_name model_name
+
 let analysis_model_ast ast proc_type =
   let rec iter ast iter_func =
     match ast.ty with
@@ -62,11 +67,6 @@ let analysis_model_ast ast proc_type =
            )
         )
     | _ -> ()
-  and
-    match_db_for_model model_name =
-    match Hashtbl.find model_db_name model_name with
-    | Some(db) -> db
-    | _ -> Util.class_to_table_name model_name
   and
     match_table key =
     match key with
