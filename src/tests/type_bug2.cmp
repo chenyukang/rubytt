@@ -26,7 +26,7 @@
 ----------------------------------------
 
 bind: $gvar ty: Str_ty
-bind: c ty: Unkown_ty
+bind: c ty: Inst_ty: C
 bind: C ty: Class_ty: C
   bind: examine_global ty:  Fn [] => Unkown_ty
 

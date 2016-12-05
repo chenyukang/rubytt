@@ -40,7 +40,7 @@
 
 ----------------------------------------
 
-bind: a ty: Unkown_ty
+bind: a ty: Inst_ty: Demo
 bind: Demo ty: Class_ty: Demo
   bind: test ty:  Fn [Int_ty] => Unkown_ty
   bind: b ty: Int_ty

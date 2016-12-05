@@ -33,7 +33,7 @@
 
 ----------------------------------------
 
-bind: a ty: Unkown_ty
+bind: a ty: Inst_ty: Demo
 bind: Demo ty: Class_ty: Demo
   bind: XX ty: Str_ty
   bind: func ty:  Fn [] => Unkown_ty

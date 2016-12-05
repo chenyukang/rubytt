@@ -26,7 +26,7 @@
 
 ----------------------------------------
 
-bind: d ty: Unkown_ty
+bind: d ty: Inst_ty: Demo
 bind: Demo ty: Class_ty: Demo
   bind: func ty:  Fn [] => Int_ty
   bind: @a ty: Int_ty

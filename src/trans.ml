@@ -196,7 +196,8 @@ and
       | _ -> (
           (* Printf.printf "error: unbound variable for %s\n" id; *)
           Global.set_unresolve node;
-          Type.unkown_ty)
+          Type.unkown_ty
+      )
     )
   | BinOp(op, ln, rn) -> (
       let _ = transform ln state in
@@ -221,17 +222,17 @@ and
   )
   | Assign(target, rvalue) -> (
     let vt = transform rvalue state in
-    (match target.ty with
-    | Attribute(_, _) -> ignore(transform target state)
-    | _ -> (
-      if Node.is_instance_var target then (
+    let _  = transform target state in
+    if Node.is_instance_var target then (
         let this_ty = lookup_ty state "self" in
         if not(Type.is_unkown_ty this_ty) then
           bind_node this_ty.info.table target vt
-      ) else (
-        bind_node state target vt
-      );
-    ));
+    ) else (
+      let target_v = Printer.node_to_str target 0 in
+      let type_v = Printer.type_to_str vt 0 in
+      (* Printf.printf "%s -> %s\n" target_v type_v; *)
+      bind_node state target vt
+    );
     vt
   )
   | Attribute(target, attr) -> (
@@ -246,10 +247,10 @@ and
             make_unions_from_bs _bs
           )
         | _ -> (
-            (* Printf.printf "error: '%s' attribute not found for : %s\n" *)
-            (*   id (Printer.type_to_str target_ty 0); *)
-            Type.unkown_ty
-          )
+          (* Printf.printf "error: '%s' attribute not found for : %s\n" *)
+          (*               id (Printer.type_to_str target_ty 0); *)
+          Type.unkown_ty
+        )
       )
     )
   | Subscript(value, slices) -> (
@@ -316,14 +317,14 @@ and
   | Call(func, pos, star, block_arg) -> (
       let _func = ref func in
       let _name = ref nil_node in
-      (* let func_str = Printer.node_to_str func 0 in *)
+      let func_str = Printer.node_to_str func 0 in
       (* Printf.printf "func_str: %s\n" func_str; *)
-      (* if is_attr func then ( *)
-      (*   _func := attr_target func; *)
+      if is_attr func then (
+        _func := attr_target func;
         (* Printf.printf "attr target: %s\n" (Printer.node_to_str !_func 0); *)
-        (* _name := attr_attr func *)
+        _name := attr_attr func;
         (* Printf.printf "attr name: %s\n" (Printer.node_to_str !_name 0) *)
-      (* ); *)
+      );
       let fun_ty = transform !_func state in
       let args_ty = List.map pos ~f:(fun x -> transform x state) in
       let star_ty = transform star state in
@@ -394,8 +395,16 @@ and resolve_call obj name args_ty star_ty block_arg_ty call state =
         ) else
           apply_func method_ty args_ty star_ty block_arg_ty call
       ) else unkown_ty
-    )
-  | _ -> (* (Printf.printf "try to resolve_call: unkown_ty\n"); *) Type.unkown_ty
+  )
+  | _ -> (
+    match name_node_id name with
+    | "to_s" -> Type.new_str_type()
+    | "to_sym" -> Type.new_sym_type()
+    | "to_i" -> Type.new_int_type()
+    | _ -> (
+      (* (Printf.printf "try to resolve_call: unkown_ty\n"); *)
+      Type.unkown_ty
+    ))
 
 and bind_param_tys env args args_types =
   List.iteri args ~f:(fun i arg ->

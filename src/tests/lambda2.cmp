@@ -18,8 +18,8 @@
 
 ----------------------------------------
 
-bind: twice ty:  Fn [] => Unkown_ty
-bind: lambda%1 ty:  Fn [] => Unkown_ty
+bind: twice ty:  Fn [] => Int_ty
+bind: lambda%1 ty:  Fn [] => Int_ty
 
 
 ----------------------------------------

@@ -106,16 +106,10 @@ let rec type_equal ty1 ty2 =
   | Float_ty, Float_ty
   | Bool_ty _, Bool_ty _ -> true
   | Class_ty _, Class_ty _ -> phys_equal ty1 ty2
-  | Module_ty(_, f1), Module_ty(_, f2) -> (
-      f1 = f2 && (phys_equal ty1 ty2)
-    )
-  | Instance_ty(t1), Instance_ty(t2) ->
-    (type_equal t1 t2)
-  | Fun_ty(f1), Fun_ty(f2) -> (
-      (Node.compare_node_t f1.fun_node f2.fun_node) = 0
-    )
+  | Module_ty(_, f1), Module_ty(_, f2) -> (f1 = f2 && phys_equal ty1 ty2)
+  | Instance_ty(t1), Instance_ty(t2) -> type_equal t1 t2
+  | Fun_ty(f1), Fun_ty(f2) -> (Node.compare_node_t f1.fun_node f2.fun_node) = 0
   | _, _ -> phys_equal ty1 ty2
-
 
 let new_ty_info() =
   {
@@ -478,5 +472,3 @@ let ty_kind_str ty =
 let type_t_hash ty =
   let info  = ty.info in
   String.hash info.file lxor String.hash (ty_kind_str ty)
-
-

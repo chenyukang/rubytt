@@ -194,6 +194,7 @@ let rec type_to_str ?show_bind:(show_bind=true) ty depth =
   | Str_ty _  -> "Str_ty"
   | Bool_ty _ -> "Bool_ty"
   | Float_ty  -> "Float_ty"
+  | Sym_ty _ -> "Symbol_ty"
   | List_ty(elem_ty, _, _) ->
     let elem_str = (type_to_str ~show_bind:show_bind elem_ty 0) in
     Printf.sprintf "[%s]" elem_str
@@ -257,4 +258,3 @@ and
       )
     );
   !res
-

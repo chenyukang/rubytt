@@ -29,7 +29,7 @@
 
 ----------------------------------------
 
-bind: a ty: Unkown_ty
+bind: a ty: Inst_ty: Order
 bind: Order ty: Class_ty: Order
   bind: order_gateway ty:  Fn [] => Int_ty
   bind: @order_gateway ty: Int_ty

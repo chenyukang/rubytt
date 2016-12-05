@@ -47,8 +47,8 @@
 
 ----------------------------------------
 
-bind: a ty: Unkown_ty
-bind: res ty: Unkown_ty
+bind: a ty: Inst_ty: Demo
+bind: res ty:  Fn [] => Unkown_ty
 bind: Demo ty: Class_ty: Demo
   bind: data ty:  Fn [] => Unkown_ty
   bind: now ty:  Fn [] =>  Fn [] => Unkown_ty

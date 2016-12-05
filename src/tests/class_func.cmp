@@ -104,11 +104,11 @@
 
 ----------------------------------------
 
-bind: hello ty: Unkown_ty
+bind: hello ty: Int_ty
 bind: Drive ty: Class_ty: Drive
-bind: base ty: Unkown_ty
-bind: demo ty: Unkown_ty
-bind: res ty: Unkown_ty
+bind: base ty: [Int_ty]
+bind: demo ty: Inst_ty: Demo
+bind: res ty: Str_ty
 bind: Base ty: Class_ty: Base
   bind: base_base_func ty:  Fn [] => [Int_ty]
   bind: initialize ty:  Fn [] => Int_ty

@@ -45,7 +45,7 @@
 
 ----------------------------------------
 
-bind: a ty: Unkown_ty
+bind: a ty: Inst_ty: Demo
 bind: Demo ty: Class_ty: Demo
   bind: class_func ty:  Fn [] => Str_ty
   bind: func_a ty:  Fn [] => Int_ty
