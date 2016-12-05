@@ -1,0 +1,37 @@
+(Block 
+ (Assign 
+  (Name a Local)
+  (Int 1))
+ (Assign 
+  (Name s Local)
+  (Call 
+   (Attribute 
+    (Name a Local)
+    (Name to_s Local))))
+ (Assign 
+  (Name i Local)
+  (Call 
+   (Attribute 
+    (Name a Local)
+    (Name to_i Local))))
+ (Assign 
+  (Name sym Local)
+  (Call 
+   (Attribute 
+    (Name a Local)
+    (Name to_sym Local)))))
+
+----------------------------------------
+
+bind: a ty: Int_ty
+bind: s ty: Str_ty
+bind: i ty: Int_ty
+bind: sym ty: Symbol_ty
+
+
+----------------------------------------
+
+
+unvisited variable ./tests/type_bug4.rb(2) : s
+unvisited variable ./tests/type_bug4.rb(3) : i
+unvisited variable ./tests/type_bug4.rb(4) : sym

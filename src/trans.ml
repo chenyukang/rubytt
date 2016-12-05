@@ -362,7 +362,7 @@ and resolve_call obj name args_ty star_ty block_arg_ty call state =
   | Class_ty(_) -> (
       let id = name_node_id name in
       match id with
-      | "new" -> (
+      | "new" | "create" -> (
           (* class contructor *)
           let class_ty = obj in
           let inst_ty = new_instance_type class_ty in
