@@ -188,6 +188,7 @@ and
           (* Printf.printf "put ref name: %s\n" id; *)
           Global.put_refs node bs;
           Global.set_resolve node;
+          (* List.iter bs ~f:(fun t -> Printf.printf "now: %s\n" (Printer.type_to_str t.bind_ty 0)); *)
           make_unions_from_bs bs
         )
       | _ when id = "true" || id = "false" -> (
@@ -200,10 +201,13 @@ and
       )
     )
   | BinOp(op, ln, rn) -> (
+    let str = Printer.node_to_str node 0 in
+    (* Printf.printf "now result: %s\n" str; *)
       let _ = transform ln state in
       let rt = transform rn state in
       if Node.is_logic_bin node then Type.bool_ty
       else (
+        (* Printf.printf "rt type: %s\n" (Printer.type_to_str rt 0); *)
         if not (type_equal rt Type.unkown_ty) then rt
         else Type.unkown_ty
       )
@@ -326,6 +330,7 @@ and
         (* Printf.printf "attr name: %s\n" (Printer.node_to_str !_name 0) *)
       );
       let fun_ty = transform !_func state in
+      (* Printf.printf "type str: %s\n" (Printer.type_to_str fun_ty 0); *)
       let args_ty = List.map pos ~f:(fun x -> transform x state) in
       let star_ty = transform star state in
       let block_arg_ty = transform block_arg state in
@@ -358,10 +363,11 @@ and
 
 and resolve_call obj name args_ty star_ty block_arg_ty call state =
   match obj.ty with
+  | Int_ty | Str_ty _ | Float_ty -> obj
   | Fun_ty(_) -> apply_func obj args_ty star_ty block_arg_ty call
   | Class_ty(_) -> (
-      let id = name_node_id name in
-      match id with
+    let id = name_node_id name in
+    match id with
       | "new" | "create" -> (
           (* class contructor *)
           let class_ty = obj in
@@ -381,10 +387,10 @@ and resolve_call obj name args_ty star_ty block_arg_ty call state =
         )
       | _ -> (
           (* Printf.printf "error method name: %s\n" id; *)
-          (* ignore(failwith "resolve_call"); *)
-          unkown_ty
-        )
-    )
+        (* ignore(failwith "resolve_call"); *)
+        transform name obj.info.table
+      )
+  )
   | Instance_ty(class_ty) -> (
       if not (Type.is_unkown_ty obj) then (
         let id = name_node_id name in
