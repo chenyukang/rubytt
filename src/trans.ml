@@ -402,7 +402,6 @@ and resolve_call obj name args_ty star_ty block_arg_ty call state =
       ) else unkown_ty
   )
   | _ -> (
-    Printf.printf "now debug here: %s\n" (name_node_id name);
     match name_node_id name with
     | "to_s" -> Type.new_str_type()
     | "to_sym" -> Type.new_sym_type()
