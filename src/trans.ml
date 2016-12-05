@@ -363,7 +363,6 @@ and
 
 and resolve_call obj name args_ty star_ty block_arg_ty call state =
   match obj.ty with
-  | Int_ty | Str_ty _ | Float_ty -> obj
   | Fun_ty(_) -> apply_func obj args_ty star_ty block_arg_ty call
   | Class_ty(_) -> (
     let id = name_node_id name in
@@ -403,13 +402,16 @@ and resolve_call obj name args_ty star_ty block_arg_ty call state =
       ) else unkown_ty
   )
   | _ -> (
+    Printf.printf "now debug here: %s\n" (name_node_id name);
     match name_node_id name with
     | "to_s" -> Type.new_str_type()
     | "to_sym" -> Type.new_sym_type()
     | "to_i" -> Type.new_int_type()
     | _ -> (
       (* (Printf.printf "try to resolve_call: unkown_ty\n"); *)
-      Type.unkown_ty
+      match obj.ty with
+      | Int_ty | Str_ty _ | Float_ty -> obj
+      | _ -> Type.unkown_ty
     ))
 
 and bind_param_tys env args args_types =
