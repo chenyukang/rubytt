@@ -46,13 +46,12 @@ let process_ref ref_node bindings =
   let info = ref_node.info in
   let hash = Node.node_t_hash ref_node in
   let style = Style.new_style Style.LINK info.ss info.ee in
+  let strs = List.map bindings ~f:(fun b -> (Printer.type_to_str ~show_bind:false b.bind_ty 0)) in
   let msg =
-    List.foldi bindings
-      ~init:""
-      ~f:(fun i acc bind ->
-          let s = (Printer.type_to_str ~show_bind:false bind.bind_ty 0) in
-          if i = 0 then s else acc ^ "|" ^ s
-        ) in
+    List.foldi (Util.remove_duplicates strs)
+               ~init:""
+               ~f:(fun i acc str ->
+                   if i = 0 then str else acc ^ "|" ^ str) in
   style.msg <- msg;
   (* FIXME *)
   (match List.find bindings ~f:(fun bind -> bind.qname <> "") with

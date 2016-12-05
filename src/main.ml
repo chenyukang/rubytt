@@ -19,12 +19,13 @@ let load_dir ?need_trans:(need_trans=true) input_dir output_dir =
   let rb_files = Util.walk_directory_tree input_dir ".*\\.rb" in
   (* skpe specs dir and migrate directories *)
   let rb_files = List.filter
-      ~f:(fun rb -> not((Util.contains rb "/spec/") || (Util.contains rb "/migrate/")))
+      ~f:(fun rb -> not((Util.contains rb "/spec/") || (Util.contains rb "/db/")))
       rb_files in
+  List.iter rb_files ~f:(fun x -> Printf.printf "now: %s\n" x);
   let db_schema = input_dir ^ "/db/schema.rb" in
   if Sys.is_file_exn db_schema then (
     Printf.printf "analysising db schema\n";
-    let db_ast = parse_to_ast db_schema in
+    let db_ast = parse_to_ast db_schema ~need_trans: false in
     Db.analysis_db_ast db_ast
   );
   List.iter rb_files ~f:(fun x -> Global.set_load_file x);
@@ -34,10 +35,12 @@ let load_dir ?need_trans:(need_trans=true) input_dir output_dir =
       if need_trans then (
         if Util.contains x "app/models/" then
           Db.analysis_model_ast ast "specify_table";
-        Analyzer.trans ast;
-        let res = gen_ast_str ast in
-        let ty_file = Printf.sprintf "%s.ty" (Filename.chop_extension x) in
-        Out_channel.write_all ty_file ~data: res;
+        if not(Util.contains x "/db/") then (
+          Analyzer.trans ast;
+          let res = gen_ast_str ast in
+          let ty_file = Printf.sprintf "%s.ty" (Filename.chop_extension x) in
+          Out_channel.write_all ty_file ~data: res;
+        )
       );
       ast
     ) in

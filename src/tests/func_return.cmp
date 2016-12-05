@@ -54,7 +54,7 @@
 
 bind: max ty:  Fn [Int_ty Int_ty] => {(Int_ty)|(Str_ty)}
 bind: demo ty:  Fn [] => Int_ty
-bind: hah ty:  Fn [Int_ty] => Unkown_ty
+bind: hah ty:  Fn [Int_ty] => Int_ty
 bind: y ty: Int_ty
 bind: x ty: Int_ty
 
