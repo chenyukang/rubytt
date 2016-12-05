@@ -207,7 +207,7 @@ let rec convert json =
         | LtE ->
           let lt = make_bin_node Node.Lt l r !ff ss ee in
           let eq = make_bin_node Node.Eq l r !ff ss ee in
-          make_bin_node Or lt eq !ff ss ee
+          make_bin_node Node.Or lt eq !ff ss ee
         | GtE ->
           let gt = make_bin_node Node.Gt l r !ff ss ee in
           let eq = make_bin_node Node.Eq l r !ff ss ee in
@@ -277,4 +277,3 @@ let run_dump_ruby filename =
   let j = Printf.sprintf "%s.json" b in
   Sys.command_exn (Printf.sprintf "ruby dump.rb %s %s" filename j);
   j
-

@@ -198,11 +198,14 @@ and
           Global.set_unresolve node;
           Type.unkown_ty)
     )
-  | BinOp(_, ln, rn) -> (
+  | BinOp(op, ln, rn) -> (
       let _ = transform ln state in
       let rt = transform rn state in
-      if not (type_equal rt Type.unkown_ty) then rt
-      else Type.unkown_ty
+      if Node.is_logic_bin node then Type.bool_ty
+      else (
+        if not (type_equal rt Type.unkown_ty) then rt
+        else Type.unkown_ty
+      )
     )
   | Array(elems) -> (
       let list_ty = new_list_type() in
@@ -212,9 +215,15 @@ and
         );
       list_ty
     )
-  | UnaryOp(_, operand) -> transform operand state
+  | UnaryOp(_, operand) -> (
+    let r = transform operand state in
+    if Node.is_logic_bin node then Type.bool_ty else r
+  )
   | Assign(target, rvalue) -> (
-      let vt = transform rvalue state in
+    let vt = transform rvalue state in
+    (match target.ty with
+    | Attribute(_, _) -> ignore(transform target state)
+    | _ -> (
       if Node.is_instance_var target then (
         let this_ty = lookup_ty state "self" in
         if not(Type.is_unkown_ty this_ty) then
@@ -222,8 +231,9 @@ and
       ) else (
         bind_node state target vt
       );
-      vt
-    )
+    ));
+    vt
+  )
   | Attribute(target, attr) -> (
       if is_nil target then transform attr state
       else (
@@ -425,7 +435,8 @@ and add_inst_type_from_db class_ty =
                         let ty_str = col.(1) in
                         (* Printf.printf "name: %s type: %s\n" name ty_str; *)
                         let ty = match ty_str with
-                          | "string" -> new_str_type()
+                          | "string" | "text"  -> new_str_type()
+                          | "boolean" -> new_bool_type()
                           | "integer" -> new_int_type()
                           | _ -> unkown_ty in
                         state_insert table name nil_node ty Type.ScopeK;

@@ -149,6 +149,21 @@ let make_bin_node op left right file s e =
     parent = None;
   }
 
+let rec is_logic_bin node =
+  match node.ty with
+  | BinOp(op, l, r) ->  (
+     match op with
+     | Equal | Lt | Gt | Eq -> true
+     | Or -> (is_logic_bin l) && (is_logic_bin r)
+     | _ -> false
+  )
+  | UnaryOp(op, v) -> (
+    match op with
+    | Not -> true
+    | _ -> false
+  )
+  | _ -> false
+
 let make_unary_node op operand file s e =
   {
     info = {path=""; file = file; ss = s; ee = e};
