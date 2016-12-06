@@ -87,7 +87,7 @@ let apply_tag applier source (t:tag) =
   | START -> (
       (match t.sty.ty with
       | ANCHOR -> (add ("<a name='" ^ t.sty.url ^ "'");
-                   add (", xid='" ^ t.sty.id ^ "'"))
+                   add (", xid='" ^ "#" ^ t.sty.id ^ "'"))
       | LINK -> (add ("<a href='" ^ t.sty.url ^ "'");
                  add (", xid='" ^ t.sty.id ^ "'"))
       | _ -> add ("<span class='" ^ to_css(t.sty) ^ "'"));

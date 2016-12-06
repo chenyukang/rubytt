@@ -15,6 +15,14 @@ let new_linker root out_dir =
   root_path := root;
   outdir := out_dir
 
+let to_url cur_file file name =
+  if cur_file = file then (
+    "#" ^ name
+  ) else (
+    let out = Util.change_root_dir_of_path !root_path !outdir file in
+    "file:///" ^ (Util.change_extension out ".html" ^ "#" ^ name)
+  )
+
 let add_file_style path style =
   let styles = Hashtbl.find file_styles path in
   match styles with
@@ -53,10 +61,9 @@ let process_ref ref_node bindings =
                ~f:(fun i acc str ->
                    if i = 0 then str else acc ^ "|" ^ str) in
   style.msg <- msg;
-  (* FIXME *)
-  (match List.find bindings ~f:(fun bind -> bind.qname <> "") with
+  (match List.find bindings ~f:(fun bind -> bind.qname <> "" && bind.bind_file <> "") with
    | Some(b) -> (
-       style.url <- b.qname; style.id <- b.qname
+       style.url <- (to_url info.file b.bind_file b.qname); style.id <- b.qname
      )
    | _ -> ());
   (* Printf.printf "process_ref: bind_name: %s ss:%d ee:%d\n%!" *)

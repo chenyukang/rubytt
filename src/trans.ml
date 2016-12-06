@@ -14,7 +14,7 @@ let state_insert st id node ty kind =
   let b = new_bind node ty kind in
   let qname = match ty.ty with
   | Module_ty(_) -> "" (* fixme *)
-  | Fun_ty(_) -> extend_path st id "#"
+  | Fun_ty(_) -> (extend_path st id "#")
   | _ -> extend_path st id "::"
   in
   set_bind_qname b qname;
