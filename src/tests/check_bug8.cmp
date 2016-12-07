@@ -25,8 +25,8 @@
 ----------------------------------------
 
 bind: a ty: [Unkown_ty]
-bind: items ty: Unkown_ty
-bind: lambda%1 ty:  Fn [] => Unkown_ty
+bind: items ty: Dict_ty(Unkown_ty Unkown_ty)
+bind: lambda%1 ty:  Fn [] => Dict_ty(Unkown_ty Unkown_ty)
 
 
 ----------------------------------------

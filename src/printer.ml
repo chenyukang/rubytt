@@ -217,7 +217,14 @@ let rec type_to_str ?show_bind:(show_bind=true) ty depth =
       | "?" -> "Unkown_ty"
       | "nil" -> "Nil_ty"
       | _ -> Printf.sprintf "Inst_ty: %s" class_name
-    )
+  )
+  | Dict_ty(key_ty, val_ty) -> (
+    "Dict_ty("
+    ^ (type_to_str ~show_bind:show_bind key_ty 0)
+    ^ " "
+    ^ (type_to_str ~show_bind:show_bind val_ty 0)
+    ^ ")"
+  )
   | Union_ty(tys_table)  -> (
       let res = ref "{" in
       Hashtbl.iter tys_table ~f:(fun ~key:k ~data:_ ->

@@ -19,8 +19,8 @@
 
 ----------------------------------------
 
-bind: a ty: Unkown_ty
-bind: b ty: [Int_ty]
+bind: a ty: Dict_ty(Int_ty Int_ty)
+bind: b ty: [{(Int_ty)|(Dict_ty(Int_ty Int_ty))}]
 
 
 ----------------------------------------

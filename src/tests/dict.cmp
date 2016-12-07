@@ -20,7 +20,7 @@
 
 ----------------------------------------
 
-bind: a ty: Unkown_ty
+bind: a ty: Dict_ty({(Int_ty)|(Str_ty)|(Str_ty)} {(Int_ty)|(Dict_ty(Str_ty Str_ty))|(Str_ty)})
 
 
 ----------------------------------------

@@ -37,6 +37,7 @@ and ty =
   | Class_ty of string * type_t option * type_t option
   | Module_ty of string * string
   | Union_ty of (type_t, bool) Hashtbl.t
+  | Dict_ty of type_t * type_t
   | Tuple_ty of type_t list
   (* elem_ty * positional * values *)
   | List_ty of type_t * type_t list * node_t list
@@ -104,6 +105,7 @@ let rec type_equal ty1 ty2 =
   | Int_ty, Int_ty
   | Str_ty _, Str_ty _
   | Float_ty, Float_ty
+  | Sym_ty _ , Sym_ty _
   | Bool_ty _, Bool_ty _ -> true
   | Class_ty _, Class_ty _ -> phys_equal ty1 ty2
   | Module_ty(_, f1), Module_ty(_, f2) -> (f1 = f2 && phys_equal ty1 ty2)
@@ -292,6 +294,12 @@ let new_tuple_type elem_tys =
   {
     info = new_ty_info();
     ty = Tuple_ty(elem_tys)
+  }
+
+let new_dict_ty key_ty val_ty =
+  {
+    info = new_ty_info();
+    ty = Dict_ty(key_ty, val_ty);
   }
 
 let new_binding (node:node_t) ttype kind =

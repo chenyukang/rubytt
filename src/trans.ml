@@ -179,8 +179,13 @@ and
           | Name(id, _) -> (State.remove state id)
           | _ -> ()
         );
-        Type.cont_ty
-    )
+      Type.cont_ty
+  )
+  | Dict(keys, vals) -> (
+    let key_ty = resolve_union keys state in
+    let val_ty = resolve_union vals state in
+    Type.new_dict_ty key_ty val_ty
+  )
   | Name(id, _) -> (
       (* Printf.printf "lookup name: %s\n" id; *)
       match state_lookup state id with
@@ -360,6 +365,12 @@ and
   | Kwd(_, v) | Return(v) | Starred(v) | Yield(v)
     -> transform v state
   | _ -> Type.unkown_ty
+
+and resolve_union nodes state =
+  let ty = ref Type.unkown_ty in
+  List.iter nodes ~f:(fun n ->
+                      ty := Type.union_ty (transform n state) !ty);
+  !ty
 
 and resolve_call obj name args_ty star_ty block_arg_ty call state =
   match obj.ty with

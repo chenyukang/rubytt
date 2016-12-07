@@ -312,7 +312,7 @@ class AstSimplifier
           }
         when :@label
           {
-              :type => :name,
+              :type => :symbol,
               :id => exp[1][0..-2],
               :location => exp[2]
           }
