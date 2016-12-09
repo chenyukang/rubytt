@@ -4,6 +4,7 @@ require 'pp'
 require 'json'
 require 'optparse'
 require 'fileutils'
+require 'parallel'
 
 # --------------------- utils ---------------------
 def banner(s)
@@ -916,11 +917,13 @@ def parse_dir(input, output)
     FileUtils.remove_dir abs_output
   end
 
-  res = Dir.glob("#{input}/**/*").select{ |x|  x.end_with? ".rb" }.
-        map{ |x| File.absolute_path x}
-  res.each{ |rb|
-    next if rb.index("/spec/")
-    next if rb.index("/migrate/")
+  rb_files = Dir.glob("#{input}/**/*").select{ |x|
+      x.end_with?(".rb") &&
+      x.index("/spec/").nil? &&
+      x.index("/migrate/").nil?
+  }.map{ |x| File.absolute_path x }
+
+  results = Parallel.map(rb_files, in_processes: 6, progress: "Parsing and dump Ruby files") { |rb|
     json_path = rb.gsub(abs_input, abs_output).gsub(".rb", ".json")
     FileUtils.mkdir_p (File.dirname json_path)
     parse_dump rb, json_path
