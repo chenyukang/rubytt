@@ -22,6 +22,7 @@ Compile it:
 
 ```shell
 gem install parallel
+
 brew install opam
 eval `opam config env`
 opam update
