@@ -10,6 +10,7 @@ open Type
 
 let run_dir dir =
   (* process rb to json *)
+  Util.prepare_dump();
   Sys.command_exn (Printf.sprintf "ruby dump.rb %s %s" dir dir);
 
   let jsons = Util.walk_directory_tree dir ".*\\.json" in

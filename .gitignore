@@ -4,6 +4,7 @@
 *.json
 *.png
 *.dot
+src/dump.ml
 out
 now
 xx

@@ -15,12 +15,13 @@ let load_dir ?need_trans:(need_trans=true) input_dir output_dir =
   if Sys.file_exists_exn output_dir then
     Sys.command_exn (Printf.sprintf "rm -rf %s;" output_dir);
   Unix.mkdir_p output_dir;
-  Sys.command_exn (Printf.sprintf "ruby dump.rb %s %s" input_dir output_dir);
+  Sys.command_exn (Printf.sprintf "ruby /tmp/dump.rb %s %s" input_dir output_dir);
   let rb_files = Util.walk_directory_tree input_dir ".*\\.rb" in
   (* skpe specs dir and migrate directories *)
   let rb_files = List.filter
       ~f:(fun rb -> not((Util.contains rb "/spec/") || (Util.contains rb "/db/")))
       rb_files in
+
   List.iter rb_files ~f:(fun x -> Printf.printf "now: %s\n" x);
   let db_schema = input_dir ^ "/db/schema.rb" in
   if Sys.is_file_exn db_schema then (
@@ -87,7 +88,8 @@ let command =
       +> flag "-o" (optional string) ~doc:"the output directory or file"
     )
     (fun source_code analy_type output () ->
-       match source_code with
+     Util.prepare_dump();
+     match source_code with
        | Some(source) -> (
            Printf.printf "Source dir: %s\n" source;
            if not(Sys.is_directory_exn source) then

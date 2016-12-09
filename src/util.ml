@@ -2,6 +2,9 @@ open Core.Std
 open Sys
 open Unix
 
+let prepare_dump () =
+  Out_channel.write_all "/tmp/dump.rb" ~data: Dump.dump_str
+
 let read_file_to_str name =
   In_channel.read_all name
 
