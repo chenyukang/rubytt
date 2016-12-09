@@ -137,7 +137,7 @@ class AstSimplifier
 
 
   def find_locations(obj)
-    def find1(obj)
+    def find_internal(obj)
       if obj.is_a?(Hash)
         ret = {}
         whole_start = nil
@@ -158,7 +158,7 @@ class AstSimplifier
             start_line = v[0]
             end_line = v[1]
           else
-            new_node, start_idx, end_idx, line_start, line_end = find1(v)
+            new_node, start_idx, end_idx, line_start, line_end = find_internal(v)
             ret[k] = new_node
 
             if start_idx && (!whole_start || whole_start > start_idx)
@@ -208,7 +208,7 @@ class AstSimplifier
         whole_end = nil
 
         for v in obj
-          new_node, start_idx, end_idx, line_start, line_end = find1(v)
+          new_node, start_idx, end_idx, line_start, line_end = find_internal(v)
           ret.push(new_node)
           if  start_idx && (!whole_start || whole_start > start_idx)
             whole_start = start_idx
@@ -227,7 +227,7 @@ class AstSimplifier
       end
     end
 
-    node, _, _, _, _ = find1(obj)
+    node, _, _, _, _ = find_internal(obj)
     node
   end
 
