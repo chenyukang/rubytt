@@ -626,6 +626,7 @@ class AstSimplifier
         when :stmts_add
           block = convert(exp[1])
           stmt = convert(exp[2])
+          block[:stmts] ||= []
           block[:stmts].push(stmt)
           block
         when :bodystmt
