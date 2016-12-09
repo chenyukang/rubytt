@@ -178,7 +178,7 @@ and
           match n.ty with
           | Name(id, _) -> (State.remove state id)
           | _ -> ()
-        );
+                         );
       Type.cont_ty
   )
   | Dict(keys, vals) -> (
@@ -218,12 +218,12 @@ and
       )
     )
   | Array(elems) -> (
-      let list_ty = new_list_type() in
-      List.iter elems ~f:(fun e ->
-          let t = transform e state in
-          list_ty_add list_ty t;
-        );
-      list_ty
+    let list_ty = new_list_type() in
+    List.iter elems ~f:(fun e ->
+                        let t = transform e state in
+                        list_ty_add list_ty t;
+                       );
+    list_ty
     )
   | UnaryOp(_, operand) -> (
     let r = transform operand state in
@@ -363,7 +363,7 @@ and
       Type.cont_ty
     )
   | Kwd(_, v) | Return(v) | Starred(v) | Yield(v)
-    -> transform v state
+                                         -> transform v state
   | _ -> Type.unkown_ty
 
 and resolve_union nodes state =

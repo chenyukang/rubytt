@@ -11,11 +11,14 @@ default: byte
 
 all: byte native test dot
 
-byte:
-	$(OCAMLBUILD) gen_dump.byte; ./gen_dump.byte; $(OCAMLBUILD) $(TARGET).byte; cp $(TARGET).byte ../bin;
+prepare_dump:
+	$(OCAMLBUILD) gen_dump.byte; ./gen_dump.byte;
 
-native:
-	$(OCAMLBUILD) gen_dump.byte; ./gen_dump.byte;$(OCAMLBUILD) $(TARGET).native; cp $(TARGET).native ../bin;
+byte: prepare_dump
+	$(OCAMLBUILD) $(TARGET).byte; cp $(TARGET).byte ../bin;
+
+native: prepare_dump
+	$(OCAMLBUILD) $(TARGET).native; cp $(TARGET).native ../bin;
 
 test:
 	$(OCAMLBUILD) test.native; ./test.native -e
@@ -25,7 +28,7 @@ update:
 
 dot:
 	$(OCAMLBUILD) proj.docdir/dep.dot;
-  # remove the line of "rotate=90"
+    # remove the line of "rotate=90"
 	grep -vwE "(rotate)" _build/proj.docdir/dep.dot > dep.dot;
 	dot dep.dot -Tpng -o dep.png; open dep.png
 

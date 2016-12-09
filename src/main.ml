@@ -11,12 +11,19 @@ let gen_ast_str ast =
   Printer.node_to_str ast 0
 
 let load_dir ?need_trans:(need_trans=true) input_dir output_dir =
-  Printf.printf "Dump dir: %s\n%!" input_dir;
+  Printf.printf "Dump dir: %s => %s \n%!" input_dir output_dir;
   if Sys.file_exists_exn output_dir then
     Sys.command_exn (Printf.sprintf "rm -rf %s;" output_dir);
   Unix.mkdir_p output_dir;
-  Sys.command_exn (Printf.sprintf "ruby /tmp/dump.rb %s %s" input_dir output_dir);
+
   let rb_files = Util.walk_directory_tree input_dir ".*\\.rb" in
+  if List.length rb_files = 0 then (
+    Printf.printf "Dir %s contains no Ruby program\n%!" input_dir;
+    exit 1
+  )
+  else
+    Sys.command_exn (Printf.sprintf "ruby /tmp/dump.rb %s %s" input_dir output_dir);
+
   (* skpe specs dir and migrate directories *)
   let rb_files = List.filter
       ~f:(fun rb -> not((Util.contains rb "/spec/") || (Util.contains rb "/db/")))
