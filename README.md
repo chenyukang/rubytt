@@ -1,9 +1,9 @@
 # Rubytt
 
-Rubytt is a static Ruby code analyzer, optimized especially for Rails app. 
+Rubytt is a static Ruby code analyzer, optimized especially for Rails app.
 
-1. The basic ideas comes from [rubysonar](https://github.com/yinwang0/rubysonar), but with more help from analysis of db/schema.rb, 
-we may get more accurate types for the code annotation or bug finding. 
+1. The basic ideas comes from [rubysonar](https://github.com/yinwang0/rubysonar), but with more help from analysis of db/schema.rb,
+we may get more accurate types for the code annotation or bug finding.
 
 2. I also add some visualizations for the class/db/model.
 
@@ -21,6 +21,7 @@ to be finished ....
 Compile it:
 
 ```shell
+gem install parallel
 brew install opam
 eval `opam config env`
 opam update
@@ -30,7 +31,7 @@ opam install core yojson alcotest ounit stringext -y
 brew install graphviz ## ignore it if installed
 
 cd rubytt/src;
-make  ## or use: make native 
+make  ## or use: make native
 ```
 
 Usage:

@@ -4,6 +4,7 @@ require 'pp'
 require 'json'
 require 'optparse'
 require 'fileutils'
+require 'parallel'
 
 # --------------------- utils ---------------------
 def banner(s)
@@ -137,7 +138,7 @@ class AstSimplifier
 
 
   def find_locations(obj)
-    def find1(obj)
+    def find_internal(obj)
       if obj.is_a?(Hash)
         ret = {}
         whole_start = nil
@@ -158,7 +159,7 @@ class AstSimplifier
             start_line = v[0]
             end_line = v[1]
           else
-            new_node, start_idx, end_idx, line_start, line_end = find1(v)
+            new_node, start_idx, end_idx, line_start, line_end = find_internal(v)
             ret[k] = new_node
 
             if start_idx && (!whole_start || whole_start > start_idx)
@@ -208,7 +209,7 @@ class AstSimplifier
         whole_end = nil
 
         for v in obj
-          new_node, start_idx, end_idx, line_start, line_end = find1(v)
+          new_node, start_idx, end_idx, line_start, line_end = find_internal(v)
           ret.push(new_node)
           if  start_idx && (!whole_start || whole_start > start_idx)
             whole_start = start_idx
@@ -227,7 +228,7 @@ class AstSimplifier
       end
     end
 
-    node, _, _, _, _ = find1(obj)
+    node, _, _, _, _ = find_internal(obj)
     node
   end
 
@@ -916,11 +917,13 @@ def parse_dir(input, output)
     FileUtils.remove_dir abs_output
   end
 
-  res = Dir.glob("#{input}/**/*").select{ |x|  x.end_with? ".rb" }.
-        map{ |x| File.absolute_path x}
-  res.each{ |rb|
-    next if rb.index("/spec/")
-    next if rb.index("/migrate/")
+  rb_files = Dir.glob("#{input}/**/*").select{ |x|
+      x.end_with?(".rb") &&
+      x.index("/spec/").nil? &&
+      x.index("/migrate/").nil?
+  }.map{ |x| File.absolute_path x }
+
+  results = Parallel.map(rb_files, in_processes: 6, progress: "Parsing and dump Ruby files") { |rb|
     json_path = rb.gsub(abs_input, abs_output).gsub(".rb", ".json")
     FileUtils.mkdir_p (File.dirname json_path)
     parse_dump rb, json_path
