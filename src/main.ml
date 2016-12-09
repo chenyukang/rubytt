@@ -29,7 +29,7 @@ let load_dir ?need_trans:(need_trans=true) input_dir output_dir =
       ~f:(fun rb -> not((Util.contains rb "/spec/") || (Util.contains rb "/db/")))
       rb_files in
 
-  List.iter rb_files ~f:(fun x -> Printf.printf "now: %s\n" x);
+  (* List.iter rb_files ~f:(fun x -> Printf.printf "now: %s\n" x); *)
   let db_schema = input_dir ^ "/db/schema.rb" in
   if Sys.is_file_exn db_schema then (
     Printf.printf "analysising db schema\n";
