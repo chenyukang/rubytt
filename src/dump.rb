@@ -39,7 +39,6 @@ class AstSimplifier
     find_docs
   end
 
-
   def detect_encoding(s)
     # take first two lines
     header = s.match('^.*\n?.*\n?')
@@ -91,13 +90,11 @@ class AstSimplifier
     }
   end
 
-
   def node_start(loc)
     line = loc[0]
     col = loc[1]
     @line_starts[line-1] + col
   end
-
 
   def ident_end(start_idx)
     if @bytes[start_idx] == '['.ord and @bytes[start_idx + 1] == ']'.ord
@@ -115,7 +112,6 @@ class AstSimplifier
     end
     idx
   end
-
 
   def simplify
     tree = Ripper::SexpBuilder.new(@src).parse
