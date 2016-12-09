@@ -275,5 +275,5 @@ let build_ast_from_json file =
 let run_dump_ruby filename =
   let b = Filename.chop_extension filename in
   let j = Printf.sprintf "%s.json" b in
-  Sys.command_exn (Printf.sprintf "ruby dump.rb %s %s" filename j);
+  Sys.command_exn (Printf.sprintf "ruby /tmp/dump.rb %s %s" filename j);
   j
