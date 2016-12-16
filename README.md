@@ -1,5 +1,8 @@
 # Rubytt
 
+[![Build Status](https://travis-ci.org/chenyukang/rubytt.svg?branch=master)](https://travis-ci.org/chenyukang/rubytt)
+
+
 Rubytt is a static Ruby code analyzer, optimized especially for Rails app.
 
 1. The basic ideas comes from [rubysonar](https://github.com/yinwang0/rubysonar), but with more help from analysis of db/schema.rb,
