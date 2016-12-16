@@ -25,6 +25,3 @@ install:
 
 script:
   - ./.ci/test.sh
-
-git:
-    depth: 3
