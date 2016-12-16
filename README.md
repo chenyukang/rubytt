@@ -18,7 +18,6 @@ we may get more accurate types for the code annotation or bug finding.
 
 6. The project is in experimental status. It's written in OCaml.
 
-
 to be finished ....
 
 Compile it:
