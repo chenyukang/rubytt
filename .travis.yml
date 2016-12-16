@@ -5,3 +5,5 @@ env:
   - OCAML_VERSION=4.00.1 OPAM_VERSION=1.1.0
 rvm:
   - 2.2
+
+sudo: required
