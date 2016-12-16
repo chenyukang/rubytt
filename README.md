@@ -31,7 +31,6 @@ opam install core yojson alcotest ounit stringext -y
 
 brew install graphviz ## ignore it if installed
 
-cd rubytt/src;
 make  ## or use: make native
 ```
 
