@@ -11,7 +11,7 @@ open Type
 let run_dir dir =
   (* process rb to json *)
   Util.prepare_dump();
-  Sys.command_exn (Printf.sprintf "ruby dump.rb %s %s" dir dir);
+  Sys.command_exn (Printf.sprintf "ruby src/dump.rb %s %s" dir dir);
 
   let jsons = Util.walk_directory_tree dir ".*\\.json" in
   List.filter ~f:(fun j ->
@@ -203,7 +203,7 @@ let test_unit = [
   "Bool", `Quick, test_bool_type;
   "Type", `Quick, test_type;
   "UnionTy", `Quick, test_union;
-  "Cases", `Slow, test_dir;
+  "Cases", `Quick, test_dir;
 ]
 
 let () =
