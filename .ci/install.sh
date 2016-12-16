@@ -9,6 +9,7 @@ if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
     sudo apt-get install --yes ruby-dev opam
 fi
 
+opam init
 eval `opam config env`
 opam update
 opam switch 4.02.1

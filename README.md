@@ -27,6 +27,7 @@ Compile it:
 gem install parallel
 
 brew install opam
+opam init
 eval `opam config env`
 opam update
 opam switch 4.02.1
