@@ -5,12 +5,11 @@ echo -e "\e[31m=== Running $0 ===\e[0m"
 set -e
 
 if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-  brew update;
+    brew update;
 fi
 
 if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-  sudo add-apt-repository --yes ppa:avsm/ppa;
-  sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test;
-  sudo add-apt-repository --yes ppa:0k53d-karl-f830m/openssl;
-  sudo apt-get -qq update;
+    sudo add-apt-repository --yes ppa:avsm/ppa
+    sudo apt-get update --yes
+    sudo apt-get install --yes ocaml ocaml-native-compilers camlp4-extra opam
 fi
