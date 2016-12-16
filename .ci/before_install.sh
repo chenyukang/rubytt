@@ -10,6 +10,5 @@ fi
 
 if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
     sudo add-apt-repository --yes ppa:avsm/ppa
-    sudo apt-get update --yes
     sudo apt-get install --yes ocaml ocaml-native-compilers camlp4-extra opam
 fi
