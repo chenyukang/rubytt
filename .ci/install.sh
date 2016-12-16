@@ -7,6 +7,7 @@ if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
 fi
 if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
     sudo apt-get install --yes ruby-dev opam
+    #sudo apt-get install --yes ocaml ocaml-native-compilers camlp4-extra opam
 fi
 
 opam init
