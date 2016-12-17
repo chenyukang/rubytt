@@ -1,5 +1,7 @@
 # Rubytt
 
+[![Build Status](https://travis-ci.org/chenyukang/rubytt.svg?branch=master)](https://travis-ci.org/chenyukang/rubytt)
+
 Rubytt is a static Ruby code analyzer, optimized especially for Rails app.
 
 1. The basic ideas comes from [rubysonar](https://github.com/yinwang0/rubysonar), but with more help from analysis of db/schema.rb,
@@ -21,9 +23,10 @@ to be finished ....
 Compile it:
 
 ```shell
-gem install parallel
+gem install parallel ruby-progressbar
 
 brew install opam
+opam init -y
 eval `opam config env`
 opam update
 opam switch 4.02.1

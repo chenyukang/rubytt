@@ -5,6 +5,7 @@ require 'json'
 require 'optparse'
 require 'fileutils'
 require 'parallel'
+require 'ruby-progressbar'
 
 # --------------------- utils ---------------------
 def banner(s)

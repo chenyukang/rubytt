@@ -1,6 +1,8 @@
 #!/bin/bash
-
 set -e
-eval $(opam config env)
 
-make all
+opam switch 4.02.1
+
+eval `opam config env`
+
+make

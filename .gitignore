@@ -13,3 +13,11 @@ _tests
 res
 debug
 cur_res
+_oasis
+_tags
+myocamlbuild.ml
+rubytt.0.1/
+setup.data
+setup.ml
+src/base.mldylib
+src/base.mllib

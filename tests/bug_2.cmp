@@ -1,0 +1,42 @@
+(Block 
+ (Func func
+  (args: 
+   (Name a Local)
+   (Name b Local))
+  (body: 
+   (Block 
+    (Call puts
+     (args: 
+      (Name a Local))))))
+ (Assign 
+  (Name a Local)
+  (Array ))
+ (Assign 
+  (Name x Local)
+  (Int 1))
+ (Call 
+  (Attribute 
+   (Name a Local)
+   (Name each Local))
+  (block_arg: 
+   (Func lambda%1
+    (args: 
+     (Name x Local))
+    (body: 
+     (Block 
+      (Void)))))))
+
+----------------------------------------
+
+bind: a ty: [Unkown_ty]
+bind: lambda%1 ty:  Fn [] => Nil_ty
+bind: func ty:  Fn [] => Unkown_ty
+bind: x ty: Int_ty
+
+
+----------------------------------------
+
+
+unvisited variable ./tests/bug_2.rb(2) : b
+unvisited variable ./tests/bug_2.rb(9) : x
+unvisited variable ./tests/bug_2.rb(10) : x

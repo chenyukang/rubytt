@@ -2,7 +2,7 @@ TARGET = main
 
 SRC=src
 
-OCAMLBUILD = cd $(SRC); corebuild -use-ocamlfind -pkg yojson -pkg alcotest -pkg ounit -pkg str -pkg stringext -cflags -w,-45,-w,-11,-w,-27,-w,-26
+OCAMLBUILD = cd $(SRC); corebuild -use-ocamlfind -pkg yojson,alcotest,str,stringext -cflags -w,-45,-w,-11,-w,-27,-w,-26
 
 default: byte
 
@@ -28,8 +28,11 @@ update:
 dot:
 	$(OCAMLBUILD) proj.docdir/dep.dot;
 	# remove the line of "rotate=90"
-	grep -vwE "(rotate)" _build/proj.docdir/dep.dot > dep.dot;
-	dot dep.dot -Tpng -o dep.png; open dep.png
+	grep -vwE "(rotate)" ./src/_build/proj.docdir/dep.dot > dep.dot;
+	cd src; dot dep.dot -Tpng -o dep.png
+
+install:
+	sudo cp ./bin/main.native /usr/local/bin/rubytt
 
 clean:
 	$(OCAMLBUILD) -clean
