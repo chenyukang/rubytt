@@ -2,6 +2,7 @@ open Core.Std
 open Typestack
 open State
 open Node
+open Def
 
 type
   state_t = (type_t, binding_ty) state
@@ -60,7 +61,7 @@ and kind =
 and
   binding_ty = {
   node: node_t;
-  refs: (Node.node_t, bool) Hashtbl.t;
+  refs: (bool) NodeHashtbl.t;
   mutable qname: string;
   bind_file: string;
   bind_ty: type_t;
@@ -313,14 +314,14 @@ let new_binding (node:node_t) ttype kind =
     tail = node.info.ee;
     body_start = 0;
     body_end = 0;
-    refs = Hashtbl.create ~hashable:NodeHash.hashable ();
+    refs = NodeHashtbl.create 1;
   }
 
 let set_bind_qname binding qname =
   binding.qname <- qname
 
 let binding_add_ref binding node =
-  ignore(Hashtbl.add binding.refs ~key:node ~data:true)
+  NodeHashtbl.add binding.refs node true
 
 let bind_equal a b =
   (a.start = b.start && a.tail = b.tail && a.bind_file = b.bind_file)

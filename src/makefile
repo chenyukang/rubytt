@@ -1,10 +1,5 @@
 TARGET = main
 
-SOURCES = \
-	node.ml \
-	read_json.ml \
-	main.ml
-
 OCAMLBUILD = corebuild -use-ocamlfind -pkg yojson -pkg alcotest -pkg ounit -pkg str -pkg stringext -cflags -w,-45,-w,-11,-w,-27,-w,-26
 
 default: byte

@@ -21,3 +21,4 @@ setup.data
 setup.ml
 src/base.mldylib
 src/base.mllib
+html

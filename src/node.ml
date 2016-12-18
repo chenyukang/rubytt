@@ -339,7 +339,6 @@ let make_strembed_node value file s e =
   }
 
 let make_starred_node value file s e =
-  Printf.printf "now make_star_node: %s\n" file;
   let node = {
     info = {path = ""; file = file; ss = s; ee = e};
     ty = Starred(value);
@@ -528,14 +527,14 @@ let name_ty_to_str t =
   | Class -> "Class"
   | Global -> "Global"
 
-module NodeHash : sig
-  type t = node_t
-  include Hashable.S with type t := t
-end = struct
-    module T = struct
-      type t = node_t with sexp, compare
-      let hash t = node_t_hash t
-    end
-    include T
-    include Hashable.Make(T)
-end
+(* module NodeHash : sig *)
+(*   type t = node_t *)
+(*   include Hashable.S with type t := t *)
+(* end = struct *)
+(*     module T = struct *)
+(*       type t = node_t with sexp, compare *)
+(*       let hash t = node_t_hash t *)
+(*     end *)
+(*     include T *)
+(*     include Hashable.Make(T) *)
+(* end *)
