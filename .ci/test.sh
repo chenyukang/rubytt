@@ -5,4 +5,4 @@ opam switch 4.02.1
 
 eval `opam config env`
 
-make
+make test
