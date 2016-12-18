@@ -9,22 +9,7 @@ module TypeSetT =
 
 module TypeSet = Set.Make(TypeSetT)
 
-(* module TypeSet : sig *)
-(*   type t = Type.type_t *)
-(*   include Comparable.S with type t := t *)
-(* end = struct *)
-(*   module T = struct *)
-(*     type t = Type.type_t with sexp *)
-(*     (\* use to compare fun_ty *\) *)
-(*     let compare t1 t2 = Type.compare_type_t t1 t2 *)
-(*   end *)
-(*   include T *)
-(*   include Comparable.Make(T) *)
-(* end *)
-
-
 let refs: (Type.binding_ty list) NodeHashtbl.t = NodeHashtbl.create 1;;
-
 let resolved = ref NodeSet.empty;;
 let unresolved = ref NodeSet.empty;;
 let callstack = ref NodeSet.empty;;
