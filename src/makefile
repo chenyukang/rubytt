@@ -15,7 +15,7 @@ byte: prepare_dump
 native: prepare_dump
 	$(OCAMLBUILD) $(TARGET).native; cp $(TARGET).native ../bin;
 
-test:
+test: prepare_dump
 	$(OCAMLBUILD) test.native; ./test.native -e
 
 update:
