@@ -31,8 +31,11 @@ dot:
 	grep -vwE "(rotate)" ./src/_build/proj.docdir/dep.dot > dep.dot;
 	cd src; dot dep.dot -Tpng -o dep.png
 
-install:
+install: native
 	sudo cp ./bin/main.native /usr/local/bin/rubytt
+
+remove:
+	sudo rm /usr/local/bin/rubytt
 
 clean:
 	$(OCAMLBUILD) -clean
