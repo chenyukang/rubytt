@@ -1,4 +1,5 @@
 open Core.Std
+open Def
 open Sys
 open Style
 
@@ -96,11 +97,11 @@ let dump_html input output_dir =
   Linker.find_links !Global.bindings;
   Linker.linker_print();
   Printf.printf "Writing HTML\n%!";
-  Hash_set.iter Global.loaded_files ~f:(
+  StringSet.iter (
     fun f ->
       Printf.printf "generate file: %s\n%!" f;
       let out = Util.change_root_dir_of_path root_dir output_dir f in
       let outfile = Util.change_extension out ".html" in
       let html = markup f in
       Out_channel.write_all outfile ~data: html;
-  )
+    ) !Global.loaded_files

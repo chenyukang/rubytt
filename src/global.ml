@@ -1,103 +1,70 @@
-open Core.Std;;
+open Def;;
 
-module TypeSet : sig
-  type t = Type.type_t
-  include Comparable.S with type t := t
-end = struct
-  module T = struct
-    type t = Type.type_t with sexp
-    (* use to compare fun_ty *)
-    let compare t1 t2 = Type.compare_type_t t1 t2
+module TypeSetT =
+  struct
+    type t = Type.type_t
+    let compare t1 t2 =
+      Type.compare_type_t t1 t2
   end
-  include T
-  include Comparable.Make(T)
-end
 
-module NodeSet : sig
-  type t = Node.node_t
-  include Comparable.S with type t := t
-end = struct
-  module T = struct
-    type t = Node.node_t with sexp
-    let compare t1 t2 = Node.compare_node_t t1 t2
-  end
-  include T
-  include Comparable.Make(T)
-end
+module TypeSet = Set.Make(TypeSetT)
 
-module TypeHash : sig
-  type t = Type.type_t
-  include Hashable.S with type t := t
-end = struct
-    module T = struct
-      type t = Type.type_t with sexp, compare
-      let hash t = Type.type_t_hash t
-    end
-    include T
-    include Hashable.Make(T)
-end
-
-let refs : (Node.node_t, Type.binding_ty list) Hashtbl.t =
-  Hashtbl.create ~hashable:Node.NodeHash.hashable ();;
-
-let resolved = ref NodeSet.Set.empty;;
-let unresolved = ref NodeSet.Set.empty;;
-let callstack = ref NodeSet.Set.empty;;
-let uncalled = ref TypeSet.Set.empty;;
+let refs: (Type.binding_ty list) NodeHashtbl.t = NodeHashtbl.create 1;;
+let resolved = ref NodeSet.empty;;
+let unresolved = ref NodeSet.empty;;
+let callstack = ref NodeSet.empty;;
+let uncalled = ref TypeSet.empty;;
 let bindings:(Type.binding_ty list ref) = ref [];;
-let loaded_files = Hash_set.Poly.create();;
+let loaded_files = ref StringSet.empty;;
 
 let clear() =
   Node.lambda_counter := 0;
   State.state_clear Type.global_table;
-  Hashtbl.clear refs;
-  Hash_set.clear loaded_files;
-  resolved := NodeSet.Set.empty;
-  unresolved := NodeSet.Set.empty;
-  callstack := NodeSet.Set.empty;
-  uncalled := TypeSet.Set.empty
+  NodeHashtbl.clear refs;
+  loaded_files := StringSet.empty;
+  resolved := NodeSet.empty;
+  unresolved := NodeSet.empty;
+  callstack := NodeSet.empty;
+  uncalled := TypeSet.empty
 
 
 let print_size() =
-  Printf.printf "resolve: %d\n%!" (NodeSet.Set.length !resolved);
-  Printf.printf "unresolve: %d\n%!" (NodeSet.Set.length !unresolved);
-  Printf.printf "callstack: %d\n%!" (NodeSet.Set.length !callstack);
-  Printf.printf "uncalled: %d\n%!" (TypeSet.Set.length !uncalled);
-  Printf.printf "loaded_files: %d\n%!" (Hash_set.length loaded_files);
-  Printf.printf "refs: %d\n%!" (Hashtbl.length refs)
+  Printf.printf "resolve: %d\n%!" (NodeSet.cardinal !resolved);
+  Printf.printf "unresolve: %d\n%!" (NodeSet.cardinal !unresolved);
+  Printf.printf "callstack: %d\n%!" (NodeSet.cardinal !callstack);
+  Printf.printf "uncalled: %d\n%!" (TypeSet.cardinal !uncalled);
+  Printf.printf "loaded_files: %d\n%!" (StringSet.cardinal !loaded_files);
+  Printf.printf "refs: %d\n%!" (NodeHashtbl.length refs)
 
 let put_refs node bs =
-  let bind = Hashtbl.find refs node in
-  match bind with
-  | None ->  (
-      ignore(Hashtbl.add_exn refs ~key:node ~data:bs)
-    )
-  | Some(v) -> (
-      List.iter bs ~f:(fun b -> Type.binding_add_ref b node);
-      ignore(Hashtbl.replace refs ~key:node ~data:(v @ bs));
-    )
+  try
+    let v = NodeHashtbl.find refs node in
+    List.iter (fun b -> Type.binding_add_ref b node) bs;
+    NodeHashtbl.replace refs node (v @ bs);
+  with
+  | Not_found -> NodeHashtbl.add refs node bs
 
 let set_resolve node =
-  resolved := NodeSet.Set.add !resolved node;
-  unresolved := NodeSet.Set.remove !unresolved node
+  resolved := NodeSet.add node !resolved;
+  unresolved := NodeSet.remove node !unresolved
 
 let set_unresolve node =
-  unresolved := NodeSet.Set.add !unresolved node
+  unresolved := NodeSet.add node !unresolved
 
 let set_uncalled ty =
-  uncalled := TypeSet.Set.add !uncalled ty
+  uncalled := TypeSet.add ty !uncalled
 
 let set_called ty =
-  uncalled := TypeSet.Set.remove !uncalled ty
+  uncalled := TypeSet.remove ty !uncalled
 
 let push_call call =
-  callstack := NodeSet.Set.add !callstack call
+  callstack := NodeSet.add call !callstack
 
 let contains_call call =
-  NodeSet.Set.mem !callstack call
+  NodeSet.mem call !callstack
 
 let register_bind bind =
   bindings := !bindings @ [bind]
 
 let set_load_file (file: string) =
-  Hash_set.add loaded_files file
+  loaded_files := StringSet.add file !loaded_files

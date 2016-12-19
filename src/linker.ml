@@ -2,6 +2,7 @@ open Core.Std;;
 open Type;;
 open Node;;
 open Style;;
+open Def;;
 
 let file_styles = Hashtbl.Poly.create();;
 let root_path = ref "";;
@@ -79,9 +80,8 @@ let find_links bindings =
       | _ -> ());
       process_def bind;
     );
-  Printf.printf "Global size: %d\n" (Hashtbl.length Global.refs);
-  Hashtbl.iter Global.refs
-    ~f:(fun ~key:node ~data:bindings -> process_ref node bindings)
+  Printf.printf "Global size: %d\n" (NodeHashtbl.length Global.refs);
+  NodeHashtbl.iter (fun node bindings -> process_ref node bindings) Global.refs
 
 let linker_print () =
   Printf.printf "methods: %d\n" !methods_count;

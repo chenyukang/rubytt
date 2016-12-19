@@ -471,7 +471,7 @@ and add_inst_type_from_db class_ty =
   ()
 
 let apply_uncalled () =
-  TypeSet.Set.iter !Global.uncalled ~f:(fun fun_ty ->
+  TypeSet.iter (fun fun_ty ->
       let info = Type.fun_ty_info fun_ty in
       let node_info = func_node_info info.fun_node in
       let id = name_node_id node_info.name in
@@ -480,7 +480,7 @@ let apply_uncalled () =
       (* let ret_ty = transform node_info.body env in *)
       (* ignore(fun_ty_set_ret_ty fun_ty ret_ty)) *)
       let _ = apply_func fun_ty [] unkown_ty unkown_ty info.fun_node in
-      ())
+      ()) !Global.uncalled
 
 let transform_expr node state =
   ignore(transform node state);

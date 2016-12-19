@@ -1,10 +1,5 @@
 TARGET = main
 
-SOURCES = \
-	node.ml \
-	read_json.ml \
-	main.ml
-
 OCAMLBUILD = corebuild -use-ocamlfind -pkg yojson -pkg alcotest -pkg ounit -pkg str -pkg stringext -cflags -w,-45,-w,-11,-w,-27,-w,-26
 
 default: byte
@@ -20,7 +15,7 @@ byte: prepare_dump
 native: prepare_dump
 	$(OCAMLBUILD) $(TARGET).native; cp $(TARGET).native ../bin;
 
-test:
+test: prepare_dump
 	$(OCAMLBUILD) test.native; ./test.native -e
 
 update:
