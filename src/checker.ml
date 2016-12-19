@@ -60,14 +60,13 @@ let line_no_from_file file node =
   done;
   !num
 
-let rec env_info ?check_global:(check_global=false) ?check_inst:(check_inst=false) env =
-  let cur_dir = Sys.getcwd () in
-  let res = ref [] in
-  let add_unused_var v =
-    res := !res @ [
-        ((Stringext.replace_all v.info.file ~pattern:cur_dir ~with_:"."),
-         (line_no_from_file v.info.file v), (name_node_id v))] in
+let node_to_info node =
+  let cur_dir = Sys.getcwd() in
+  ((Stringext.replace_all node.info.file ~pattern:cur_dir ~with_:"."),
+   (line_no_from_file node.info.file node), (name_node_id node))
 
+let rec env_info ?check_global:(check_global=false) ?check_inst:(check_inst=false) env =
+  let res = ref [] in
   let rec env_visited var env =
     let name = name_node_id var in
     (* Printf.printf "check now: %s\n" name; *)
@@ -86,15 +85,38 @@ let rec env_info ?check_global:(check_global=false) ?check_inst:(check_inst=fals
             | Name(_, Instance) -> check_inst && (not (env_visited v env))
             | Name(_, Local) -> not (env_visited v env)
             | _ -> false) then
-          add_unused_var v
-      );
+          (* add unvisited variable *)
+          res := !res @ [node_to_info v]
+       );
 
   List.iter env.children
             ~f:(fun e -> res := !res @ (env_info ~check_global:check_global ~check_inst:check_inst e));
   !res
 
-let check_result ?check_global:(check_global=false) ?check_inst:(check_inst=false) () =
-  let res = env_info !root_env ~check_global:check_global ~check_inst:check_inst in
+
+let rec env_defname_info env =
+  let res = ref [] in
+  let rec env_find_def name env =
+    let found = ref false in
+    Hashtbl.iter env.variables
+                 ~f:(fun ~key:v ~data:_ ->
+                     if (match v.ty with
+                         | Name(s, _) -> (name_node_id v) = name
+                         | _ -> false ) then
+                       found := true);
+    if !found = false then
+      match env.parent with
+      | Some(parent) -> env_find_def name parent
+      | _ -> false
+    else
+      true in
+  Hashtbl.iter env.visited ~f:(fun ~key:name ~data:_ ->
+                            if env_find_def name env = false then
+                              res := !res @ [name]);
+  List.iter env.children ~f:(fun e -> res := !res @ (env_defname_info e));
+  !res
+
+let sort_result res =
   if List.length res = 0 then
     "\nNo unsed variable issue found, ^_^\n"
   else
@@ -108,8 +130,12 @@ let check_result ?check_global:(check_global=false) ?check_inst:(check_inst=fals
     List.fold infos  ~init:"" ~f:(fun acc (f, l, v) ->
         acc ^ "\n" ^ (Printf.sprintf "unvisited variable %s(%d) : %s" f l v))
 
-let print_env_info env =
-  Printf.printf "%s\n" (check_result())
+let env_unused check_global check_inst =
+  let unused_result = env_info
+                        !root_env
+                        ~check_global:check_global
+                        ~check_inst:check_inst in
+  sort_result unused_result
 
 let check_unused asts =
   let rec iter ast env =
@@ -170,4 +196,5 @@ let check_unused asts =
     | Kwd(_, v) | Return(v) | Starred(v) | Yield(v) -> _iter v
     | _ -> () in
   List.iter asts ~f:(fun ast -> iter ast !root_env);
-  print_env_info !root_env
+  let res = env_unused false false in
+  Printf.printf "%s\n" res
