@@ -10,11 +10,11 @@ Rubytt is a static Ruby code analyzer, optimized especially for Rails app.
 1. The basic ideas comes from [rubysonar](https://github.com/yinwang0/rubysonar), but with more help from analysis of db/schema.rb,
 we may get more accurate types for the code annotation or bug finding.
 
-2. I also add some visualizations for the class/db/model.
+2. Do some visualizations for the class/db/model.
 
 3. Check the unused variable, this may reported out some bugs, [ruby-lint](https://github.com/YorickPeterse/ruby-lint) seems can report out these errors, but it's too slow.
 
-4. Check the undefined error [TODO]
+4. Check the undefined error [PARTLY FINISHED]
 
 5. Check the type mismatch error  [TODO]
 
@@ -29,7 +29,7 @@ For Users
 
 rubytt will installed at `/usr/local/bin/rubytt`
 
-### Linux
+#### Linux
 
 ```
 cd rubytt/
@@ -37,7 +37,7 @@ sudo apt-get install --force-yes ocaml ocaml-native-compilers camlp4-extra opam
 opam pin add rubytt .
 ```
 
-### Mac
+#### Mac
 ```
 cd rubytt/
 brew install opam
