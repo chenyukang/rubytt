@@ -52,7 +52,7 @@ gem install parallel ruby-progressbar
 // Linux:
 sudo apt-get install --force-yes ocaml ocaml-native-compilers camlp4-extra opam
 
-// mac:
+// Mac:
 brew install opam
 
 opam init -y
