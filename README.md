@@ -27,10 +27,10 @@ gem install parallel ruby-progressbar
 
 brew install opam
 opam init -y
-eval `opam config env`
 opam update
 opam switch 4.02.1
 opam install core yojson alcotest ounit stringext -y
+eval `opam config env`
 
 brew install graphviz ## ignore it if installed
 
