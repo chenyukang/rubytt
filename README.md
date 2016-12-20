@@ -35,6 +35,7 @@ rubytt will installed at `/usr/local/bin/rubytt`
 cd rubytt/
 sudo apt-get install --force-yes ocaml ocaml-native-compilers camlp4-extra opam
 opam pin add rubytt .
+opam install rubytt
 ```
 
 #### Mac
@@ -42,8 +43,10 @@ opam pin add rubytt .
 cd rubytt/
 brew install opam
 opam pin add rubytt .
+opam install rubytt
 ```
 
+---------------------------------------
 ## Compile it:
 
 ```shell
