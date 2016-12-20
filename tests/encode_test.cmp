@@ -14,4 +14,4 @@ bind: demo ty:  Fn [] => Int_ty
 ----------------------------------------
 
 
-unvisited variable ./tests/encode_test.rb(3) : a
+unused variable ./tests/encode_test.rb(3) : a

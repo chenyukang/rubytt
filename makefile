@@ -23,7 +23,7 @@ test:
 
 update:
 	$(OCAMLBUILD) test.native;
-	./bin/test.native -u
+	./src/test.native -u
 
 dot:
 	$(OCAMLBUILD) proj.docdir/dep.dot;
@@ -32,7 +32,7 @@ dot:
 	cd src; dot dep.dot -Tpng -o dep.png
 
 install: native
-if [ -a main.native ]; then sudo cp main.native $(INSTALL_TARGET); fi;
+	if [ -a main.native ]; then sudo cp main.native $(INSTALL_TARGET); fi;
 	if [ -a ./bin/main.native ]; then sudo cp ./bin/main.native $(INSTALL_TARGET); fi;
 
 remove:

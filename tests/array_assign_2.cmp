@@ -19,6 +19,6 @@ bind: b ty: Int_ty
 ----------------------------------------
 
 
-unvisited variable ./tests/array_assign_2.rb(1) : a
-unvisited variable ./tests/array_assign_2.rb(1) : b
-unvisited variable ./tests/array_assign_2.rb(2) : a
+unused variable ./tests/array_assign_2.rb(1) : a
+unused variable ./tests/array_assign_2.rb(1) : b
+unused variable ./tests/array_assign_2.rb(2) : a

@@ -57,4 +57,4 @@ bind: Demo ty: Class_ty: Demo
 ----------------------------------------
 
 
-unvisited variable ./tests/bug3.rb(16) : res
+unused variable ./tests/bug3.rb(16) : res

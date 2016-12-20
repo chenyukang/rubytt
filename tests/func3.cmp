@@ -36,4 +36,4 @@ bind: add ty:  Fn [] => Unkown_ty
 ----------------------------------------
 
 
-unvisited variable ./tests/func3.rb(1) : d
+unused variable ./tests/func3.rb(1) : d

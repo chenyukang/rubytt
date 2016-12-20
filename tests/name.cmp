@@ -23,6 +23,6 @@ bind: x ty: Bool_ty
 ----------------------------------------
 
 
-unvisited variable ./tests/name.rb(2) : b
-unvisited variable ./tests/name.rb(3) : b
-unvisited variable ./tests/name.rb(4) : x
+unused variable ./tests/name.rb(2) : b
+unused variable ./tests/name.rb(3) : b
+unused variable ./tests/name.rb(4) : x

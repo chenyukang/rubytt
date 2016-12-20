@@ -24,4 +24,4 @@ bind: c ty: Int_ty
 ----------------------------------------
 
 
-No unsed variable issue found, ^_^
+No unused variable issue found, ^_^

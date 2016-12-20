@@ -4,7 +4,7 @@ open Node
 type env = {
   env_ty : string;
   mutable parent: env option;
-  mutable visited: (string, bool) Hashtbl.t;
+  mutable visited: (string, Node.node_t) Hashtbl.t;
   mutable variables: (Node.node_t, bool) Hashtbl.t;
   mutable children: env list;
 }
@@ -43,9 +43,6 @@ let add_variable env var =
   )
   else
     ignore(Hashtbl.add env.variables ~key:var ~data:true)
-
-let visited_variable env name =
-  ignore(Hashtbl.add env.visited ~key:name ~data:true)
 
 let line_no_from_file file node =
   let ss = node.info.ss in
@@ -90,7 +87,8 @@ let rec env_info ?check_global:(check_global=false) ?check_inst:(check_inst=fals
        );
 
   List.iter env.children
-            ~f:(fun e -> res := !res @ (env_info ~check_global:check_global ~check_inst:check_inst e));
+            ~f:(fun e ->
+                res := !res @ (env_info ~check_global:check_global ~check_inst:check_inst e));
   !res
 
 
@@ -110,15 +108,15 @@ let rec env_defname_info env =
       | _ -> false
     else
       true in
-  Hashtbl.iter env.visited ~f:(fun ~key:name ~data:_ ->
-                            if env_find_def name env = false then
-                              res := !res @ [name]);
+  Hashtbl.iter env.visited ~f:(fun ~key:name ~data:v ->
+                               if env_find_def name env = false then
+                                 res := !res @ [node_to_info v]);
   List.iter env.children ~f:(fun e -> res := !res @ (env_defname_info e));
   !res
 
-let sort_result res =
+let sort_result res msg =
   if List.length res = 0 then
-    "\nNo unsed variable issue found, ^_^\n"
+    Printf.sprintf "\nNo %s issue found, ^_^\n" msg
   else
     let infos = List.sort res ~cmp:(fun (f1, l1, v1) (f2, l2, v2) ->
         let r = String.compare f1 f2 in
@@ -128,16 +126,20 @@ let sort_result res =
       )
     in
     List.fold infos  ~init:"" ~f:(fun acc (f, l, v) ->
-        acc ^ "\n" ^ (Printf.sprintf "unvisited variable %s(%d) : %s" f l v))
+        acc ^ "\n" ^ (Printf.sprintf "%s %s(%d) : %s" msg f l v))
 
 let env_unused check_global check_inst =
   let unused_result = env_info
                         !root_env
                         ~check_global:check_global
                         ~check_inst:check_inst in
-  sort_result unused_result
+  sort_result unused_result "unused variable"
 
-let check_unused asts =
+let env_undef () =
+  let undef_result = env_defname_info !root_env in
+  sort_result undef_result "undef variable"
+              
+let traverse asts =
   let rec iter ast env =
     let _iter ast = iter ast env in
     (* let str = Printer.node_to_str ast 0 in *)
@@ -157,7 +159,7 @@ let check_unused asts =
     | Name(id, _) -> (
         let name = name_node_id ast in
         (* Printf.printf "lookup: %s\n" name; *)
-        visited_variable env name
+        ignore(Hashtbl.add env.visited ~key:name ~data:ast)
       )
     | Assign(target, value) -> (
       let _ = match target.ty, value.ty with
@@ -197,4 +199,8 @@ let check_unused asts =
     | _ -> () in
   List.iter asts ~f:(fun ast -> iter ast !root_env);
   let res = env_unused false false in
+  Printf.printf "%s\n\n" res;
+  let res = env_undef() in
   Printf.printf "%s\n" res
+
+                

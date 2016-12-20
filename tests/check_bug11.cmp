@@ -35,4 +35,4 @@ bind: Demo ty: Class_ty: Demo
 ----------------------------------------
 
 
-unvisited variable ./tests/check_bug11.rb(4) : @a
+unused variable ./tests/check_bug11.rb(4) : @a

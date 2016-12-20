@@ -18,5 +18,5 @@ bind: demo ty:  Fn [Int_ty Str_ty Int_ty] => Unkown_ty
 ----------------------------------------
 
 
-unvisited variable ./tests/default_arg.rb(2) : b
-unvisited variable ./tests/default_arg.rb(2) : c
+unused variable ./tests/default_arg.rb(2) : b
+unused variable ./tests/default_arg.rb(2) : c

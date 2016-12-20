@@ -11,4 +11,4 @@ bind: a ty: Float_ty
 ----------------------------------------
 
 
-unvisited variable ./tests/type_bug.rb(3) : a
+unused variable ./tests/type_bug.rb(3) : a

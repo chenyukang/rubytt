@@ -25,4 +25,4 @@ bind: Abc ty: Int_ty
 ----------------------------------------
 
 
-unvisited variable ./tests/check_bug6.rb(3) : a
+unused variable ./tests/check_bug6.rb(3) : a

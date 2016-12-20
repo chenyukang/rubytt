@@ -33,4 +33,4 @@ bind: my_puts ty:  Fn [Int_ty] => Unkown_ty
 ----------------------------------------
 
 
-No unsed variable issue found, ^_^
+No unused variable issue found, ^_^

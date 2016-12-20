@@ -25,4 +25,4 @@ bind: ActiveRecord ty: Module_ty: ActiveRecord
 ----------------------------------------
 
 
-No unsed variable issue found, ^_^
+No unused variable issue found, ^_^

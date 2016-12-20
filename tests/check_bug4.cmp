@@ -37,4 +37,4 @@ bind: lambda%1 ty:  Fn [] => Unkown_ty
 ----------------------------------------
 
 
-unvisited variable ./tests/check_bug4.rb(4) : x
+unused variable ./tests/check_bug4.rb(4) : x

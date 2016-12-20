@@ -19,4 +19,4 @@ bind: print ty:  Fn [Int_ty Int_ty] => Unkown_ty
 ----------------------------------------
 
 
-unvisited variable ./tests/func.rb(1) : a
+unused variable ./tests/func.rb(1) : a

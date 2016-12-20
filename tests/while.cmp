@@ -30,4 +30,4 @@ bind: index ty: Int_ty
 ----------------------------------------
 
 
-unvisited variable ./tests/while.rb(1) : a
+unused variable ./tests/while.rb(1) : a

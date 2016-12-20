@@ -126,4 +126,4 @@ bind: Demo ty: Class_ty: Demo
 ----------------------------------------
 
 
-unvisited variable ./tests/class_func.rb(4) : @a
+unused variable ./tests/class_func.rb(4) : @a

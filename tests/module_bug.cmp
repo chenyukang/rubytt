@@ -60,6 +60,6 @@ bind: B ty: Module_ty: B
 ----------------------------------------
 
 
-unvisited variable ./tests/module_bug.rb(4) : C
-unvisited variable ./tests/module_bug.rb(11) : a
-unvisited variable ./tests/module_bug.rb(18) : a
+unused variable ./tests/module_bug.rb(4) : C
+unused variable ./tests/module_bug.rb(11) : a
+unused variable ./tests/module_bug.rb(18) : a

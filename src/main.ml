@@ -83,7 +83,7 @@ let load_checker input =
         | `Yes -> load_dir ~need_trans:false input "/tmp/rubytt/checker"
         | _ -> failwith (Printf.sprintf "Cound not found: %s" input)
       ) in
-  Checker.check_unused asts
+  Checker.traverse asts
 
 let command =
   Command.basic

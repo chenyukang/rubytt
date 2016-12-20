@@ -51,6 +51,6 @@ bind: Demo ty: Class_ty: Demo
 ----------------------------------------
 
 
-unvisited variable ./tests/attr.rb(2) : b
-unvisited variable ./tests/attr.rb(5) : @attr
-unvisited variable ./tests/attr.rb(8) : b
+unused variable ./tests/attr.rb(2) : b
+unused variable ./tests/attr.rb(5) : @attr
+unused variable ./tests/attr.rb(8) : b
