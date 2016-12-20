@@ -1,5 +1,5 @@
 TARGET = main
-
+INSTALL_TARGET = /usr/local/bin/rubytt
 SRC=src
 
 OCAMLBUILD = cd $(SRC); corebuild -use-ocamlfind -pkg yojson,alcotest,str,stringext -cflags -w,-45,-w,-11,-w,-27,-w,-26
@@ -15,7 +15,7 @@ byte: prepare_dump
 	$(OCAMLBUILD) $(TARGET).byte; cp $(TARGET).byte ../bin;
 
 native: prepare_dump
-	$(OCAMLBUILD) $(TARGET).native; cp $(TARGET).native ../bin;
+	$(OCAMLBUILD) $(TARGET).native; cp $(TARGET).native ../bin; cd ../;
 
 test:
 	$(OCAMLBUILD) test.native;
@@ -32,7 +32,11 @@ dot:
 	cd src; dot dep.dot -Tpng -o dep.png
 
 install: native
-	sudo cp ./bin/main.native /usr/local/bin/rubytt
+if [ -a main.native ]; then sudo cp main.native $(INSTALL_TARGET); fi;
+	if [ -a ./bin/main.native ]; then sudo cp ./bin/main.native $(INSTALL_TARGET); fi;
+
+remove:
+	if [ -a $(INSTALL_TARGET) ]; then sudo rm -rf $(INSTALL_TARGET); fi;
 
 clean:
 	$(OCAMLBUILD) -clean
