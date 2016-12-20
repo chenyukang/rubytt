@@ -153,7 +153,7 @@ let analysis_db_ast ast =
     | Call(_, args, _, block_arg) -> (
         let name = List.nth_exn args 0 in
         let columns = table_columns block_arg in
-        Hashtbl.add_exn tables ~key:(string_of_str name) ~data:columns;
+        ignore(Hashtbl.add tables ~key:(string_of_str name) ~data:columns);
       )
     | _ -> failwith "invalid node in build_table"
   and
