@@ -62,7 +62,7 @@ let node_to_info node =
   ((Stringext.replace_all node.info.file ~pattern:cur_dir ~with_:"."),
    (line_no_from_file node.info.file node), (name_node_id node))
 
-let rec env_info ?check_global:(check_global=false) ?check_inst:(check_inst=false) env =
+let rec env_unused_info ?check_global:(check_global=false) ?check_inst:(check_inst=false) env =
   let res = ref [] in
   let rec env_visited var env =
     let name = name_node_id var in
@@ -88,11 +88,18 @@ let rec env_info ?check_global:(check_global=false) ?check_inst:(check_inst=fals
 
   List.iter env.children
             ~f:(fun e ->
-                res := !res @ (env_info ~check_global:check_global ~check_inst:check_inst e));
+                res := !res @ (env_unused_info ~check_global:check_global ~check_inst:check_inst e));
   !res
 
 
 let rec env_defname_info env =
+  let ignore_name name =
+    let pre_defs = ["self"; "false"; "true"; "nil"; "raise"; "require"; "pp"; "puts"; "print"] in
+    name = "" || (String.nget name 0 = '_') || (String.nget name 0 = '@') ||
+      (Char.is_uppercase (String.nget name 0)) ||
+        (match List.find ~f:(fun x -> x = name) pre_defs with
+         | Some(_) -> true | _ -> false) in
+  
   let res = ref [] in
   let rec env_find_def name env =
     let found = ref false in
@@ -100,16 +107,16 @@ let rec env_defname_info env =
                  ~f:(fun ~key:v ~data:_ ->
                      if (match v.ty with
                          | Name(s, _) -> (name_node_id v) = name
+                         | Func(_) -> (Node.func_node_name v) = name
                          | _ -> false ) then
                        found := true);
     if !found = false then
-      match env.parent with
-      | Some(parent) -> env_find_def name parent
-      | _ -> false
-    else
-      true in
+        match env.parent with
+        | Some(parent) -> env_find_def name parent
+        | _ -> false
+    else true in
   Hashtbl.iter env.visited ~f:(fun ~key:name ~data:v ->
-                               if env_find_def name env = false then
+                               if (ignore_name name = false) && (env_find_def name env = false) then
                                  res := !res @ [node_to_info v]);
   List.iter env.children ~f:(fun e -> res := !res @ (env_defname_info e));
   !res
@@ -129,7 +136,7 @@ let sort_result res msg =
         acc ^ "\n" ^ (Printf.sprintf "%s %s(%d) : %s" msg f l v))
 
 let env_unused check_global check_inst =
-  let unused_result = env_info
+  let unused_result = env_unused_info
                         !root_env
                         ~check_global:check_global
                         ~check_inst:check_inst in
@@ -154,6 +161,9 @@ let traverse asts =
           | _ -> ()
         )
       )
+      | Func(info) -> (
+        add_variable env v
+      )
       | _ -> () in
     match ast.ty with
     | Name(id, _) -> (
@@ -164,14 +174,19 @@ let traverse asts =
     | Assign(target, value) -> (
       let _ = match target.ty, value.ty with
         | Name(_, _), _ -> try_add_variable env target
-        | Array(ls), Array(_) -> (
-            List.iter ls ~f:(fun e -> try_add_variable env e)
+        | Array(ls), _ -> (
+          List.iter ls ~f:(fun e -> try_add_variable env e)
           )
-        | _, _ -> (_iter target) in _iter value
+        | _, _ -> (_iter target) in
+      _iter value
     )
     | Func(info) -> (
         let new_env = if (is_lambda ast) then env
                       else (new_child ~ty:"func" env) in
+        (* set func name *)
+        if not (is_lambda ast) then (
+          try_add_variable env ast
+        );
         List.iter info.args ~f:(fun arg ->
                                 match arg.ty with
                                 | Name(_, _) -> try_add_variable new_env arg

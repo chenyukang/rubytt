@@ -3546,4 +3546,9 @@ bind: banner ty:  Fn [] => Unkown_ty
 ----------------------------------------
 
 
+unused result:
 No unused variable issue found, ^_^
+
+
+undef result:
+undef variable ./tests/dump.rb(1) : #dyna_symbol

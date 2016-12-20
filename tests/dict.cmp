@@ -26,4 +26,8 @@ bind: a ty: Dict_ty({(Int_ty)|(Str_ty)|(Str_ty)} {(Int_ty)|(Dict_ty(Str_ty Str_t
 ----------------------------------------
 
 
+unused result:
 unused variable ./tests/dict.rb(1) : a
+
+undef result:
+No undef variable issue found, ^_^

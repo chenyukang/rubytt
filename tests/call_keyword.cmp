@@ -33,4 +33,9 @@ bind: my_puts ty:  Fn [Int_ty] => Unkown_ty
 ----------------------------------------
 
 
+unused result:
 No unused variable issue found, ^_^
+
+
+undef result:
+undef variable ./tests/call_keyword.rb(2) : c

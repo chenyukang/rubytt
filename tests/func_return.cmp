@@ -62,6 +62,10 @@ bind: x ty: Int_ty
 ----------------------------------------
 
 
+unused result:
 unused variable ./tests/func_return.rb(19) : x
 unused variable ./tests/func_return.rb(20) : y
 unused variable ./tests/func_return.rb(22) : a
+
+undef result:
+No undef variable issue found, ^_^

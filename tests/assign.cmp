@@ -43,4 +43,8 @@ bind: arr ty: [Int_ty]
 ----------------------------------------
 
 
+unused result:
 unused variable ./tests/assign.rb(1) : a
+
+undef result:
+No undef variable issue found, ^_^

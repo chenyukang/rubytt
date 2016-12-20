@@ -41,4 +41,8 @@ bind: AstSimplifier ty: Class_ty: AstSimplifier
 ----------------------------------------
 
 
+unused result:
 unused variable ./tests/func_bug.rb(4) : filename
+
+undef result:
+undef variable ./tests/func_bug.rb(10) : lines

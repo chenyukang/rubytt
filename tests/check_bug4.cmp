@@ -37,4 +37,8 @@ bind: lambda%1 ty:  Fn [] => Unkown_ty
 ----------------------------------------
 
 
+unused result:
 unused variable ./tests/check_bug4.rb(4) : x
+
+undef result:
+No undef variable issue found, ^_^

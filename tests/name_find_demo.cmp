@@ -42,5 +42,9 @@ bind: Demo ty: Class_ty: Demo
 ----------------------------------------
 
 
+unused result:
 unused variable ./tests/name_find_demo.rb(3) : XX
 unused variable ./tests/name_find_demo.rb(7) : b
+
+undef result:
+No undef variable issue found, ^_^

@@ -36,4 +36,9 @@ bind: demo ty:  Fn [Int_ty] => Unkown_ty
 ----------------------------------------
 
 
+unused result:
 No unused variable issue found, ^_^
+
+
+undef result:
+No undef variable issue found, ^_^

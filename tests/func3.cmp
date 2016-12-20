@@ -36,4 +36,8 @@ bind: add ty:  Fn [] => Unkown_ty
 ----------------------------------------
 
 
+unused result:
 unused variable ./tests/func3.rb(1) : d
+
+undef result:
+No undef variable issue found, ^_^

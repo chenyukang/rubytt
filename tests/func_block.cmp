@@ -35,4 +35,9 @@ bind: contrived ty:  Fn [] => [Int_ty]
 ----------------------------------------
 
 
+unused result:
 No unused variable issue found, ^_^
+
+
+undef result:
+undef variable ./tests/func_block.rb(3) : f

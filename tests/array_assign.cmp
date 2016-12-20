@@ -41,5 +41,9 @@ bind: func ty:  Fn [] => Unkown_ty
 ----------------------------------------
 
 
+unused result:
 unused variable ./tests/array_assign.rb(8) : a
 unused variable ./tests/array_assign.rb(9) : a
+
+undef result:
+undef variable ./tests/array_assign.rb(3) : b

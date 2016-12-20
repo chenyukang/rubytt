@@ -22,4 +22,8 @@ bind: demo ty:  Fn [] => Int_ty
 ----------------------------------------
 
 
+unused result:
 unused variable ./tests/check_bug2.rb(4) : a
+
+undef result:
+No undef variable issue found, ^_^

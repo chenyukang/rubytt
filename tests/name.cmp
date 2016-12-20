@@ -23,6 +23,10 @@ bind: x ty: Bool_ty
 ----------------------------------------
 
 
+unused result:
 unused variable ./tests/name.rb(2) : b
 unused variable ./tests/name.rb(3) : b
 unused variable ./tests/name.rb(4) : x
+
+undef result:
+No undef variable issue found, ^_^

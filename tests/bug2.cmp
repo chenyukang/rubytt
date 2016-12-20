@@ -72,4 +72,9 @@ bind: String ty: Class_ty: String
 ----------------------------------------
 
 
+unused result:
 No unused variable issue found, ^_^
+
+
+undef result:
+No undef variable issue found, ^_^
