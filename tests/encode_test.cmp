@@ -14,4 +14,8 @@ bind: demo ty:  Fn [] => Int_ty
 ----------------------------------------
 
 
-unvisited variable ./tests/encode_test.rb(3) : a
+unused result:
+unused variable ./tests/encode_test.rb(3) : a
+
+undef result:
+No undef variable issue found, ^_^

@@ -32,4 +32,8 @@ bind: div ty: Int_ty
 ----------------------------------------
 
 
-unvisited variable ./tests/begin.rb(3) : div
+unused result:
+unused variable ./tests/begin.rb(3) : div
+
+undef result:
+No undef variable issue found, ^_^

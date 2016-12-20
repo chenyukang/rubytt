@@ -32,6 +32,10 @@ bind: sym ty: Symbol_ty
 ----------------------------------------
 
 
-unvisited variable ./tests/type_bug4.rb(2) : s
-unvisited variable ./tests/type_bug4.rb(3) : i
-unvisited variable ./tests/type_bug4.rb(4) : sym
+unused result:
+unused variable ./tests/type_bug4.rb(2) : s
+unused variable ./tests/type_bug4.rb(3) : i
+unused variable ./tests/type_bug4.rb(4) : sym
+
+undef result:
+No undef variable issue found, ^_^

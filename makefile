@@ -23,7 +23,7 @@ test:
 
 update:
 	$(OCAMLBUILD) test.native;
-	./bin/test.native -u
+	./src/test.native -u
 
 dot:
 	$(OCAMLBUILD) proj.docdir/dep.dot;

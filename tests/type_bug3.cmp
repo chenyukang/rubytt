@@ -87,7 +87,11 @@ bind: x ty: Bool_ty
 ----------------------------------------
 
 
-unvisited variable ./tests/type_bug3.rb(5) : x
-unvisited variable ./tests/type_bug3.rb(6) : y
-unvisited variable ./tests/type_bug3.rb(7) : y2
-unvisited variable ./tests/type_bug3.rb(8) : z
+unused result:
+unused variable ./tests/type_bug3.rb(5) : x
+unused variable ./tests/type_bug3.rb(6) : y
+unused variable ./tests/type_bug3.rb(7) : y2
+unused variable ./tests/type_bug3.rb(8) : z
+
+undef result:
+No undef variable issue found, ^_^

@@ -16,4 +16,8 @@ bind: Test ty: Module_ty: Test
 ----------------------------------------
 
 
-unvisited variable ./tests/module.rb(2) : a
+unused result:
+unused variable ./tests/module.rb(2) : a
+
+undef result:
+No undef variable issue found, ^_^

@@ -25,4 +25,8 @@ bind: Abc ty: Int_ty
 ----------------------------------------
 
 
-unvisited variable ./tests/check_bug6.rb(3) : a
+unused result:
+unused variable ./tests/check_bug6.rb(3) : a
+
+undef result:
+No undef variable issue found, ^_^

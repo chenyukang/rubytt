@@ -31,4 +31,9 @@ bind: eat ty:  Fn [] => Str_ty
 ----------------------------------------
 
 
-No unsed variable issue found, ^_^
+unused result:
+No unused variable issue found, ^_^
+
+
+undef result:
+undef variable ./tests/func2.rb(2) : block_given?

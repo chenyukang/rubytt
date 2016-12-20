@@ -41,4 +41,9 @@ bind: b ty: Dict_ty(Unkown_ty Unkown_ty)
 ----------------------------------------
 
 
-No unsed variable issue found, ^_^
+unused result:
+No unused variable issue found, ^_^
+
+
+undef result:
+No undef variable issue found, ^_^

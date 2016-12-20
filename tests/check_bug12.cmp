@@ -35,4 +35,8 @@ bind: Demo ty: Class_ty: Demo
 ----------------------------------------
 
 
-unvisited variable ./tests/check_bug12.rb(4) : @a
+unused result:
+unused variable ./tests/check_bug12.rb(4) : @a
+
+undef result:
+No undef variable issue found, ^_^

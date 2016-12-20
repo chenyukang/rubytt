@@ -24,5 +24,9 @@ bind: demo_func ty:  Fn [] => Nil_ty
 ----------------------------------------
 
 
-unvisited variable ./tests/check_bug10.rb(4) : a
-unvisited variable ./tests/check_bug10.rb(4) : b
+unused result:
+unused variable ./tests/check_bug10.rb(4) : a
+unused variable ./tests/check_bug10.rb(4) : b
+
+undef result:
+No undef variable issue found, ^_^

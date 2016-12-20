@@ -32,4 +32,8 @@ bind: lambda%1 ty:  Fn [] => Dict_ty(Unkown_ty Unkown_ty)
 ----------------------------------------
 
 
-unvisited variable ./tests/check_bug8.rb(5) : se
+unused result:
+unused variable ./tests/check_bug8.rb(5) : se
+
+undef result:
+No undef variable issue found, ^_^

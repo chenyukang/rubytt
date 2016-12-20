@@ -34,5 +34,9 @@ bind: AstSimplifier ty: Class_ty: AstSimplifier
 ----------------------------------------
 
 
-unvisited variable ./tests/block.rb(3) : filename
-unvisited variable ./tests/block.rb(8) : line
+unused result:
+unused variable ./tests/block.rb(3) : filename
+unused variable ./tests/block.rb(8) : line
+
+undef result:
+undef variable ./tests/block.rb(8) : lines

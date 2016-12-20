@@ -34,4 +34,9 @@ bind: C ty: Class_ty: C
 ----------------------------------------
 
 
-No unsed variable issue found, ^_^
+unused result:
+No unused variable issue found, ^_^
+
+
+undef result:
+No undef variable issue found, ^_^

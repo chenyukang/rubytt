@@ -76,7 +76,11 @@ bind: lambda%2 ty:  Fn [] => Nil_ty
 ----------------------------------------
 
 
-unvisited variable ./tests/check_bug13.rb(10) : a
-unvisited variable ./tests/check_bug13.rb(10) : b
-unvisited variable ./tests/check_bug13.rb(19) : a
-unvisited variable ./tests/check_bug13.rb(19) : b
+unused result:
+unused variable ./tests/check_bug13.rb(10) : a
+unused variable ./tests/check_bug13.rb(10) : b
+unused variable ./tests/check_bug13.rb(19) : a
+unused variable ./tests/check_bug13.rb(19) : b
+
+undef result:
+No undef variable issue found, ^_^
