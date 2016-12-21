@@ -1,1 +1,1 @@
-bin: ["bin/main.native" {"rubytt_cli"}]
+bin: ["bin/main.native" {"rubytt"}]
