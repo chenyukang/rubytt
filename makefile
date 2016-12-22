@@ -9,10 +9,10 @@ default: byte
 all: byte native test dot
 
 prepare_dump:
-	$(OCAMLBUILD) gen_dump.byte; ./gen_dump.byte;
+	$(OCAMLBUILD) gen_dump.byte; ./gen_dump.byte; cd ../;
 
 byte: prepare_dump
-	$(OCAMLBUILD) $(TARGET).byte; cp $(TARGET).byte ../bin;
+	$(OCAMLBUILD) $(TARGET).byte; cp $(TARGET).byte ../bin; cd ../;
 
 native: prepare_dump
 	$(OCAMLBUILD) $(TARGET).native; cp $(TARGET).native ../bin; cd ../;
@@ -32,11 +32,13 @@ dot:
 	cd src; dot dep.dot -Tpng -o dep.png
 
 install: native
-	if [ -a main.native ]; then sudo cp main.native $(INSTALL_TARGET); fi;
 	if [ -a ./bin/main.native ]; then sudo cp ./bin/main.native $(INSTALL_TARGET); fi;
 
 remove:
 	if [ -a $(INSTALL_TARGET) ]; then sudo rm -rf $(INSTALL_TARGET); fi;
+
+opam_install: native
+	if [ -a ./bin/main.native ]; then echo "main.native is compiled"; fi;
 
 clean:
 	$(OCAMLBUILD) -clean

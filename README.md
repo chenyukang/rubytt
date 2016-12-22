@@ -27,27 +27,38 @@ For Users
 ---------
 ## Install
 
-rubytt will installed at `/usr/local/bin/rubytt`
+rubytt can be installed using OCaml package manager:
 
 #### Linux
 
 ```
-cd rubytt/
+gem install parallel ruby-progressbar
 sudo apt-get install --force-yes ocaml ocaml-native-compilers camlp4-extra opam
-opam pin add rubytt .
+eval `opam config env`
 opam install rubytt
 ```
 
 #### Mac
 ```
-cd rubytt/
+gem install parallel ruby-progressbar
 brew install opam
-opam pin add rubytt .
+eval `opam config env`
 opam install rubytt
 ```
 
+## Usage
+
+```shell
+rubytt -h   ## see the help messages
+rubytt -s source_dir -t type -o res       ## analysis type for source_dir, dump html in res directory
+rubytt -s source_dir -t class -o res.png  ## analysis class for source_dir, dump out result to res.png
+rubytt -s source_dir -t db -o res.png     ## analysis db for source_dir, dump out result to res.png
+rubytt -s source_dir -t model -o res.png  ## analysis model for source_dir, dump out result to res.png
+rubytt -s source_dir -t check             ## try find unused or undef variable bugs
+```
+
 ---------------------------------------
-## Compile it:
+## How to compile:
 
 ```shell
 gem install parallel ruby-progressbar
@@ -67,15 +78,4 @@ eval `opam config env`
 brew install graphviz ## ignore it if installed
 
 make  ## or use: make native
-```
-
-## Usage
-
-```shell
-rubytt -h   ## see the help messages
-rubytt -s source_dir -t type -o res       ## analysis type for source_dir, dump html in res directory
-rubytt -s source_dir -t class -o res.png  ## analysis class for source_dir, dump out result to res.png
-rubytt -s source_dir -t db -o res.png     ## analysis db for source_dir, dump out result to res.png
-rubytt -s source_dir -t model -o res.png  ## analysis model for source_dir, dump out result to res.png
-rubytt -s source_dir -t check             ## try find unused or undef variable bugs
 ```
