@@ -37,6 +37,9 @@ install: native
 remove:
 	if [ -a $(INSTALL_TARGET) ]; then sudo rm -rf $(INSTALL_TARGET); fi;
 
+opam_install: native
+	if [ -a ./bin/main.native ]; then echo "main.native is compiled"; fi;
+
 clean:
 	$(OCAMLBUILD) -clean
 	rm -rf _tests
