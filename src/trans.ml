@@ -457,9 +457,7 @@ and add_inst_type_from_db class_ty =
   let columns = match Hashtbl.find Db.tables db_name with
     | Some(cols) -> cols
     | _ -> [] in
-  List.iter columns ~f:(fun col ->
-                        let name = col.(0) in
-                        let ty_str = col.(1) in
+  List.iter columns ~f:(fun (name, ty_str, _) ->
                         (* Printf.printf "name: %s type: %s\n" name ty_str; *)
                         let ty = match ty_str with
                           | "string" | "text"  -> new_str_type()
