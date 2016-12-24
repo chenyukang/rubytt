@@ -12,6 +12,12 @@ let match_db_for_model model_name =
   | Some(db) -> db
   | _ -> Util.class_to_table_name model_name
 
+let class_to_model_columns class_name =
+  let db_name = match_db_for_model class_name in
+  match Hashtbl.find tables db_name with
+  | Some(cols) -> cols
+  | _ -> []
+           
 let analysis_model_ast ast proc_type =
   let rec iter ast iter_func =
     match ast.ty with

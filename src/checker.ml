@@ -188,9 +188,7 @@ let traverse asts =
         let new_env = if (is_lambda ast) then env
                       else (new_child ~ty:"func" env) in
         (* set func name *)
-        if not (is_lambda ast) then (
-          try_add_variable env ast
-        );
+        if not (is_lambda ast) then try_add_variable env ast;
         List.iter info.args ~f:(fun arg ->
                                 match arg.ty with
                                 | Name(_, _) -> try_add_variable new_env arg
@@ -200,10 +198,7 @@ let traverse asts =
       )
     | Class(name, _, body, _, _) | Module(name, _, body, _) -> (
       let n = name_node_id name in
-      let db_name = Db.match_db_for_model n in
-      let columns = match Hashtbl.find Db.tables db_name with
-        | Some(cols) -> cols
-        | _ -> [] in
+      let columns = Db.class_to_model_columns n in
       iter body (new_child ~cols:columns env)
     )
     | Block(stmts) -> List.iter stmts ~f:_iter
