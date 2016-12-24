@@ -1,0 +1,97 @@
+(Block 
+ (Assign 
+  (Name a Local)
+  (Int 1))
+ (Assign 
+  (Name b Local)
+  (BinOp:Add 
+   (String hello)
+   (StrEmb
+     (Block 
+      (Name a Local)))))
+ (Assign 
+  (Name c Local)
+  (Int 2))
+ (Assign 
+  (Name x Local)
+  (BinOp:Equal 
+   (Name a Local)
+   (Name b Local)))
+ (Assign 
+  (Name y Local)
+  (BinOp:Or 
+   (BinOp:Lt 
+    (Name a Local)
+    (Name c Local))
+   (BinOp:Eq 
+    (Name a Local)
+    (Name c Local))))
+ (Assign 
+  (Name y2 Local)
+  (BinOp:Or 
+   (BinOp:Gt 
+    (Name a Local)
+    (Name c Local))
+   (BinOp:Eq 
+    (Name a Local)
+    (Name c Local))))
+ (Assign 
+  (Name z Local)
+  (UnaryOp:Not 
+   (BinOp:Equal 
+    (Name a Local)
+    (Name b Local))))
+ (Assign 
+  (Name m Local)
+  (UnaryOp:Not 
+   (Name a Local)))
+ (Assign 
+  (Name h Local)
+  (BinOp:Or 
+   (Name a Local)
+   (Name b Local)))
+ (Call puts
+  (args: 
+   (BinOp:Add 
+    (String m class: )
+    (StrEmb
+      (Block 
+       (Call 
+        (Attribute 
+         (Name m Local)
+         (Name class Local))))))))
+ (Call puts
+  (args: 
+   (BinOp:Add 
+    (String h class: )
+    (StrEmb
+      (Block 
+       (Call 
+        (Attribute 
+         (Name h Local)
+         (Name class Local)))))))))
+
+----------------------------------------
+
+bind: a ty: Int_ty
+bind: h ty: Str_ty
+bind: z ty: Bool_ty
+bind: b ty: Str_ty
+bind: y ty: Bool_ty
+bind: c ty: Int_ty
+bind: y2 ty: Bool_ty
+bind: m ty: Bool_ty
+bind: x ty: Bool_ty
+
+
+----------------------------------------
+
+
+unused result:
+unused variable ./tests/cases/type_bug3.rb(5) : x
+unused variable ./tests/cases/type_bug3.rb(6) : y
+unused variable ./tests/cases/type_bug3.rb(7) : y2
+unused variable ./tests/cases/type_bug3.rb(8) : z
+
+undef result:
+No undef variable issue found, ^_^

@@ -1,0 +1,50 @@
+(Block 
+ (Assign 
+  (Name a Local)
+  (Int 1))
+ (Assign 
+  (Name arr Local)
+  (Array 
+   (Int 1)
+   (Int 2)))
+ (Assign 
+  (Subscript 
+   (Name arr Local)
+   (Int 0))
+  (Int 0))
+ (Assign 
+  (Subscript 
+   (Name arr Local)
+   (Array 
+    (Int 0)
+    (Int 1)))
+  (Array 
+   (Int 2)
+   (Int 3)))
+ (Call 
+  (Attribute 
+   (Block 
+    (Array 
+     (Int 1)
+     (Int 4)))
+   (Name include? Local))
+  (args: 
+   (Int 1)))
+ (Call puts
+  (args: 
+   (Name arr Local))))
+
+----------------------------------------
+
+bind: a ty: Int_ty
+bind: arr ty: [Int_ty]
+
+
+----------------------------------------
+
+
+unused result:
+unused variable ./tests/cases/assign.rb(1) : a
+
+undef result:
+No undef variable issue found, ^_^

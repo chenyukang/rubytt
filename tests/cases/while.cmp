@@ -1,0 +1,37 @@
+(Block 
+ (Assign 
+  (Name a Local)
+  (Try 
+   (Block 
+    (Assign 
+     (Name index Local)
+     (Int 0))
+    (While 
+     (BinOp:Lt 
+      (Name index Local)
+      (Int 10))
+     (Block 
+      (Assign 
+       (Name index Local)
+       (BinOp:Add 
+        (Name index Local)
+        (Int 1)))
+      (String hello))))
+   (Nil)
+   (Nil)
+   (Nil))))
+
+----------------------------------------
+
+bind: a ty: Str_ty
+bind: index ty: Int_ty
+
+
+----------------------------------------
+
+
+unused result:
+unused variable ./tests/cases/while.rb(1) : a
+
+undef result:
+No undef variable issue found, ^_^

@@ -1,0 +1,133 @@
+(Block 
+ (Class static: false
+  (Name Base Global)
+  (Nil)
+   (Block 
+    (Func initialize
+     (body: 
+      (Block 
+       (Assign 
+        (Name a Instance)
+        (Int 1)))))
+    (Func base_base_func
+     (body: 
+      (Block 
+       (Array 
+        (Int 1)
+        (Int 2)
+        (Int 3)))))))
+ (Class static: false
+  (Name Hello Global)
+  (Name Base Global)
+   (Block 
+    (Func base_func
+     (body: 
+      (Block 
+       (String here))))))
+ (Class static: false
+  (Name Demo Global)
+  (Name Hello Global)
+   (Block 
+    (Func initialize
+     (body: 
+      (Block 
+       (Call puts
+        (args: 
+         (String initialize)))
+       (Assign 
+        (Name a Instance)
+        (Int 1)))))
+    (Func test
+     (body: 
+      (Block 
+       (Call puts
+        (args: 
+         (String hello)))
+       (Call puts
+        (args: 
+         (BinOp:Add 
+          (String @a: )
+          (StrEmb
+            (Block 
+             (Name a Instance)))))))))
+    (Func hello
+     (body: 
+      (Block 
+       (Int 1))))))
+ (Class static: false
+  (Name Drive Global)
+  (Name Base Global)
+   (Block 
+    (Void)))
+ (Class static: false
+  (Name Haha Global)
+  (Name Base Global)
+   (Block 
+    (Void)))
+ (Assign 
+  (Name demo Local)
+  (Call 
+   (Attribute 
+    (Name Demo Global)
+    (Name new Local))))
+ (Call 
+  (Attribute 
+   (Name demo Local)
+   (Name test Local)))
+ (Assign 
+  (Name res Local)
+  (Call 
+   (Attribute 
+    (Name demo Local)
+    (Name base_func Local))))
+ (Call puts
+  (args: 
+   (Name res Local)))
+ (Assign 
+  (Name hello Local)
+  (Call 
+   (Attribute 
+    (Name demo Local)
+    (Name hello Local))))
+ (Call puts
+  (args: 
+   (Name hello Local)))
+ (Assign 
+  (Name base Local)
+  (Call 
+   (Attribute 
+    (Name demo Local)
+    (Name base_base_func Local))))
+ (Call puts
+  (args: 
+   (Name base Local))))
+
+----------------------------------------
+
+bind: hello ty: Int_ty
+bind: Drive ty: Class_ty: Drive
+bind: base ty: [Int_ty]
+bind: demo ty: Inst_ty: Demo
+bind: res ty: Str_ty
+bind: Base ty: Class_ty: Base
+  bind: base_base_func ty:  Fn [] => [Int_ty]
+  bind: initialize ty:  Fn [] => Int_ty
+  bind: @a ty: Int_ty
+bind: Haha ty: Class_ty: Haha
+bind: Hello ty: Class_ty: Hello
+  bind: base_func ty:  Fn [] => Str_ty
+bind: Demo ty: Class_ty: Demo
+  bind: hello ty:  Fn [] => Int_ty
+  bind: test ty:  Fn [] => Unkown_ty
+  bind: initialize ty:  Fn [] => Int_ty
+  bind: @a ty: Int_ty
+
+
+----------------------------------------
+
+
+unused result:
+unused variable ./tests/cases/class_func.rb(4) : @a
+
+undef result:
+No undef variable issue found, ^_^

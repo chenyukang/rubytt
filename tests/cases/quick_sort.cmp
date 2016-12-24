@@ -1,0 +1,62 @@
+(Block 
+ (Func qsort
+  (args: 
+   (Name lst Local))
+  (body: 
+   (Block 
+    (If 
+     (BinOp:Equal 
+      (Call 
+       (Attribute 
+        (Name lst Local)
+        (Name size Local)))
+      (Int 0))
+     (Return 
+      (Array 
+       (Array )))
+     (Nil))
+    (Assign 
+     (Array 
+      (Name less Local)
+      (Name more Local))
+     (Call 
+      (Attribute 
+       (Call left)
+       (Name partition Local))
+      (block_arg: 
+       (Func lambda%1
+        (args: 
+         (Name x Local))
+        (body: 
+         (Block 
+          (BinOp:Lt 
+           (Name x Local)
+           (Call first))))))))
+    (Return 
+     (Array 
+      (BinOp:Add 
+       (BinOp:Add 
+        (Call qsort
+         (args: 
+          (Name less Local)))
+        (Array 
+         (Call first)))
+       (Call qsort
+        (args: 
+         (Name more Local))))))))))
+
+----------------------------------------
+
+bind: qsort ty:  Fn [] => [Unkown_ty]
+
+
+----------------------------------------
+
+
+unused result:
+No unused variable issue found, ^_^
+
+
+undef result:
+undef variable ./tests/cases/quick_sort.rb(3) : first
+undef variable ./tests/cases/quick_sort.rb(3) : left

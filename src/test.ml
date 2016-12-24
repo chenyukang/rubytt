@@ -43,9 +43,9 @@ let update_cmp dir =
       Sys.command_exn (Printf.sprintf "cp %s %s" p o);
     ) logs
 
-
+            
 let test_dir() =
-  let res = run_dir "tests" in
+  let res = run_dir "tests/cases" in
   if (List.length res <> 0) then
     Printf.printf "\n\n";
   List.iter res ~f:(fun p -> Printf.printf "fail case: %s\n" p);

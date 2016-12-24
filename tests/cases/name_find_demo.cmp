@@ -1,0 +1,50 @@
+(Block 
+ (Class static: false
+  (Name Demo Global)
+  (Nil)
+   (Block 
+    (Assign 
+     (Name XX Global)
+     (String hello))
+    (Func func
+     (body: 
+      (Block 
+       (Assign 
+        (Name a Local)
+        (Int 1))
+       (Assign 
+        (Name b Local)
+        (Name a Local))
+       (Call puts
+        (args: 
+         (Attribute 
+          (Name Demo Global)
+          (Name XX Global)))))))))
+ (Assign 
+  (Name a Local)
+  (Call 
+   (Attribute 
+    (Name Demo Global)
+    (Name new Local))))
+ (Call 
+  (Attribute 
+   (Name a Local)
+   (Name func Local))))
+
+----------------------------------------
+
+bind: a ty: Inst_ty: Demo
+bind: Demo ty: Class_ty: Demo
+  bind: XX ty: Str_ty
+  bind: func ty:  Fn [] => Unkown_ty
+
+
+----------------------------------------
+
+
+unused result:
+unused variable ./tests/cases/name_find_demo.rb(3) : XX
+unused variable ./tests/cases/name_find_demo.rb(7) : b
+
+undef result:
+No undef variable issue found, ^_^

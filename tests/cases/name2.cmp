@@ -1,0 +1,19 @@
+(Block 
+ (Assign 
+  (Name a Local)
+  (Name false Local))
+ (Call x))
+
+----------------------------------------
+
+bind: a ty: Bool_ty
+
+
+----------------------------------------
+
+
+unused result:
+unused variable ./tests/cases/name2.rb(1) : a
+
+undef result:
+undef variable ./tests/cases/name2.rb(2) : x

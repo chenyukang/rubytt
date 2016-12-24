@@ -73,8 +73,7 @@ let load_db ?dump_db:(dump_db=false) input_dir output =
     Db.analysis_model_asts asts;
     Db.dump_db output
   )
-
-
+         
 let load_checker input =
   let asts = match Sys.is_file input with
     | `Yes -> [(parse_to_ast ~need_trans:false input)]
