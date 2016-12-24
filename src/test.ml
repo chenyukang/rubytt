@@ -35,6 +35,9 @@ let run_dir dir =
                   not(cmp_file cmp log)
                  ) jsons
 
+let run_check_dir dir =
+  []
+  
 let update_cmp dir =
   let logs = Util.walk_directory_tree dir ".*\\.log" in
   List.iter ~f:(fun p ->
@@ -43,17 +46,22 @@ let update_cmp dir =
       Sys.command_exn (Printf.sprintf "cp %s %s" p o);
     ) logs
 
-            
+
 let test_dir() =
   let res = run_dir "tests/cases" in
-  if (List.length res <> 0) then
-    Printf.printf "\n\n";
+  if (List.length res <> 0) then Printf.printf "\n";
   List.iter res ~f:(fun p -> Printf.printf "fail case: %s\n" p);
-  if List.length res <> 0 then
-    failwith "testing failed"
+  if List.length res <> 0 then failwith "testing failed"
 
+let test_checker() =
+  let res = run_check_dir "tests/checker" in
+  if (List.length res <> 0) then Printf.printf "\n";
+  List.iter res ~f:(fun p -> Printf.printf "fail checker case: %s\n" p);
+  if List.length res <> 0 then failwith "checker testing failed"
+                                        
 let test_unit = [
     "Cases", `Quick, test_dir;
+    "Checker", `Quick, test_checker;
 ]
 
 let () =
