@@ -27,6 +27,7 @@ let cmp_file a b =
   else
     (read_file_to_str a) = (read_file_to_str b)
 
+                             
 let walk_directory_tree dir pattern =
   let select str = Str.string_match (Str.regexp pattern) str 0 in
   let rec walk acc = function
@@ -50,6 +51,14 @@ let walk_directory_tree dir pattern =
   in
   walk [] [dir]
 
+let sub_dirs dir =
+  let contents = Array.to_list (Sys.readdir dir) in
+  let contents = List.rev_map ~f:(Filename.concat dir) contents in
+  List.filter contents ~f:(fun s ->
+                           try match (Unix.stat s).st_kind with
+                               | S_DIR -> true | _ -> false
+                           with _ -> false)
+              
 let main_name tagged_name =
   let segs = Str.split (Str.regexp "\\^") tagged_name in
   if List.length segs > 0 then

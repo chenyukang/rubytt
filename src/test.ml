@@ -36,7 +36,16 @@ let run_dir dir =
                  ) jsons
 
 let run_check_dir dir =
-  []
+  let sub_dirs = Util.sub_dirs dir in
+  List.iter sub_dirs ~f:(fun d -> Printf.printf "dir: %s\n" d);
+  List.filter sub_dirs ~f:(fun d ->
+                         let cmd = Printf.sprintf "./bin/main.byte -s %s -t check" d in
+                         let result = Util.read_process cmd in
+                         let cmp = Printf.sprintf "%s.cmp" d in
+                         let log = Printf.sprintf "%s.log" d in
+                         Out_channel.write_all log ~data:result;
+                         ignore(Printf.printf "result:%s\n" result);
+                         not(cmp_file cmp log))
   
 let update_cmp dir =
   let logs = Util.walk_directory_tree dir ".*\\.log" in
