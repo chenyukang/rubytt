@@ -2,14 +2,19 @@ Source dir: tests/checker/p1
 Dump dir: tests/checker/p1 => /tmp/rubytt/checker 
 
 
+analysising db schema
 resolve: 0
 unresolve: 0
 callstack: 0
 uncalled: 0
-loaded_files: 1
+loaded_files: 2
 refs: 0
 
+unused variable ./tests/checker/p1/app/models/order.rb(4) : a
+unused variable ./tests/checker/p1/app/models/order.rb(5) : b
+unused variable ./tests/checker/p1/app/models/order.rb(6) : c
+unused variable ./tests/checker/p1/app/models/order.rb(7) : d
 unused variable ./tests/checker/p1/demo.rb(2) : hello
 
 
-No undef variable issue found, ^_^
+undef variable ./tests/checker/p1/app/models/order.rb(7) : error_variable
