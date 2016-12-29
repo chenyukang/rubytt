@@ -2,7 +2,6 @@ Source dir: tests/checker/p1
 Dump dir: tests/checker/p1 => /tmp/rubytt/checker 
 
 
-Parsing and dump Ruby files: |=================================================|
 resolve: 0
 unresolve: 0
 callstack: 0
@@ -14,4 +13,3 @@ unused variable ./tests/checker/p1/demo.rb(2) : hello
 
 
 No undef variable issue found, ^_^
-

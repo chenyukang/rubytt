@@ -36,11 +36,15 @@ let run_dir dir =
                  ) jsons
 
 let run_check_dir dir =
+  let filter_header str =
+    let lines = Str.split (Str.regexp "\n") str in
+    let lines = List.filter lines ~f:(fun l -> not (Util.contains l "Parsing and dump")) in
+    List.fold lines ~init:"" ~f:(fun acc l -> if acc = "" then l else acc ^ "\n" ^ l) in
   let sub_dirs = Util.sub_dirs dir in
   List.iter sub_dirs ~f:(fun d -> Printf.printf "dir: %s\n" d);
   List.filter sub_dirs ~f:(fun d ->
                          let cmd = Printf.sprintf "./bin/main.byte -s %s -t check" d in
-                         let result = Util.read_process cmd in
+                         let result = filter_header (Util.read_process cmd) in
                          let cmp = Printf.sprintf "%s.cmp" d in
                          let log = Printf.sprintf "%s.log" d in
                          Out_channel.write_all log ~data:result;
