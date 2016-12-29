@@ -95,8 +95,13 @@ let rec env_unused_info ?check_global:(check_global=false) ?check_inst:(check_in
   !res
 
 let rec env_defname_info env =
+  (* hard code! *)
   let ignore_name name =
     let pre_defs = ["self"; "false"; "true"; "nil"; "raise";
+                    "private"; "extend"; "include"; "super"; "on";
+                    "e"; "before"; "set"; "respond_to?"; "scope";
+                    "p"; "loop"; "included"; "send"; "where"; "all";
+                    "attrs"; "attr_accessor";
                     "require"; "pp"; "puts"; "print"] in
     name = "" || (String.nget name 0 = '_') || (String.nget name 0 = '@') ||
       (Char.is_uppercase (String.nget name 0)) ||
