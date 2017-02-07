@@ -38,20 +38,18 @@ let load_dir ?need_trans:(need_trans=true) input_dir output_dir =
   );
   List.iter rb_files ~f:(fun x -> Global.set_load_file x);
   let jsons = Util.walk_directory_tree output_dir ".*\\.json" in
+  let jsons = List.filter jsons ~f:(fun x -> not(Util.contains x "/db/")) in
   let asts = List.map jsons ~f:(fun x ->
       let ast = Parser.build_ast_from_json x in
       if need_trans then (
         if Util.contains x "app/models/" then
           Db.analysis_model_ast ast "specify_table";
-        if not(Util.contains x "/db/") then (
-          Analyzer.trans ast;
-          let res = gen_ast_str ast in
-          let ty_file = Printf.sprintf "%s.ty" (Filename.chop_extension x) in
-          Out_channel.write_all ty_file ~data: res;
-        )
+        Analyzer.trans ast;
+        let res = gen_ast_str ast in
+        let ty_file = Printf.sprintf "%s.ty" (Filename.chop_extension x) in
+        Out_channel.write_all ty_file ~data: res;
       );
-      ast
-    ) in
+      ast) in
   Global.print_size();
   asts
 
@@ -73,8 +71,7 @@ let load_db ?dump_db:(dump_db=false) input_dir output =
     Db.analysis_model_asts asts;
     Db.dump_db output
   )
-
-
+         
 let load_checker input =
   let asts = match Sys.is_file input with
     | `Yes -> [(parse_to_ast ~need_trans:false input)]

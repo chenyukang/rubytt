@@ -453,13 +453,8 @@ and apply_func fun_ty args_ty star_ty block_arg_ty call =
 and add_inst_type_from_db class_ty =
   let class_name = classty_get_name class_ty in
   let table = class_ty.info.table in
-  let db_name = Db.match_db_for_model class_name in
-  let columns = match Hashtbl.find Db.tables db_name with
-    | Some(cols) -> cols
-    | _ -> [] in
-  List.iter columns ~f:(fun col ->
-                        let name = col.(0) in
-                        let ty_str = col.(1) in
+  let columns = Db.class_to_model_columns class_name in
+  List.iter columns ~f:(fun (name, ty_str, _) ->
                         (* Printf.printf "name: %s type: %s\n" name ty_str; *)
                         let ty = match ty_str with
                           | "string" | "text"  -> new_str_type()

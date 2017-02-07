@@ -1,0 +1,69 @@
+(Block 
+ (Assign 
+  (Name C Global)
+  (Int 1))
+ (Module 
+  (Name A Global)
+   (Block 
+    (Void)
+    (Assign 
+     (Name C Global)
+     (String In A))))
+ (Module 
+  (Name A Global)
+   (Block 
+    (Void)
+    (Module 
+     (Name B Global)
+      (Block 
+       (Void)
+       (Call puts
+        (args: 
+         (Call 
+          (Attribute 
+           (Name Module Global)
+           (Name nesting Local)))))
+       (Call puts
+        (args: 
+         (Name C Global)))
+       (Assign 
+        (Name a Local)
+        (Name C Global))))))
+ (Module 
+  (Name B Global)
+   (Block 
+    (Void)
+    (Call puts
+     (args: 
+      (Call 
+       (Attribute 
+        (Name Module Global)
+        (Name nesting Local)))))
+    (Call puts
+     (args: 
+      (Name C Global)))
+    (Assign 
+     (Name a Local)
+     (Name C Global)))))
+
+----------------------------------------
+
+bind: A ty: Module_ty: A
+  bind: C ty: Str_ty
+  bind: B ty: Module_ty: B
+    bind: a ty: Str_ty
+bind: C ty: Int_ty
+bind: B ty: Module_ty: B
+  bind: a ty: Str_ty
+
+
+----------------------------------------
+
+
+unused result:
+unused variable ./tests/cases/module_bug.rb(4) : C
+unused variable ./tests/cases/module_bug.rb(11) : a
+unused variable ./tests/cases/module_bug.rb(18) : a
+
+undef result:
+No undef variable issue found, ^_^

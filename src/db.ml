@@ -12,6 +12,12 @@ let match_db_for_model model_name =
   | Some(db) -> db
   | _ -> Util.class_to_table_name model_name
 
+let class_to_model_columns class_name =
+  let db_name = match_db_for_model class_name in
+  match Hashtbl.find tables db_name with
+  | Some(cols) -> cols
+  | _ -> []
+           
 let analysis_model_ast ast proc_type =
   let rec iter ast iter_func =
     match ast.ty with
@@ -153,7 +159,7 @@ let analysis_db_ast ast =
     | Call(_, args, _, block_arg) -> (
         let name = List.nth_exn args 0 in
         let columns = table_columns block_arg in
-        ignore(Hashtbl.add tables ~key:(string_of_str name) ~data:columns);
+        ignore(Hashtbl.add tables ~key:(string_of_str name) ~data:columns)
       )
     | _ -> failwith "invalid node in build_table"
   and
@@ -162,12 +168,15 @@ let analysis_db_ast ast =
     | Func(info) -> (
         match info.body.ty with
         | Block(stmts) ->
-          List.map stmts ~f:(fun c ->
+          List.fold ~init:[] stmts ~f:(fun acc c ->
               match c.ty with
               | Call(attr, args, _, _) ->
-                let name = List.nth_exn args 0 in
-                [|(string_of_str name); (string_of_attr attr)|]
-              | _ -> [||]
+                 let name = string_of_str (List.nth_exn args 0) in
+                 let inf = c.info in 
+                 let name_node =
+                   Node.make_name_node name Node.Global inf.file inf.ss inf.ee in
+                 acc @ [(name, (string_of_attr attr), name_node)]
+              | _ -> acc
             )
         | _ -> failwith "invalid type in table_columns"
       )
@@ -213,10 +222,11 @@ let db_to_dot_str() =
   Hashtbl.iter tables ~f:(fun ~key:k ~data:v ->
       content := !content ^ (
           "\n    " ^ (gen_id k) ^ "[label=\"{{" ^ k ^ "}" ^
-          (List.fold v ~init:"" ~f:(fun acc x ->
-               let name_with_type = x.(0) ^ " : " ^ x.(1) in
-               acc ^ "|{" ^ name_with_type ^ "}")) ^
-          "}\",  color=blue, fontcolor=blue]\n"
+            (List.fold v ~init:"" ~f:(fun acc (name, ty, _) ->
+                                      let name_with_type = name ^ " : " ^ ty in
+                                      acc ^ "|{" ^ name_with_type ^ "}"
+                                     ))
+            ^ "}\",  color=blue, fontcolor=blue]\n"
         )
     );
   let need_output k v color =
@@ -255,7 +265,7 @@ let db_to_dot_str() =
                 Printf.sprintf "M_%s -> M_%s [color=\"orange\"]\n" k v
               )
           )
-        );
+        )
     );
   wrapper !content
 

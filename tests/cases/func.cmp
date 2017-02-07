@@ -1,0 +1,26 @@
+(Block 
+ (Func print
+  (args: 
+   (Name s Local)
+   (Name a Local))
+  (after_rest: 
+   (Name c Local))
+  (body: 
+   (Block 
+    (Call puts
+     (args: 
+      (Name s Local)))))))
+
+----------------------------------------
+
+bind: print ty:  Fn [Int_ty Int_ty] => Unkown_ty
+
+
+----------------------------------------
+
+
+unused result:
+unused variable ./tests/cases/func.rb(1) : a
+
+undef result:
+No undef variable issue found, ^_^

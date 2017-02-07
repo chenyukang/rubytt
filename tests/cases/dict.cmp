@@ -1,0 +1,33 @@
+(Block 
+ (Assign 
+  (Name a Local)
+  (Dict  
+   (Int 1)
+    (Int 2)
+   (String hello)
+    (String world)
+   (String haha)
+    (Dict  
+     (String xiaokang)
+      (String now)
+     (String DJI)
+      (String good))))
+ (BinOp:And 
+  (BinOp:And 
+   (Int 1)
+   (Int 2))
+  (Int 3)))
+
+----------------------------------------
+
+bind: a ty: Dict_ty({(Int_ty)|(Str_ty)|(Str_ty)} {(Int_ty)|(Dict_ty(Str_ty Str_ty))|(Str_ty)})
+
+
+----------------------------------------
+
+
+unused result:
+unused variable ./tests/cases/dict.rb(1) : a
+
+undef result:
+No undef variable issue found, ^_^

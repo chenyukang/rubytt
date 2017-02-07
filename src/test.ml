@@ -35,6 +35,22 @@ let run_dir dir =
                   not(cmp_file cmp log)
                  ) jsons
 
+let run_check_dir dir =
+  let filter_header str =
+    let lines = Str.split (Str.regexp "\n") str in
+    let lines = List.filter lines ~f:(fun l -> not (Util.contains l "Parsing and dump")) in
+    List.fold lines ~init:"" ~f:(fun acc l -> if acc = "" then l else acc ^ "\n" ^ l) in
+  let sub_dirs = Util.sub_dirs dir in
+  List.iter sub_dirs ~f:(fun d -> Printf.printf "dir: %s\n" d);
+  List.filter sub_dirs ~f:(fun d ->
+                         let cmd = Printf.sprintf "./bin/main.byte -s %s -t check" d in
+                         let result = filter_header (Util.read_process cmd) in
+                         let cmp = Printf.sprintf "%s.cmp" d in
+                         let log = Printf.sprintf "%s.log" d in
+                         Out_channel.write_all log ~data:result;
+                         ignore(Printf.printf "result:%s\n" result);
+                         not(cmp_file cmp log))
+  
 let update_cmp dir =
   let logs = Util.walk_directory_tree dir ".*\\.log" in
   List.iter ~f:(fun p ->
@@ -42,18 +58,22 @@ let update_cmp dir =
       let o = Printf.sprintf "%s.cmp" b in
       Sys.command_exn (Printf.sprintf "cp %s %s" p o);
     ) logs
-
-
+            
 let test_dir() =
-  let res = run_dir "tests" in
-  if (List.length res <> 0) then
-    Printf.printf "\n\n";
+  let res = run_dir "tests/cases" in
+  if (List.length res <> 0) then Printf.printf "\n";
   List.iter res ~f:(fun p -> Printf.printf "fail case: %s\n" p);
-  if List.length res <> 0 then
-    failwith "testing failed"
+  if List.length res <> 0 then failwith "testing failed"
 
+let test_checker() =
+  let res = run_check_dir "tests/checker" in
+  if (List.length res <> 0) then Printf.printf "\n";
+  List.iter res ~f:(fun p -> Printf.printf "fail checker case: %s\n" p);
+  if List.length res <> 0 then failwith "checker testing failed"
+                                        
 let test_unit = [
     "Cases", `Quick, test_dir;
+    "Checker", `Quick, test_checker;
 ]
 
 let () =
