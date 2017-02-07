@@ -58,8 +58,7 @@ let update_cmp dir =
       let o = Printf.sprintf "%s.cmp" b in
       Sys.command_exn (Printf.sprintf "cp %s %s" p o);
     ) logs
-
-
+            
 let test_dir() =
   let res = run_dir "tests/cases" in
   if (List.length res <> 0) then Printf.printf "\n";
