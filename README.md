@@ -34,6 +34,7 @@ rubytt can be installed using OCaml package manager:
 ```
 gem install parallel ruby-progressbar
 sudo apt-get install --force-yes ocaml ocaml-native-compilers camlp4-extra opam
+opam init
 eval `opam config env`
 opam install rubytt
 ```
@@ -42,6 +43,7 @@ opam install rubytt
 ```
 gem install parallel ruby-progressbar
 brew install opam
+opam init
 eval `opam config env`
 opam install rubytt
 ```
