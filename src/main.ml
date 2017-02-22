@@ -4,7 +4,7 @@ open Sys
 let parse_to_ast ?need_trans:(need_trans=true) file =
   let json = Parser.run_dump_ruby file in
   let ast = Parser.build_ast_from_json json in
-  if need_trans then Analyzer.trans ast;
+  if need_trans then Trans.transform_expr ast Type.global_table;
   ast
 
 let gen_ast_str ast =
@@ -44,7 +44,7 @@ let load_dir ?need_trans:(need_trans=true) input_dir output_dir =
       if need_trans then (
         if Util.contains x "app/models/" then
           Db.analysis_model_ast ast "specify_table";
-        Analyzer.trans ast;
+        Trans.transform_expr ast Type.global_table;
         let res = gen_ast_str ast in
         let ty_file = Printf.sprintf "%s.ty" (Filename.chop_extension x) in
         Out_channel.write_all ty_file ~data: res;

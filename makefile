@@ -2,7 +2,7 @@ TARGET = main
 INSTALL_TARGET = /usr/local/bin/rubytt
 SRC=src
 
-OCAMLBUILD = cd $(SRC); corebuild -use-ocamlfind -pkg yojson,alcotest,str,stringext -cflags -w,-45,-w,-11,-w,-27,-w,-26
+OCAMLBUILD = cd $(SRC); corebuild -use-ocamlfind -pkg yojson,alcotest,str,stringext -cflags -w,-45,-w,-11,-w,-27,-w,-26,-w,-29,-w,-3
 
 default: byte
 

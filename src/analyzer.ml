@@ -22,7 +22,3 @@ let make_analyzer () =
     path = [];
   }
 
-
-let trans ast =
-  Trans.transform_expr ast Type.global_table
-
