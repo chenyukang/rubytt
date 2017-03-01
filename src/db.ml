@@ -171,11 +171,14 @@ let analysis_db_ast ast =
           List.fold ~init:[] stmts ~f:(fun acc c ->
               match c.ty with
               | Call(attr, args, _, _) ->
-                 let name = string_of_str (List.nth_exn args 0) in
-                 let inf = c.info in 
-                 let name_node =
-                   Node.make_name_node name Node.Global inf.file inf.ss inf.ee in
-                 acc @ [(name, (string_of_attr attr), name_node)]
+                 let type_str = string_of_attr attr in
+                 if type_str <> "index" then (
+                   let name = string_of_str (List.nth_exn args 0) in
+                   let inf = c.info in 
+                   let name_node =
+                     Node.make_name_node name Node.Global inf.file inf.ss inf.ee in
+                   acc @ [(name, type_str, name_node)]
+                 ) else acc
               | _ -> acc
             )
         | _ -> failwith "invalid type in table_columns"

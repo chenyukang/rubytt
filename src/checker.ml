@@ -170,9 +170,7 @@ let traverse asts =
           | _ -> ()
         )
       )
-      | Func(info) -> (
-        add_variable env v
-      )
+      | Func(info) -> add_variable env v
       | _ -> () in
     match ast.ty with
     | Name(id, _) -> (
