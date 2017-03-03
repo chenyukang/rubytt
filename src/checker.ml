@@ -18,9 +18,8 @@ let make_env ?ty:(ty="top") ()=
     children = [];
   }
 
-let root_env = ref (make_env());;
-
-
+let root_env = ref (make_env())
+             
 let clear () =
   root_env := make_env()
 
@@ -99,10 +98,13 @@ let rec env_defname_info env =
   let ignore_name name =
     let pre_defs = ["self"; "false"; "true"; "nil"; "raise";
                     "private"; "extend"; "include"; "super"; "on";
-                    "e"; "before"; "set"; "respond_to?"; "scope";
-                    "p"; "loop"; "included"; "send"; "where"; "all";
-                    "attrs"; "attr_accessor";
+                    "e"; "before"; "set"; "respond_to?"; 
+                    "p"; "loop"; "included"; "send"; "current_operator";
+                    "attrs"; "attr_accessor"; "validates";
                     "require"; "pp"; "puts"; "print"] in
+    let rails_methods = Util.read_file_to_str "/Users/kang/code/rubytt/src/rails_methods.txt" in
+    let methods = Str.split (Str.regexp "\n") rails_methods in
+    let pre_defs = pre_defs @ methods in
     name = "" || (String.nget name 0 = '_') || (String.nget name 0 = '@') ||
       (Char.is_uppercase (String.nget name 0)) ||
         (match List.find ~f:(fun x -> x = name) pre_defs with
@@ -134,6 +136,10 @@ let sort_result res msg =
   if List.length res = 0 then
     Printf.sprintf "\nNo %s issue found, ^_^\n" msg
   else
+    let res = List.filter res ~f:(fun (f1, _, v) ->
+                            ((String.substr_index f1 ~pattern:"/config/") = None) &&
+                              ((String.substr_index v ~pattern:"_path") = None))
+    in
     let infos = List.sort res ~cmp:(fun (f1, l1, v1) (f2, l2, v2) ->
         let r = String.compare f1 f2 in
         if r <> 0 then r else (
