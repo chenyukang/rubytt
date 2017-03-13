@@ -499,7 +499,29 @@ let make_call_node func pos star block_arg file s e =
   add_children node ([func; star; block_arg] @ pos);
   node
 
+let line_no_from_file file node =
+  let ss = node.info.ss in
+  let buf = Util.read_file_to_str file in
+  let pos = ref 0 in
+  let num = ref 0 in
+  let lines = String.split buf ~on:'\n' in
+  while !num < (List.length lines) && !pos <= ss do
+    let line = List.nth_exn lines !num in
+    pos := !pos + (String.length line) + 1;
+    incr num
+  done;
+  !num
 
+let node_to_info node =
+  let cur_dir = Sys.getcwd() in
+  let name = match node.ty with
+    | Name(_, _) -> name_node_id node
+    | Func(_) -> func_node_name node
+    | _ -> "****" 
+  in
+  ((Stringext.replace_all node.info.file ~pattern:cur_dir ~with_:"."),
+   (line_no_from_file node.info.file node), name)
+  
 let compare_node_t n1 n2 =
   let f1 = n1.info in
   let f2 = n2.info in
