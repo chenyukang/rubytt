@@ -91,7 +91,7 @@ let command =
       +> flag "-t" (optional string) ~doc:"the analysis type, shoud in [class, db, model, type, check]"
       +> flag "-o" (optional string) ~doc:"the output directory or file"
     )
-    (fun source_code analy_type output () ->
+    (fun source_code analy_ty output_dir () ->
      Util.prepare_dump();
      match source_code with
        | Some(source) -> (
@@ -99,10 +99,10 @@ let command =
            if not(Sys.is_directory_exn source) then
              failwith (Printf.sprintf "%s is not an directory\n" source);
            let output () =
-             match output with
+             match output_dir with
              |Some(s) -> s
              |_ -> failwith "Please set output directory or file\n" in
-           match analy_type with
+           match analy_ty with
            | Some("class") -> (
                ignore(load_dir source "/tmp/rubytt/");
                Class.dump_class_dot(output())
