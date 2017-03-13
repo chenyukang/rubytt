@@ -19,6 +19,7 @@ let make_env ?ty:(ty="top") ()=
   }
 
 let root_env = ref (make_env())
+let rails_methods = ref []             
              
 let clear () =
   root_env := make_env()
@@ -63,7 +64,8 @@ let node_to_info node =
   ((Stringext.replace_all node.info.file ~pattern:cur_dir ~with_:"."),
    (line_no_from_file node.info.file node), (name_node_id node))
 
-let rec env_unused_info ?check_global:(check_global=false) ?check_inst:(check_inst=false) env =
+let rec env_unused_info ?check_global:(check_global=false)
+                        ?check_inst:(check_inst=false) env =
   let res = ref [] in
   let rec env_visited var env =
     let name = name_node_id var in
@@ -93,21 +95,34 @@ let rec env_unused_info ?check_global:(check_global=false) ?check_inst:(check_in
                                                ~check_inst:check_inst e));
   !res
 
+let init_pre_methods dir =
+  let pre_defs = ["self"; "false"; "true"; "nil"; "raise";
+                  "private"; "extend"; "include"; "super"; "on";
+                  "e"; "before"; "set"; "respond_to?"; "params";
+                  "p"; "loop"; "included"; "send"; "current_operator";
+                  "attrs"; "attr_accessor"; "validates";
+                  "require"; "pp"; "puts"; "print"] in
+  let gemfile = dir ^ "/Gemfile" in
+  let res = if Sys.is_file_exn gemfile then
+                 let methods = Util.read_process
+                  (Printf.sprintf
+                     "cd %s; rails runner \"puts Object.methods + 
+                      Object.new.methods + 
+                      ActionController::Base.methods +
+                      ActionController::Base.new.methods +
+                      ActiveRecord::Base.methods\"" dir) in
+                 Str.split (Str.regexp "\n") methods
+                 else [] in
+  (* List.iter res ~f:(fun x -> Printf.printf "%s " x); *)
+  (* Printf.printf "count: %d\n" (List.length res); *)
+  rails_methods := (res @ pre_defs)
+  
 let rec env_defname_info env =
   (* hard code! *)
   let ignore_name name =
-    let pre_defs = ["self"; "false"; "true"; "nil"; "raise";
-                    "private"; "extend"; "include"; "super"; "on";
-                    "e"; "before"; "set"; "respond_to?"; 
-                    "p"; "loop"; "included"; "send"; "current_operator";
-                    "attrs"; "attr_accessor"; "validates";
-                    "require"; "pp"; "puts"; "print"] in
-    let rails_methods = Util.read_file_to_str "/Users/kang/code/rubytt/src/rails_methods.txt" in
-    let methods = Str.split (Str.regexp "\n") rails_methods in
-    let pre_defs = pre_defs @ methods in
     name = "" || (String.nget name 0 = '_') || (String.nget name 0 = '@') ||
       (Char.is_uppercase (String.nget name 0)) ||
-        (match List.find ~f:(fun x -> x = name) pre_defs with
+        (match List.find ~f:(fun x -> x = name) !rails_methods with
          | Some(_) -> true | _ -> false) in
   
   let res = ref [] in
@@ -157,11 +172,12 @@ let env_unused check_global check_inst =
                         ~check_inst:check_inst in
   sort_result unused_result "unused variable"
 
-let env_undef () =
+let env_undef input =
+  init_pre_methods input;
   let undef_result = env_defname_info !root_env in
   sort_result undef_result "undef variable"
               
-let traverse asts =
+let traverse asts input =
   let rec iter ast env =
     let _iter ast = iter ast env in
     (* let str = Printer.node_to_str ast 0 in *)
@@ -232,7 +248,7 @@ let traverse asts =
   List.iter asts ~f:(fun ast -> iter ast !root_env);
   let res = env_unused false false in
   Printf.printf "%s\n\n" res;
-  let res = env_undef() in
+  let res = env_undef input in
   Printf.printf "%s\n" res
 
                 

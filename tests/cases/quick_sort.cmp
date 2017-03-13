@@ -58,4 +58,5 @@ No unused variable issue found, ^_^
 
 
 undef result:
+undef variable ./tests/cases/quick_sort.rb(3) : first
 undef variable ./tests/cases/quick_sort.rb(3) : left

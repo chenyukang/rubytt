@@ -82,8 +82,7 @@ let state_add_bind st id binding =
       Hashtbl.replace st.s_table ~key:id ~data:(prev_bindings @ [binding])
     )
   | _ -> ()
-
-
+       
 let extend_path st name sep =
   let name = Util.main_name name in
   if Util.is_synthetic_name name then
