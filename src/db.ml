@@ -1,11 +1,11 @@
 open Core.Std
 open Node
 
-let tables = Hashtbl.Poly.create();;
-let belongs_table = Hashtbl.Poly.create();;
-let has_one_table = Hashtbl.Poly.create();;
-let has_many_table = Hashtbl.Poly.create();;
-let model_db_name = Hashtbl.Poly.create();;
+let tables = Hashtbl.Poly.create()
+let belongs_table = Hashtbl.Poly.create()
+let has_one_table = Hashtbl.Poly.create()
+let has_many_table = Hashtbl.Poly.create()
+let model_db_name = Hashtbl.Poly.create()
 
 let match_db_for_model model_name =
   match Hashtbl.find model_db_name model_name with

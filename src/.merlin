@@ -1,3 +1,2 @@
 PKG core yojson alcotest ounit stringext
-S .
 B _build/

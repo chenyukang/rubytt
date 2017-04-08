@@ -79,19 +79,29 @@ let load_checker input =
         match Sys.is_directory input with
         | `Yes -> load_dir ~need_trans:false input "/tmp/rubytt/checker"
         | _ -> failwith (Printf.sprintf "Cound not found: %s" input)
-      ) in
-  Checker.traverse asts
+    ) in
+  Checker.traverse asts input
 
+let load_fun_analy input =
+  let asts = match Sys.is_file input with
+    | `Yes -> [(parse_to_ast ~need_trans:false input)]
+    | _ -> (
+      match Sys.is_directory input with
+      | `Yes -> load_dir ~need_trans:false input "/tmp/rubytt/checker"
+      | _ -> failwith (Printf.sprintf "Cound not found: %s" input)
+    ) in
+  Fun.traverse asts
+  
 let command =
   Command.basic
     ~summary: "rubytt: an Ruby analyzer"
     Command.Spec.(
       empty
       +> flag "-s" (optional string) ~doc:"the source code directory"
-      +> flag "-t" (optional string) ~doc:"the analysis type, shoud in [class, db, model, type, check]"
+      +> flag "-t" (optional string) ~doc:"the analysis type, shoud in [class, db, model, type, check, fun]"
       +> flag "-o" (optional string) ~doc:"the output directory or file"
     )
-    (fun source_code analy_type output () ->
+    (fun source_code analy_ty output_dir () ->
      Util.prepare_dump();
      match source_code with
        | Some(source) -> (
@@ -99,15 +109,16 @@ let command =
            if not(Sys.is_directory_exn source) then
              failwith (Printf.sprintf "%s is not an directory\n" source);
            let output () =
-             match output with
+             match output_dir with
              |Some(s) -> s
              |_ -> failwith "Please set output directory or file\n" in
-           match analy_type with
+           match analy_ty with
            | Some("class") -> (
                ignore(load_dir source "/tmp/rubytt/");
                Class.dump_class_dot(output())
              )
            | Some("check") -> load_checker source
+           | Some("fun") -> load_fun_analy source
            | Some("db") -> load_db ~dump_db:true source (output())
            | Some("model") -> load_db ~dump_db:false source (output())
            | Some("type") -> (

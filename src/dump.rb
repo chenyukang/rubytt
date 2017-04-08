@@ -4,7 +4,6 @@ require 'pp'
 require 'json'
 require 'optparse'
 require 'fileutils'
-require 'parallel'
 require 'ruby-progressbar'
 
 # --------------------- utils ---------------------
@@ -228,7 +227,6 @@ class AstSimplifier
     node, _, _, _, _ = find_internal(obj)
     node
   end
-
 
   # ------------------- conversion --------------------
   # convert and simplify ruby's "sexp" into a hash
@@ -907,6 +905,12 @@ def parse_dump(input, output)
   out.close
 end
 
+def process_rb(rb, input, output)
+  json_path = rb.gsub(input, output).gsub(".rb", ".json")
+  FileUtils.mkdir_p (File.dirname json_path)
+  parse_dump rb, json_path
+end
+
 def parse_dir(input, output)
   abs_input = File.absolute_path input
   abs_output = File.absolute_path output
@@ -921,11 +925,17 @@ def parse_dir(input, output)
       x.index("/migrate/").nil?
   }.map{ |x| File.absolute_path x }
 
-  results = Parallel.map(rb_files, in_processes: 6, progress: "Parsing and dump Ruby files") { |rb|
-    json_path = rb.gsub(abs_input, abs_output).gsub(".rb", ".json")
-    FileUtils.mkdir_p (File.dirname json_path)
-    parse_dump rb, json_path
-  }
+  begin 
+    require 'parallel'
+    results = Parallel.map(rb_files, in_processes: 6,
+                           progress: "Parsing and dump Ruby files") { |rb|
+      process_rb(rb, abs_input, abs_output)      
+    }
+  rescue LoadError
+    puts "Warning: install 'parallel' gem for parsing parallelly"
+    results = rb_files.map{|rb| print "."; process_rb(rb, abs_input, abs_output) }
+    puts "\nparsing finished"
+  end
 end
 
 $options = {}

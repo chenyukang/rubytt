@@ -48,7 +48,8 @@ let rec state_lookup st name =
     )
   | Some(b) -> Some(b)
 
-let looked = Hashtbl.Poly.create();;
+let looked = Hashtbl.Poly.create()
+           
 let rec lookup_attr state id =
   match Hashtbl.find looked state with
   | Some(_) -> None
@@ -206,7 +207,7 @@ and
       )
     )
   | BinOp(op, ln, rn) -> (
-    let str = Printer.node_to_str node 0 in
+    (* let str = Printer.node_to_str node 0 in *)
     (* Printf.printf "now result: %s\n" str; *)
       let _ = transform ln state in
       let rt = transform rn state in
@@ -237,8 +238,8 @@ and
         if not(Type.is_unkown_ty this_ty) then
           bind_node this_ty.info.table target vt
     ) else (
-      let target_v = Printer.node_to_str target 0 in
-      let type_v = Printer.type_to_str vt 0 in
+      (* let target_v = Printer.node_to_str target 0 in *)
+      (* let type_v = Printer.type_to_str vt 0 in *)
       (* Printf.printf "%s -> %s\n" target_v type_v; *)
       bind_node state target vt
     );
@@ -326,7 +327,7 @@ and
   | Call(func, pos, star, block_arg) -> (
       let _func = ref func in
       let _name = ref nil_node in
-      let func_str = Printer.node_to_str func 0 in
+      (* let func_str = Printer.node_to_str func 0 in *)
       (* Printf.printf "func_str: %s\n" func_str; *)
       if is_attr func then (
         _func := attr_target func;
@@ -468,8 +469,8 @@ and add_inst_type_from_db class_ty =
 let apply_uncalled () =
   TypeSet.iter (fun fun_ty ->
       let info = Type.fun_ty_info fun_ty in
-      let node_info = func_node_info info.fun_node in
-      let id = name_node_id node_info.name in
+      (* let node_info = func_node_info info.fun_node in *)
+      (* let id = name_node_id node_info.name in *)
       (* Printf.printf "apply id: %s\n" id; *)
       (* let env = State.new_state ~parent:info.env State.Function in *)
       (* let ret_ty = transform node_info.body env in *)

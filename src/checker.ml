@@ -18,9 +18,9 @@ let make_env ?ty:(ty="top") ()=
     children = [];
   }
 
-let root_env = ref (make_env());;
-
-
+let root_env = ref (make_env())
+let rails_methods = ref []             
+             
 let clear () =
   root_env := make_env()
 
@@ -45,26 +45,9 @@ let new_child ?ty:(ty="module") ?cols:(cols=[]) parent =
   child.parent <- Some(parent);
   List.iter cols ~f:(fun (_, _, node) -> add_variable child node);
   child
-    
-let line_no_from_file file node =
-  let ss = node.info.ss in
-  let buf = Util.read_file_to_str file in
-  let pos = ref 0 in
-  let num = ref 0 in
-  let lines = String.split buf ~on:'\n' in
-  while !num < (List.length lines) && !pos <= ss do
-    let line = List.nth_exn lines !num in
-    pos := !pos + (String.length line) + 1;
-    incr num
-  done;
-  !num
-
-let node_to_info node =
-  let cur_dir = Sys.getcwd() in
-  ((Stringext.replace_all node.info.file ~pattern:cur_dir ~with_:"."),
-   (line_no_from_file node.info.file node), (name_node_id node))
-
-let rec env_unused_info ?check_global:(check_global=false) ?check_inst:(check_inst=false) env =
+  
+let rec env_unused_info ?check_global:(check_global=false)
+                        ?check_inst:(check_inst=false) env =
   let res = ref [] in
   let rec env_visited var env =
     let name = name_node_id var in
@@ -85,7 +68,7 @@ let rec env_unused_info ?check_global:(check_global=false) ?check_inst:(check_in
             | Name(_, Local) -> not (env_visited v env)
             | _ -> false) then
           (* add unvisited variable *)
-          res := !res @ [node_to_info v]
+          res := !res @ [Node.node_to_info v]
        );
 
   List.iter env.children
@@ -94,18 +77,38 @@ let rec env_unused_info ?check_global:(check_global=false) ?check_inst:(check_in
                                                ~check_inst:check_inst e));
   !res
 
+let init_pre_methods dir =
+  let pre_defs = ["self"; "false"; "true"; "nil"; "raise";
+                  "private"; "extend"; "include"; "super"; "on";
+                  "e"; "before"; "set"; "respond_to?"; "params";
+                  "post"; "updated_at"; "created_at"; "format";
+                  "get"; "sidekiq_options"; "id"; "mail";
+                  "p"; "loop"; "included"; "send"; "current_operator";
+                  "attrs"; "attr_accessor"; "validates";
+                  "require"; "pp"; "puts"; "print"] in
+  let str = Util.read_file_to_str "/Users/kang/code/rubytt/src/methods" in
+  let res = Str.split (Str.regexp "\n") str in
+  (* let gemfile = dir ^ "/Gemfile" in *)
+  (* let res = if Sys.is_file_exn gemfile then *)
+  (*                let methods = Util.read_process *)
+  (*                 (Printf.sprintf *)
+  (*                    "cd %s; rails runner \"puts Object.methods +  *)
+  (*                     Object.new.methods +  *)
+  (*                     ActionController::Base.methods + *)
+  (*                     ActionController::Base.new.methods + *)
+  (*                     ActiveRecord::Base.methods\"" dir) in *)
+  (*                Str.split (Str.regexp "\n") methods *)
+  (*                else [] in *)
+  (* List.iter res ~f:(fun x -> Printf.printf "%s " x); *)
+  (* Printf.printf "count: %d\n" (List.length res); *)
+  rails_methods := (res @ pre_defs)
+  
 let rec env_defname_info env =
   (* hard code! *)
   let ignore_name name =
-    let pre_defs = ["self"; "false"; "true"; "nil"; "raise";
-                    "private"; "extend"; "include"; "super"; "on";
-                    "e"; "before"; "set"; "respond_to?"; "scope";
-                    "p"; "loop"; "included"; "send"; "where"; "all";
-                    "attrs"; "attr_accessor";
-                    "require"; "pp"; "puts"; "print"] in
     name = "" || (String.nget name 0 = '_') || (String.nget name 0 = '@') ||
       (Char.is_uppercase (String.nget name 0)) ||
-        (match List.find ~f:(fun x -> x = name) pre_defs with
+        (match List.find ~f:(fun x -> x = name) !rails_methods with
          | Some(_) -> true | _ -> false) in
   
   let res = ref [] in
@@ -126,7 +129,7 @@ let rec env_defname_info env =
   Hashtbl.iter env.visited
                ~f:(fun ~key:name ~data:v ->
                if (ignore_name name = false) && (env_find_def name env = false) then
-                 res := !res @ [node_to_info v]);
+                 res := !res @ [Node.node_to_info v]);
   List.iter env.children ~f:(fun e -> res := !res @ (env_defname_info e));
   !res
 
@@ -134,6 +137,10 @@ let sort_result res msg =
   if List.length res = 0 then
     Printf.sprintf "\nNo %s issue found, ^_^\n" msg
   else
+    let res = List.filter res ~f:(fun (f1, _, v) ->
+                            ((String.substr_index f1 ~pattern:"/config/") = None) &&
+                              ((String.substr_index v ~pattern:"_path") = None))
+    in
     let infos = List.sort res ~cmp:(fun (f1, l1, v1) (f2, l2, v2) ->
         let r = String.compare f1 f2 in
         if r <> 0 then r else (
@@ -151,11 +158,12 @@ let env_unused check_global check_inst =
                         ~check_inst:check_inst in
   sort_result unused_result "unused variable"
 
-let env_undef () =
+let env_undef input =
+  init_pre_methods input;
   let undef_result = env_defname_info !root_env in
   sort_result undef_result "undef variable"
               
-let traverse asts =
+let traverse asts input =
   let rec iter ast env =
     let _iter ast = iter ast env in
     (* let str = Printer.node_to_str ast 0 in *)
@@ -199,7 +207,8 @@ let traverse asts =
                                );
         iter info.body new_env
       )
-    | Class(name, _, body, _, _) | Module(name, _, body, _) -> (
+    | Class(name, _, body, _, _)
+      | Module(name, _, body, _) -> (
       let n = name_node_id name in
       let columns = Db.class_to_model_columns n in
       iter body (new_child ~cols:columns env)
@@ -224,7 +233,7 @@ let traverse asts =
   List.iter asts ~f:(fun ast -> iter ast !root_env);
   let res = env_unused false false in
   Printf.printf "%s\n\n" res;
-  let res = env_undef() in
+  let res = env_undef input in
   Printf.printf "%s\n" res
 
                 

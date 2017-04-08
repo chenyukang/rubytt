@@ -1,0 +1,20 @@
+(Block 
+ (Call haha
+  (args: 
+   (Int 1)
+   (Int 2)
+   (Int 3))))
+
+----------------------------------------
+
+
+
+----------------------------------------
+
+
+unused result:
+No unused variable issue found, ^_^
+
+
+undef result:
+undef variable ./tests/cases/undef_fun.rb(1) : haha
