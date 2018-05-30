@@ -17,7 +17,7 @@ let class_to_model_columns class_name =
   match Hashtbl.find tables db_name with
   | Some(cols) -> cols
   | _ -> []
-           
+
 let analysis_model_ast ast proc_type =
   let rec iter ast iter_func =
     match ast.ty with
@@ -174,7 +174,7 @@ let analysis_db_ast ast =
                  let type_str = string_of_attr attr in
                  if type_str <> "index" then (
                    let name = string_of_str (List.nth_exn args 0) in
-                   let inf = c.info in 
+                   let inf = c.info in
                    let name_node =
                      Node.make_name_node name Node.Global inf.file inf.ss inf.ee in
                    acc @ [(name, type_str, name_node)]
@@ -210,7 +210,7 @@ let wrapper content =
     fontname = \"Arial BoldMT\";
     node[ shape  =  \"Mrecord\" , fontsize  =  \"10\" , \
     fontname  =  \"ArialMT\" , margin  =  \"0.07,0.05\" , penwidth  =  \"1.0\"];
-    edge[ fontname  =  \"ArialMT\" , fontsize  =  \"7\" , dir  =  \"both\" , \
+    edge[ fontname  =  \"ArialMT\" , fontsize  =  \"7\" , \
     arrowsize  =  \"0.9\" , penwidth  =  \"1.0\" , labelangle  =  \"32\" , \
     labeldistance  =  \"1.8\"];
     rankdir = \"TB\";
@@ -222,7 +222,7 @@ let gen_id model =
 let db_to_dot_str() =
   let content = ref "" in
   let cached = Hashtbl.Poly.create() in
-  Hashtbl.iter tables ~f:(fun ~key:k ~data:v ->
+  Hashtbl.iteri tables ~f:(fun ~key:k ~data:v ->
       content := !content ^ (
           "\n    " ^ (gen_id k) ^ "[label=\"{{" ^ k ^ "}" ^
             (List.fold v ~init:"" ~f:(fun acc (name, ty, _) ->
@@ -240,7 +240,7 @@ let db_to_dot_str() =
       | Some(_) -> false
       | _ -> (Hashtbl.add_exn cached ~key:s ~data:true; true)) in
 
-  Hashtbl.iter has_one_table ~f:(fun ~key:k ~data:vals ->
+  Hashtbl.iteri has_one_table ~f:(fun ~key:k ~data:vals ->
       List.iter vals ~f:(fun v ->
           if need_output k v "red" then
             content := !content ^ (
@@ -248,20 +248,20 @@ let db_to_dot_str() =
               )
         );
     );
-  Hashtbl.iter belongs_table ~f:(fun ~key:k ~data:vals ->
-      List.iter vals ~f:(fun v ->
-          match Hashtbl.find has_one_table v with
-          | Some(k) -> ()
-          | _ -> (
-              if need_output k v "red" then (
-                content := !content ^ (
-                    Printf.sprintf "M_%s -> M_%s [color=\"red\"]\n" k v
-                  )
-              )
-            )
-        );
-    );
-  Hashtbl.iter has_many_table ~f:(fun ~key:k ~data:vals ->
+  (* Hashtbl.iter belongs_table ~f:(fun ~key:k ~data:vals -> *)
+  (*     List.iter vals ~f:(fun v -> *)
+  (*         match Hashtbl.find has_one_table v with *)
+  (*         | Some(k) -> () *)
+  (*         | _ -> ( *)
+  (*             if need_output k v "red" then ( *)
+  (*               content := !content ^ ( *)
+  (*                   Printf.sprintf "M_%s -> M_%s [color=\"red\"]\n" k v *)
+  (*                 ) *)
+  (*             ) *)
+  (*           ) *)
+  (*       ); *)
+  (*   ); *)
+  Hashtbl.iteri has_many_table ~f:(fun ~key:k ~data:vals ->
       List.iter vals ~f:(fun v ->
           if need_output k v "orange" then (
             content := !content ^ (

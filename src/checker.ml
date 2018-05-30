@@ -19,8 +19,8 @@ let make_env ?ty:(ty="top") ()=
   }
 
 let root_env = ref (make_env())
-let rails_methods = ref []             
-             
+let rails_methods = ref []
+
 let clear () =
   root_env := make_env()
 
@@ -45,7 +45,7 @@ let new_child ?ty:(ty="module") ?cols:(cols=[]) parent =
   child.parent <- Some(parent);
   List.iter cols ~f:(fun (_, _, node) -> add_variable child node);
   child
-  
+
 let rec env_unused_info ?check_global:(check_global=false)
                         ?check_inst:(check_inst=false) env =
   let res = ref [] in
@@ -60,7 +60,7 @@ let rec env_unused_info ?check_global:(check_global=false)
            | _ -> (e.env_ty <> "func") && (env_visited var e)
          )
      <> None) in
-  Hashtbl.iter env.variables
+  Hashtbl.iteri env.variables
     ~f:(fun ~key:v ~data:_ ->
         if (match v.ty with
             | Name(_, Global) -> check_global && (not (env_visited v env))
@@ -86,23 +86,23 @@ let init_pre_methods dir =
                   "p"; "loop"; "included"; "send"; "current_operator";
                   "attrs"; "attr_accessor"; "validates";
                   "require"; "pp"; "puts"; "print"] in
-  let str = Util.read_file_to_str "/Users/kang/code/rubytt/src/methods" in
-  let res = Str.split (Str.regexp "\n") str in
-  (* let gemfile = dir ^ "/Gemfile" in *)
-  (* let res = if Sys.is_file_exn gemfile then *)
-  (*                let methods = Util.read_process *)
-  (*                 (Printf.sprintf *)
-  (*                    "cd %s; rails runner \"puts Object.methods +  *)
-  (*                     Object.new.methods +  *)
-  (*                     ActionController::Base.methods + *)
-  (*                     ActionController::Base.new.methods + *)
-  (*                     ActiveRecord::Base.methods\"" dir) in *)
-  (*                Str.split (Str.regexp "\n") methods *)
-  (*                else [] in *)
-  (* List.iter res ~f:(fun x -> Printf.printf "%s " x); *)
-  (* Printf.printf "count: %d\n" (List.length res); *)
+  (* let str = Util.read_file_to_str "/Users/kang/code/rubytt/src/methods" in *)
+  (* let res = Str.split (Str.regexp "\n") str in *)
+  let gemfile = dir ^ "/Gemfile" in
+  let res = if Sys.is_file_exn gemfile then
+                 let methods = Util.read_process
+                  (Printf.sprintf
+                     "cd %s; rails runner \"puts Object.methods +
+                      Object.new.methods +
+                      ActionController::Base.methods +
+                      ActionController::Base.new.methods +
+                      ActiveRecord::Base.methods\"" dir) in
+                 Str.split (Str.regexp "\n") methods
+                 else [] in
+  List.iter res ~f:(fun x -> Printf.printf "%s " x);
+  Printf.printf "count: %d\n" (List.length res);
   rails_methods := (res @ pre_defs)
-  
+
 let rec env_defname_info env =
   (* hard code! *)
   let ignore_name name =
@@ -110,11 +110,11 @@ let rec env_defname_info env =
       (Char.is_uppercase (String.nget name 0)) ||
         (match List.find ~f:(fun x -> x = name) !rails_methods with
          | Some(_) -> true | _ -> false) in
-  
+
   let res = ref [] in
   let rec env_find_def name env =
     let found = ref false in
-    Hashtbl.iter env.variables
+    Hashtbl.iteri env.variables
                  ~f:(fun ~key:v ~data:_ ->
                      if (match v.ty with
                          | Name(s, _) -> (name_node_id v) = name
@@ -126,7 +126,7 @@ let rec env_defname_info env =
         | Some(parent) -> env_find_def name parent
         | _ -> false
     else true in
-  Hashtbl.iter env.visited
+  Hashtbl.iteri env.visited
                ~f:(fun ~key:name ~data:v ->
                if (ignore_name name = false) && (env_find_def name env = false) then
                  res := !res @ [Node.node_to_info v]);
@@ -141,12 +141,12 @@ let sort_result res msg =
                             ((String.substr_index f1 ~pattern:"/config/") = None) &&
                               ((String.substr_index v ~pattern:"_path") = None))
     in
-    let infos = List.sort res ~cmp:(fun (f1, l1, v1) (f2, l2, v2) ->
+    let infos = List.sort (fun (f1, l1, v1) (f2, l2, v2) ->
         let r = String.compare f1 f2 in
         if r <> 0 then r else (
           if l1 <> l2 then (l1 - l2) else String.compare v1 v2
         )
-      )
+      ) res
     in
     List.fold infos  ~init:"" ~f:(fun acc (f, l, v) ->
         acc ^ "\n" ^ (Printf.sprintf "%s %s(%d) : %s" msg f l v))
@@ -162,7 +162,7 @@ let env_undef input =
   init_pre_methods input;
   let undef_result = env_defname_info !root_env in
   sort_result undef_result "undef variable"
-              
+
 let traverse asts input =
   let rec iter ast env =
     let _iter ast = iter ast env in
@@ -235,5 +235,3 @@ let traverse asts input =
   Printf.printf "%s\n\n" res;
   let res = env_undef input in
   Printf.printf "%s\n" res
-
-                

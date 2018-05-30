@@ -56,7 +56,7 @@ let traverse asts =
     | Kwd(_, v) | Return(v) | Starred(v) | Yield(v) -> _iter v
     | _ -> 0 in
   List.iter asts ~f:(fun ast -> ignore(iter ast 0));
-  stats := List.sort !stats ~cmp:(fun a b -> b.cnt - a.cnt);
+  stats := List.sort (fun a b -> b.cnt - a.cnt) !stats;
   let res = ref "" in
   List.iteri !stats ~f:(fun i info ->
                if i <= 20 then (

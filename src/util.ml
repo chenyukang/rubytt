@@ -16,7 +16,7 @@ let read_process command =
   let chars_read = ref 1 in
   while !chars_read <> 0 do
     chars_read := input in_channel string 0 buffer_size;
-    Buffer.add_substring buffer string 0 !chars_read
+    Buffer.add_substring buffer (Bytes.to_string string) 0 !chars_read
   done;
   ignore (Unix.close_process_in in_channel);
   Buffer.contents buffer
@@ -27,7 +27,6 @@ let cmp_file a b =
   else
     (read_file_to_str a) = (read_file_to_str b)
 
-                             
 let walk_directory_tree dir pattern =
   let select str = Str.string_match (Str.regexp pattern) str 0 in
   let rec walk acc = function
@@ -58,7 +57,7 @@ let sub_dirs dir =
                            try match (Unix.stat s).st_kind with
                                | S_DIR -> true | _ -> false
                            with _ -> false)
-              
+
 let main_name tagged_name =
   let segs = Str.split (Str.regexp "\\^") tagged_name in
   if List.length segs > 0 then

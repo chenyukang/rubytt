@@ -1,4 +1,4 @@
-open Core.Std;;
+open Core
 
 type state_type =
   | Class
@@ -23,7 +23,7 @@ let new_state ?(parent = None) state_ty : ('ty, 'binding) state =
     supers = None;
     s_type = state_ty;
     t_type = None;
-    s_table = Hashtbl.create ~hashable:String.hashable ();
+    s_table = Hashtbl.create ~size:0 (module String);
     path = "";
   }
 

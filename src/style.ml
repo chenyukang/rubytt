@@ -1,4 +1,4 @@
-open Core.Std
+open Core
 
 type style_ty =
   | KEYWORD
@@ -108,7 +108,7 @@ let apply file source styles =
       let end_tag = { offset = s.ee; sty = s; tag_ty = END } in
       applier.tags <- applier.tags @ [start_tag; end_tag]
     );
-  applier.tags <- List.sort applier.tags ~cmp:(fun t1 t2 -> t1.offset - t2.offset);
+  applier.tags <- List.sort applier.tags ~compare:(fun t1 t2 -> t1.offset - t2.offset);
   List.iter applier.tags ~f:(fun tag -> apply_tag applier source tag);
   let len = String.length source in
   if applier.cur < len then (
