@@ -1,4 +1,4 @@
-open Core.Std
+open Core
 open Node
 
 let tables = Hashtbl.Poly.create()

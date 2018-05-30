@@ -1,4 +1,4 @@
-open Core.Std
+open Core
 open Def
 open Sys
 open Style

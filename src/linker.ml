@@ -1,15 +1,15 @@
-open Core.Std;;
-open Type;;
-open Node;;
-open Style;;
-open Def;;
+open Core
+open Type
+open Node
+open Style
+open Def
 
-let file_styles = Hashtbl.Poly.create();;
-let root_path = ref "";;
-let outdir = ref "";;
-let methods_count = ref 0;;
-let class_count = ref 0;;
-let seen_def = Hash_set.Poly.create();;
+let file_styles = Hashtbl.Poly.create()
+let root_path = ref ""
+let outdir = ref ""
+let methods_count = ref 0
+let class_count = ref 0
+let seen_def = Hash_set.Poly.create()
 (* let seen_ref = Hash_set.Poly.create();; *)
 
 let new_linker root out_dir =
@@ -28,7 +28,7 @@ let add_file_style path style =
   let styles = Hashtbl.find file_styles path in
   match styles with
   | Some(style_list) ->
-    Hashtbl.replace file_styles ~key:path ~data:(style_list @ [style])
+    Hashtbl.set file_styles ~key:path ~data:(style_list @ [style])
   | _ -> (Hashtbl.add_exn file_styles ~key:path ~data:[style])
 
 let get_styles_for_file path =

@@ -1,4 +1,4 @@
-open Core.Std
+open Core
 open Sys
 open Unix
 
@@ -11,11 +11,12 @@ let read_file_to_str name =
 let read_process command =
   let buffer_size = 2048 in
   let buffer = Buffer.create buffer_size in
-  let string = String.create buffer_size in
+  let string = Bytes.create buffer_size in
   let in_channel = Unix.open_process_in command in
   let chars_read = ref 1 in
   while !chars_read <> 0 do
-    chars_read := input in_channel string 0 buffer_size;
+    (* chars_read := Core.input in_channel string 0 buffer_size; *)
+    chars_read := In_channel.input in_channel ~buf:string ~pos:0 ~len:buffer_size;
     Buffer.add_substring buffer (Bytes.to_string string) 0 !chars_read
   done;
   ignore (Unix.close_process_in in_channel);
@@ -115,18 +116,17 @@ let rules =
      "ix$","ices";
      "ius$","ii";
      "[sx]$","\\0es";
-     "non","na"];;
-
+     "non","na"]
 
 let pluralize x = (* "wish" in *)
   let f w x =
   ignore(Str.search_forward (fst x) w 0);
   Str.replace_first (fst x) (snd x) w in
-  let rec exn_map ex fn1 fn2 l =
+  let rec exn_map fn1 fn2 l =
     match l with
       [] -> fn2
-    | h::t -> try (fn1 h) with _ex -> exn_map ex fn1 fn2 t in
-  exn_map Not_found (f x) (x ^ "s") rules;;
+    | h::t -> try (fn1 h) with _ -> exn_map fn1 fn2 t in
+  exn_map (f x) (x ^ "s") rules
 
 let uncapitalize_class_name class_name =
   let res = String.foldi class_name ~init:"" ~f:(fun i acc c ->

@@ -1,5 +1,6 @@
 open Core
 open Sys
+open Command
 
 let parse_to_ast ?need_trans:(need_trans=true) file =
   let json = Parser.run_dump_ruby file in
@@ -96,13 +97,12 @@ let command =
   Command.basic
     ~summary:"Generate an MD5 hash of the input data"
     ~readme:(fun () -> "More detailed information")
-    (let open Command.Let_syntax in
-     let open Command.Param in
-     let%map
-       source_code = anon ("source_code" %: string)
-     and analy_ty  = anon ("analy_ty" %: string)
-     and output_dir = anon ("output_dir" %: string)
-     in
+    Command.Let_syntax.(
+      let%map_open
+         source_code = flag "-s" (optional string) ~doc:"the source code directory"
+      and analy_ty = flag "-t" (optional string) ~doc:"the analysis type, shoud in [class, db, model, type, check, fun]"
+      and output_dir = flag "-o" (optional string) ~doc:"the output directory or file"
+      in
      fun () ->
                Util.prepare_dump();
                match source_code with

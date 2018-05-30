@@ -69,7 +69,7 @@ let state_overwrite st st_v =
 
 let state_update st id bindings =
   match Hashtbl.add st.s_table ~key:id ~data:bindings with
-  | `Duplicate -> Hashtbl.replace st.s_table ~key:id ~data:bindings
+  | `Duplicate -> Hashtbl.set st.s_table ~key:id ~data:bindings
   | _ -> ()
 
 let state_update_bind st id binding =
@@ -79,7 +79,7 @@ let state_add_bind st id binding =
   match Hashtbl.add st.s_table ~key:id ~data:[binding] with
   | `Duplicate -> (
       let prev_bindings = Hashtbl.find_exn st.s_table id in
-      Hashtbl.replace st.s_table ~key:id ~data:(prev_bindings @ [binding])
+      Hashtbl.set st.s_table ~key:id ~data:(prev_bindings @ [binding])
     )
   | _ -> ()
        

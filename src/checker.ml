@@ -1,4 +1,4 @@
-open Core.Std
+open Core
 open Node
 
 type env = {
@@ -141,7 +141,7 @@ let sort_result res msg =
                             ((String.substr_index f1 ~pattern:"/config/") = None) &&
                               ((String.substr_index v ~pattern:"_path") = None))
     in
-    let infos = List.sort (fun (f1, l1, v1) (f2, l2, v2) ->
+    let infos = List.sort ~compare:(fun (f1, l1, v1) (f2, l2, v2) ->
         let r = String.compare f1 f2 in
         if r <> 0 then r else (
           if l1 <> l2 then (l1 - l2) else String.compare v1 v2
