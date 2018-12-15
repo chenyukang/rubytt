@@ -1,4 +1,4 @@
-open Core.Std
+open Core
 open Sys
 open Unix
 
@@ -11,12 +11,12 @@ let read_file_to_str name =
 let read_process command =
   let buffer_size = 2048 in
   let buffer = Buffer.create buffer_size in
-  let string = String.create buffer_size in
+  let string = Bytes.create buffer_size in
   let in_channel = Unix.open_process_in command in
   let chars_read = ref 1 in
   while !chars_read <> 0 do
-    chars_read := input in_channel string 0 buffer_size;
-    Buffer.add_substring buffer string 0 !chars_read
+    chars_read := In_channel.input in_channel string 0 buffer_size;
+    Buffer.add_substring buffer (Bytes.to_string string) 0 !chars_read
   done;
   ignore (Unix.close_process_in in_channel);
   Buffer.contents buffer
@@ -27,7 +27,6 @@ let cmp_file a b =
   else
     (read_file_to_str a) = (read_file_to_str b)
 
-                             
 let walk_directory_tree dir pattern =
   let select str = Str.string_match (Str.regexp pattern) str 0 in
   let rec walk acc = function
@@ -58,7 +57,7 @@ let sub_dirs dir =
                            try match (Unix.stat s).st_kind with
                                | S_DIR -> true | _ -> false
                            with _ -> false)
-              
+
 let main_name tagged_name =
   let segs = Str.split (Str.regexp "\\^") tagged_name in
   if List.length segs > 0 then
@@ -116,8 +115,9 @@ let rules =
      "ix$","ices";
      "ius$","ii";
      "[sx]$","\\0es";
-     "non","na"];;
+     "non","na"]
 
+exception Not_found of string
 
 let pluralize x = (* "wish" in *)
   let f w x =
@@ -127,7 +127,7 @@ let pluralize x = (* "wish" in *)
     match l with
       [] -> fn2
     | h::t -> try (fn1 h) with _ex -> exn_map ex fn1 fn2 t in
-  exn_map Not_found (f x) (x ^ "s") rules;;
+  exn_map (raise (Not_found "x")) (f x) (x ^ "s") rules
 
 let uncapitalize_class_name class_name =
   let res = String.foldi class_name ~init:"" ~f:(fun i acc c ->

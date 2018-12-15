@@ -1,4 +1,4 @@
-open Core.Std
+open Core
 
 let () =
   let dump_str = In_channel.read_all "dump.rb" in
