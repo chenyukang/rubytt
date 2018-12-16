@@ -1,4 +1,4 @@
-open Core.Std;;
+open Core
 open Node
 open State
 open Type
@@ -6,7 +6,7 @@ open Type
 let class_hash = Hashtbl.Poly.create();;
 let node_to_dot_str (state: Type.state_t) =
   let table = state.s_table in
-  Hashtbl.iter table ~f:(fun ~key:name ~data:bindings ->
+  Hashtbl.iteri table ~f:(fun ~key:name ~data:bindings ->
       if name <> "self" then (
         List.iter bindings ~f:(fun bind ->
             let ty = bind.bind_ty in
@@ -28,7 +28,7 @@ let node_to_dot_str (state: Type.state_t) =
   fontsize=\"12pt\";
   rankdir = LR;\n" in
   let setted = Hashtbl.Poly.create() in
-  Hashtbl.iter class_hash ~f:(fun ~key:base ~data:super ->
+  Hashtbl.iteri class_hash ~f:(fun ~key:base ~data:super ->
       if Hashtbl.mem setted base = false then (
         Hashtbl.add_exn setted ~key:base ~data:true;
         res := !res ^
