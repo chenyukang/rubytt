@@ -20,6 +20,7 @@
 
 bind: Order ty: Class_ty: Order
 bind: ActiveRecord ty: Module_ty: ActiveRecord
+  bind: Base ty: Class_ty: Base
 
 
 ----------------------------------------

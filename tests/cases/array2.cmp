@@ -20,7 +20,7 @@
 ----------------------------------------
 
 bind: a ty: Dict_ty(Int_ty Int_ty)
-bind: b ty: [{(Int_ty)|(Dict_ty(Int_ty Int_ty))}]
+bind: b ty: [{(Dict_ty(Int_ty Int_ty))|(Int_ty)}]
 
 
 ----------------------------------------

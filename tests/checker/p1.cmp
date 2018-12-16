@@ -16,5 +16,6 @@ unused variable ./tests/checker/p1/app/models/order.rb(6) : c
 unused variable ./tests/checker/p1/app/models/order.rb(7) : d
 unused variable ./tests/checker/p1/demo.rb(2) : hello
 
+count: 0
 
 undef variable ./tests/checker/p1/app/models/order.rb(7) : error_variable
