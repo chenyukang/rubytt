@@ -13,5 +13,5 @@ fi
 opam init -y
 eval `opam config env`
 opam update
-opam switch 4.06.1
+opam switch create 4.06.1
 opam install core yojson alcotest ounit stringext -y
