@@ -16,4 +16,4 @@ install: [make "opam_install"]
 remove: [make "clean"]
 
 depends: ["ocamlfind" "core" "yojson" "alcotest" "ounit" "stringext"]
-available: [ocaml-version > "4.01"]
+available: [ocaml-version >= "4.06.1"]
