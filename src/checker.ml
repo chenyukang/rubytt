@@ -141,12 +141,12 @@ let sort_result res msg =
                             ((String.substr_index f1 ~pattern:"/config/") = None) &&
                               ((String.substr_index v ~pattern:"_path") = None))
     in
-    let infos = List.sort ~compare:(fun (f1, l1, v1) (f2, l2, v2) ->
+    let infos = List.sort res ~compare:(fun (f1, l1, v1) (f2, l2, v2) ->
         let r = String.compare f1 f2 in
         if r <> 0 then r else (
           if l1 <> l2 then (l1 - l2) else String.compare v1 v2
         )
-      ) res
+      )
     in
     List.fold infos  ~init:"" ~f:(fun acc (f, l, v) ->
         acc ^ "\n" ^ (Printf.sprintf "%s %s(%d) : %s" msg f l v))

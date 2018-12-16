@@ -248,19 +248,21 @@ let db_to_dot_str() =
               )
         );
     );
-  (* Hashtbl.iter belongs_table ~f:(fun ~key:k ~data:vals -> *)
-  (*     List.iter vals ~f:(fun v -> *)
-  (*         match Hashtbl.find has_one_table v with *)
-  (*         | Some(k) -> () *)
-  (*         | _ -> ( *)
-  (*             if need_output k v "red" then ( *)
-  (*               content := !content ^ ( *)
-  (*                   Printf.sprintf "M_%s -> M_%s [color=\"red\"]\n" k v *)
-  (*                 ) *)
-  (*             ) *)
-  (*           ) *)
-  (*       ); *)
-  (*   ); *)
+
+  Hashtbl.iteri belongs_table ~f:(fun ~key:k ~data:vals ->
+      List.iter vals ~f:(fun v ->
+          match Hashtbl.find has_one_table v with
+          | Some(k) -> ()
+          | _ -> (
+              if need_output k v "red" then (
+                content := !content ^ (
+                    Printf.sprintf "M_%s -> M_%s [color=\"red\"]\n" k v
+                  )
+              )
+            )
+        );
+    );
+
   Hashtbl.iteri has_many_table ~f:(fun ~key:k ~data:vals ->
       List.iter vals ~f:(fun v ->
           if need_output k v "orange" then (

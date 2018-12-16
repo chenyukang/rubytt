@@ -240,6 +240,7 @@ let new_instance_type class_ty =
           if b.kind <> ClassMethodK then State.state_update_bind state name b
         )
     );
+
   set_table ret state;
   ret
 

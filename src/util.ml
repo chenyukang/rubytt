@@ -118,6 +118,7 @@ let rules =
      "[sx]$","\\0es";
      "non","na"]
 
+
 let pluralize x = (* "wish" in *)
   let f w x =
   ignore(Str.search_forward (fst x) w 0);
