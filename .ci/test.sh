@@ -1,8 +1,9 @@
 #!/bin/bash
 set -e
 
-opam switch 4.02.1
+opam switch 4.06.1
 
 eval `opam config env`
 
-make
+make && make test
+
