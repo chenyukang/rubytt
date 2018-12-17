@@ -4,6 +4,7 @@
 *.json
 *.png
 *.dot
+.DS_Store
 src/dump.ml
 out
 now
