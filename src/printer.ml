@@ -1,4 +1,4 @@
-open Core.Std;;
+open Core
 open Node
 open State
 
@@ -227,7 +227,7 @@ let rec type_to_str ?show_bind:(show_bind=true) ty depth =
   )
   | Union_ty(tys_table)  -> (
       let res = ref "{" in
-      Hashtbl.iter tys_table ~f:(fun ~key:k ~data:_ ->
+      Hashtbl.iteri tys_table ~f:(fun ~key:k ~data:_ ->
           let sep = if !res = "{" then "(" else "|(" in
           res := !res ^ sep ^ (type_to_str ~show_bind:show_bind k 0) ^ ")");
       !res ^ "}"
@@ -249,7 +249,7 @@ and
   table_to_str (state:Type.state_t) depth show_bind =
   let table = state.s_table in
   let res = ref "" in
-  Hashtbl.iter table ~f:(fun ~key:name ~data:bindings ->
+  Hashtbl.iteri table ~f:(fun ~key:name ~data:bindings ->
       (* avoid loop *)
       if name <> "self" then (
         let final_ty = make_unions_from_bs bindings in

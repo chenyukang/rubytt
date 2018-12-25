@@ -20,9 +20,9 @@
 
 ----------------------------------------
 
-bind: a ty: [{(Int_ty)|(Str_ty)}]
+bind: a ty: [{(Str_ty)|(Int_ty)}]
 bind: b ty: Int_ty
-bind: c ty: {(Int_ty)|(Str_ty)}
+bind: c ty: {(Str_ty)|(Int_ty)}
 
 
 ----------------------------------------

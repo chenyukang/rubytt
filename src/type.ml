@@ -1,4 +1,4 @@
-open Core.Std
+open Core
 open Typestack
 open State
 open Node
@@ -235,11 +235,12 @@ let new_instance_type class_ty =
               ty = Instance_ty(class_ty) } in
   let class_state = class_ty.info.table in
   let state = State.new_state ~parent:(State.parent class_state) State.Instance in
-  Hashtbl.iter class_state.s_table ~f:(fun ~key:name ~data:bindings ->
+  Hashtbl.iteri class_state.s_table ~f:(fun ~key:name ~data:bindings ->
       List.iter bindings ~f:(fun b ->
           if b.kind <> ClassMethodK then State.state_update_bind state name b
         )
     );
+
   set_table ret state;
   ret
 
@@ -269,7 +270,7 @@ let is_unkown_ty ty =
 let rec union_ty_add_ty u t =
   match t.ty with
   | Union_ty(_t) ->
-    Hashtbl.iter _t ~f:(fun ~key:k ~data:_ -> ignore(union_ty_add_ty u k))
+    Hashtbl.iteri _t ~f:(fun ~key:k ~data:_ -> ignore(union_ty_add_ty u k))
   | _ -> (
       match u.ty with
       | Union_ty(table) ->

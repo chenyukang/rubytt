@@ -1,5 +1,6 @@
-open Core.Std
+open Core
 open Sys
+open Command
 
 let parse_to_ast ?need_trans:(need_trans=true) file =
   let json = Parser.run_dump_ruby file in
@@ -71,7 +72,7 @@ let load_db ?dump_db:(dump_db=false) input_dir output =
     Db.analysis_model_asts asts;
     Db.dump_db output
   )
-         
+
 let load_checker input =
   let asts = match Sys.is_file input with
     | `Yes -> [(parse_to_ast ~need_trans:false input)]
@@ -91,45 +92,46 @@ let load_fun_analy input =
       | _ -> failwith (Printf.sprintf "Cound not found: %s" input)
     ) in
   Fun.traverse asts
-  
+
 let command =
   Command.basic
     ~summary: "rubytt: an Ruby analyzer"
-    Command.Spec.(
-      empty
-      +> flag "-s" (optional string) ~doc:"the source code directory"
-      +> flag "-t" (optional string) ~doc:"the analysis type, shoud in [class, db, model, type, check, fun]"
-      +> flag "-o" (optional string) ~doc:"the output directory or file"
-    )
-    (fun source_code analy_ty output_dir () ->
-     Util.prepare_dump();
-     match source_code with
-       | Some(source) -> (
-           Printf.printf "Source dir: %s\n" source;
-           if not(Sys.is_directory_exn source) then
-             failwith (Printf.sprintf "%s is not an directory\n" source);
-           let output () =
-             match output_dir with
-             |Some(s) -> s
-             |_ -> failwith "Please set output directory or file\n" in
-           match analy_ty with
-           | Some("class") -> (
-               ignore(load_dir source "/tmp/rubytt/");
-               Class.dump_class_dot(output())
+    Command.Let_syntax.(
+      let%map_open
+        source_code = flag "-s" (optional string) ~doc:"the source code directory"
+      and analy_ty = flag "-t" (optional string) ~doc:"the analysis type, shoud in [class, db, model, type, check, fun]"
+      and output_dir = flag "-o" (optional string) ~doc:"the output directory or file"
+      in
+      fun () ->
+           Util.prepare_dump();
+           match source_code with
+           | Some(source) -> (
+               Printf.printf "Source dir: %s\n" source;
+               if not(Sys.is_directory_exn source) then
+                 failwith (Printf.sprintf "%s is not an directory\n" source);
+               let output () =
+                 match output_dir with
+                 |Some(s) -> s
+                 |_ -> failwith "Please set output directory or file\n" in
+               match analy_ty with
+               | Some("class") -> (
+                   ignore(load_dir source "/tmp/rubytt/");
+                   Class.dump_class_dot(output())
+                 )
+               | Some("check") -> load_checker source
+               | Some("fun") -> load_fun_analy source
+               | Some("db") -> load_db ~dump_db:true source (output())
+               | Some("model") -> load_db ~dump_db:false source (output())
+               | Some("type") -> (
+                   ignore(load_dir source (output()));
+                   Html.dump_html source (output())
+                 )
+               | _ -> failwith "Invalid option"
              )
-           | Some("check") -> load_checker source
-           | Some("fun") -> load_fun_analy source
-           | Some("db") -> load_db ~dump_db:true source (output())
-           | Some("model") -> load_db ~dump_db:false source (output())
-           | Some("type") -> (
-               ignore(load_dir source (output()));
-               Html.dump_html source (output())
+           | _ -> (
+               Printf.printf "Please input source code directory\n"
              )
-           | _ -> failwith "Invalid option"
-         )
-       | _ -> (
-           Printf.printf "Please input source code directory\n"
-         )
-    )
+        )
 
 let () = Command.run command
+

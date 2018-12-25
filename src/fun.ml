@@ -1,4 +1,4 @@
-open Core.Std
+open Core
 open Node
 
 type func_stat =
@@ -8,10 +8,10 @@ type func_stat =
   }
 
 let stats = ref []
-            
+
 let add_fun_info ast cnt =
   stats := !stats @ [{ast = ast; cnt = cnt}]
-  
+
 let traverse asts =
   let rec iter ast cnt =
     let _iter ast = iter ast 0 in
@@ -22,7 +22,7 @@ let traverse asts =
     | Assign(target, value) -> (
       let target_cnt = match target.ty with
         | Name(_, _) -> 1
-        | Array(ls) -> _iter_list ls                     
+        | Array(ls) -> _iter_list ls
         | _ -> (iter target cnt) in
       target_cnt + (iter value cnt)
     )
@@ -30,7 +30,7 @@ let traverse asts =
       let args_cnt = _iter_list info.args in
       let body_cnt = iter info.body 0 in
       let all = (args_cnt + body_cnt) in
-      if is_lambda ast = false then 
+      if is_lambda ast = false then
         add_fun_info ast all;
       all
     )
@@ -56,7 +56,7 @@ let traverse asts =
     | Kwd(_, v) | Return(v) | Starred(v) | Yield(v) -> _iter v
     | _ -> 0 in
   List.iter asts ~f:(fun ast -> ignore(iter ast 0));
-  stats := List.sort !stats ~cmp:(fun a b -> b.cnt - a.cnt);
+  stats := List.sort ~compare:(fun a b -> b.cnt - a.cnt) !stats;
   let res = ref "" in
   List.iteri !stats ~f:(fun i info ->
                if i <= 20 then (
